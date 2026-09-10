@@ -36,8 +36,8 @@ func newRenderCmd(g *globals) *cobra.Command {
 			if err != nil {
 				return err
 			}
-			cmd.Println("---")
-			cmd.Print(string(b))
+			outln(cmd, "---")
+			out(cmd, string(b))
 		}
 		return nil
 	}

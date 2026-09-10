@@ -152,16 +152,32 @@ spec:
 }
 
 // The eject test: `cluster render` re-applies with zero diff.
+//
+// It runs with the policy's bindings removed, which is not a workaround — it is
+// what ejecting means. The objects render describes are managed kinds, so while
+// the policy is enforcing, re-applying them is denied; docs/eject.md says to
+// remove the bindings first and this test proves that sequence works.
 func TestE2E_RenderReAppliesWithNoDiff(t *testing.T) {
 	const name = "e2e-dev-1"
 	rendered, code := run(t, 2*time.Minute, cli(t), "render", name)
 	require.Equal(t, 0, code)
+	require.NotEmpty(t, strings.TrimSpace(rendered), "render wrote nothing to stdout")
 
 	path := filepath.Join(t.TempDir(), "rendered.yaml")
 	require.NoError(t, os.WriteFile(path, []byte(rendered), 0o644))
 
+	// While the policy enforces, re-applying a managed kind is denied. That is the
+	// assembly working, so assert it before ejecting.
+	denied, code := run(t, 2*time.Minute, "kubectl", "diff", "-f", path)
+	require.NotEqual(t, 0, code, "a managed kind was patchable while the policy was enforcing")
+	require.Contains(t, denied, "break-glass")
+
+	run(t, time.Minute, "kubectl", "delete", "validatingadmissionpolicybinding",
+		"capi-distro-cluster-fields", "capi-distro-managed-kinds")
+	t.Cleanup(func() { run(t, time.Minute, "kubectl", "apply", "-f", "policy/vap/") })
+
 	out, code := run(t, 2*time.Minute, "kubectl", "diff", "-f", path)
-	// kubectl diff exits 0 when there is no difference and 1 when there is.
+	// kubectl diff exits 0 when there is no difference and non-zero when there is.
 	require.Equal(t, 0, code, "cluster render output does not re-apply cleanly:\n%s", out)
 }
 

@@ -43,7 +43,7 @@ func newExplainCmd() *cobra.Command {
 			if len(args) == 0 {
 				for _, code := range msg.Codes() {
 					entry, _ := msg.Get(code)
-					cmd.Printf("%-18s %s\n", code, entry.Title)
+					outf(cmd, "%-18s %s\n", code, entry.Title)
 				}
 				return nil
 			}
@@ -52,7 +52,7 @@ func newExplainCmd() *cobra.Command {
 			if !ok {
 				return unknownCode(code)
 			}
-			cmd.Print(text)
+			out(cmd, text)
 			return nil
 		},
 	}
@@ -72,7 +72,7 @@ func newDocsCmd() *cobra.Command {
 			if !ok {
 				return unknownCode(code)
 			}
-			cmd.Print(text)
+			out(cmd, text)
 			return nil
 		},
 	}
@@ -126,13 +126,13 @@ func newPlanCmd(g *globals) *cobra.Command {
 			}
 			return exitWith(errs[0])
 		}
-		cmd.Printf("%s in %s: class %s, %s, %s control plane (%d nodes)\n",
+		outf(cmd, "%s in %s: class %s, %s, %s control plane (%d nodes)\n",
 			spec.Name, spec.Namespace, spec.Class, spec.Version, spec.Placement,
 			gen.ControlPlaneReplicas(spec.Size))
 		for _, p := range spec.Pools {
-			cmd.Printf("  pool %s: %d nodes\n", p.Name, p.Replicas)
+			outf(cmd, "  pool %s: %d nodes\n", p.Name, p.Replicas)
 		}
-		cmd.Println("no field is rejected; `cluster up` would apply this unchanged.")
+		outln(cmd, "no field is rejected; `cluster up` would apply this unchanged.")
 		return nil
 	}
 	return cmd
@@ -174,11 +174,11 @@ func newNewCmd(g *globals) *cobra.Command {
 				}
 				return exitWith(errs[0])
 			}
-			out, err := spec.YAML()
+			manifest, err := spec.YAML()
 			if err != nil {
 				return err
 			}
-			cmd.Print(string(out))
+			out(cmd, string(manifest))
 			return nil
 		},
 	}

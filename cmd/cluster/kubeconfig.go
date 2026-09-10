@@ -32,10 +32,10 @@ func newKubeconfigCmd(g *globals) *cobra.Command {
 			port, err := publishedPort(name)
 			if err != nil {
 				cmd.PrintErrln("kubeconfig: could not find the published port; leaving the server address alone")
-				cmd.Print(raw)
+				out(cmd, raw)
 				return nil
 			}
-			cmd.Print(RewriteServer(raw, port))
+			out(cmd, RewriteServer(raw, port))
 			return nil
 		},
 	}

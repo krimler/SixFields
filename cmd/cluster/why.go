@@ -46,15 +46,15 @@ func newWhyCmd(g *globals) *cobra.Command {
 		res := fold.Fold(env, fold.Options{Now: now, StallAfter: opt.stallAfter})
 		stall, ok := why.Rank(env, res, why.Options{Now: now})
 		if !ok {
-			cmd.Printf("%s is not waiting on anything.\n", res.Cluster)
+			outf(cmd, "%s is not waiting on anything.\n", res.Cluster)
 			return nil
 		}
 
 		view := render.View{Result: res, Stall: &stall, Verbose: g.verbose || explainRanking,
 			Estimates: estimates(res, opt), Elapsed: res.Elapsed}
 		if g.jsonOut {
-			out, _ := (&render.JSON{}).Render(view, 0)
-			cmd.Print(out)
+			document, _ := (&render.JSON{}).Render(view, 0)
+			out(cmd, document)
 		} else {
 			printStall(cmd, view)
 			explainStall(cmd.Context(), cmd, stall, view, env, ai)
@@ -71,6 +71,6 @@ func newWhyCmd(g *globals) *cobra.Command {
 func printStall(cmd *cobra.Command, v render.View) {
 	theme := render.Theme{Color: useColor(&globals{}, cmd.OutOrStdout())}
 	for _, line := range render.StallLines(v, theme) {
-		cmd.Println(line)
+		outln(cmd, line)
 	}
 }

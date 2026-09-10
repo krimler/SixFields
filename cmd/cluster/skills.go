@@ -49,7 +49,7 @@ func newSkillsCmd() *cobra.Command {
 				if err := os.WriteFile(path, b, 0o644); err != nil {
 					return err
 				}
-				cmd.Println("installed " + path)
+				outln(cmd, "installed "+path)
 			}
 			return nil
 		},

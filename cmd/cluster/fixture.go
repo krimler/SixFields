@@ -75,7 +75,7 @@ func newFixtureRecordCmd(g *globals) *cobra.Command {
 				env.Meta.RecordedAt = now.UTC().Format(time.RFC3339)
 				env.Meta.TPlusS = int(now.Sub(start).Round(time.Second).Seconds())
 				tl.Envelopes = append(tl.Envelopes, env)
-				cmd.Printf("t+%ds  %d objects\n", env.Meta.TPlusS, len(env.Objects))
+				outf(cmd, "t+%ds  %d objects\n", env.Meta.TPlusS, len(env.Objects))
 
 				res := fold.Fold(env, fold.Options{Now: now})
 				if res.Ready || len(tl.Envelopes) >= maxPoints {
@@ -88,7 +88,7 @@ func newFixtureRecordCmd(g *globals) *cobra.Command {
 			if err := fixture.Write(out, tl); err != nil {
 				return err
 			}
-			cmd.Printf("wrote %d envelopes to %s/%s\n", len(tl.Envelopes), out, name)
+			outf(cmd, "wrote %d envelopes to %s/%s\n", len(tl.Envelopes), out, name)
 			return nil
 		},
 	}
@@ -128,7 +128,7 @@ func newFixtureSynthCmd() *cobra.Command {
 				if err := fixture.Write(out, tl); err != nil {
 					return err
 				}
-				cmd.Printf("%-22s %d envelopes\n", tl.Name, len(tl.Envelopes))
+				outf(cmd, "%-22s %d envelopes\n", tl.Name, len(tl.Envelopes))
 			}
 			return nil
 		},
@@ -153,7 +153,7 @@ func newFixtureListCmd() *cobra.Command {
 				if err != nil || len(envelopes) == 0 {
 					continue
 				}
-				cmd.Printf("%-22s %2d envelopes  %s\n", name, len(envelopes), provenance(envelopes[0]))
+				outf(cmd, "%-22s %2d envelopes  %s\n", name, len(envelopes), provenance(envelopes[0]))
 			}
 			return nil
 		},

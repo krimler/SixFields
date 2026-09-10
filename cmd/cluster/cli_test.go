@@ -196,3 +196,26 @@ func pinned(t *testing.T, key string) string {
 	}
 	return ""
 }
+
+// Cobra's cmd.Print family writes to stderr. Anything a user redirects into a
+// file — `cluster render > objects.yaml`, `cluster new > cluster.yaml` — must go
+// to stdout instead, and both wrote empty files until this test existed.
+func TestUX_DataGoesToStdout(t *testing.T) {
+	for _, tc := range []struct {
+		name     string
+		args     []string
+		contains string
+	}{
+		{"new", []string{"new", "dev-1", "--version", "v1.34.11", "--pool", "default=2"}, "kind: Cluster"},
+		{"render", []string{"render", "--replay", "../../testdata/fixtures/std-docker-happy"}, "kind: Cluster"},
+		{"explain", []string{"explain", "CAPI-CP-003"}, "What happened:"},
+		{"docs", []string{"docs", "CAPI-CP-003"}, "## Check, in order"},
+		{"status --json", []string{"status", "--replay", "../../testdata/fixtures/std-docker-happy", "--json", "--speed", "0"}, `"version": "v1"`},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			stdout, stderr, code := runCLI(t, tc.args...)
+			require.Equal(t, msg.ExitReady, code, "stderr:\n%s", stderr)
+			require.Contains(t, stdout, tc.contains, "output went to stderr instead of stdout")
+		})
+	}
+}

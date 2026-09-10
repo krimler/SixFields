@@ -73,8 +73,8 @@ func explainStall(ctx context.Context, cmd *cobra.Command, stall why.Stall, view
 	// a slow or absent model costs nothing but itself (D4.1, the latency contract).
 	runbook, hasRunbook := msg.Runbook(stall.Code)
 	if hasRunbook {
-		cmd.Println()
-		cmd.Print(runbook)
+		outln(cmd)
+		out(cmd, runbook)
 	}
 
 	explainer, name, err := backend()
@@ -124,11 +124,11 @@ func explainStall(ctx context.Context, cmd *cobra.Command, stall why.Stall, view
 		return
 	}
 
-	cmd.Println()
+	outln(cmd)
 	for _, line := range answer.Lines {
-		cmd.Println(line)
+		outln(cmd, line)
 	}
-	cmd.Println("next: " + answer.NextCommand)
+	outln(cmd, "next: "+answer.NextCommand)
 }
 
 func objectNames(env snapshot.Envelope) []string {

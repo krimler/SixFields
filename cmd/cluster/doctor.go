@@ -24,28 +24,28 @@ func newDoctorCmd(g *globals) *cobra.Command {
 			check := func(label string, err error) {
 				if err != nil {
 					failed = true
-					cmd.Printf("  fail  %s\n", label)
+					outf(cmd, "  fail  %s\n", label)
 					return
 				}
-				cmd.Printf("  ok    %s\n", label)
+				outf(cmd, "  ok    %s\n", label)
 			}
 
-			cmd.Println("management cluster")
+			outln(cmd, "management cluster")
 			check("reachable", kubectl(g, "version", "-o", "json"))
 			check("Cluster kind is served", kubectl(g, "get", "crd", "clusters.cluster.x-k8s.io"))
 
-			cmd.Println("permissions in " + g.namespace)
+			outln(cmd, "permissions in "+g.namespace)
 			check("create clusters", kubectl(g, "auth", "can-i", "create", "clusters.cluster.x-k8s.io", "-n", g.namespace))
 			// Being able to write a managed kind means the policy is missing or you
 			// are exempt from it. Either way it is worth knowing before you rely on
 			// errors arriving at admission time.
 			if err := kubectl(g, "auth", "can-i", "create", "kubeadmcontrolplanes.controlplane.cluster.x-k8s.io", "-n", g.namespace); err == nil {
-				cmd.Println("  warn  you can create a KubeadmControlPlane directly: the admission policy is not covering you")
+				outln(cmd, "  warn  you can create a KubeadmControlPlane directly: the admission policy is not covering you")
 			} else {
-				cmd.Println("  ok    managed kinds are refused")
+				outln(cmd, "  ok    managed kinds are refused")
 			}
 
-			cmd.Println("classes")
+			outln(cmd, "classes")
 			check("ClusterClass std exists", kubectl(g, "get", "clusterclass", "std", "-n", g.namespace))
 
 			if failed {

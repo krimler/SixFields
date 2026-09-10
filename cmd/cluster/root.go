@@ -63,7 +63,7 @@ func newVersionCmd() *cobra.Command {
 		Short:   "Print the version of this binary",
 		Example: "  cluster version",
 		RunE: func(cmd *cobra.Command, _ []string) error {
-			cmd.Println(version)
+			outln(cmd, version)
 			return nil
 		},
 	}
