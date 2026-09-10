@@ -5,7 +5,6 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/require"
 
@@ -29,7 +28,7 @@ func requestFor(t *testing.T, scenario string) explain.Request {
 	envelopes, err := fixture.Load(filepath.Join(fixturesDir, scenario))
 	require.NoError(t, err)
 	env := envelopes[len(envelopes)-1]
-	now := fixture.T0.Add(time.Duration(env.Meta.TPlusS) * time.Second)
+	now := fixture.NowFor(env)
 
 	res := fold.Fold(env, fold.Options{Now: now})
 	stall, ok := why.Rank(env, res, why.Options{Now: now})

@@ -36,7 +36,7 @@ func lastEnvelope(t *testing.T, scenario string) snapshot.Envelope {
 func rank(t *testing.T, scenario string) why.Stall {
 	t.Helper()
 	env := lastEnvelope(t, scenario)
-	now := fixture.T0.Add(time.Duration(env.Meta.TPlusS) * time.Second)
+	now := fixture.NowFor(env)
 	res := fold.Fold(env, fold.Options{Now: now})
 	stall, ok := why.Rank(env, res, why.Options{Now: now})
 	require.True(t, ok, "nothing ranked for %s", scenario)
@@ -134,7 +134,7 @@ func TestWhy_LongMessagesAreTruncatedAndKept(t *testing.T) {
 			}
 		}
 	}
-	now := fixture.T0.Add(time.Duration(env.Meta.TPlusS) * time.Second)
+	now := fixture.NowFor(env)
 	res := fold.Fold(env, fold.Options{Now: now})
 	stall, ok := why.Rank(env, res, why.Options{Now: now})
 	require.True(t, ok)
@@ -147,7 +147,7 @@ func TestWhy_LongMessagesAreTruncatedAndKept(t *testing.T) {
 // A healthy cluster has nothing to rank.
 func TestWhy_ReadyClusterRanksNothing(t *testing.T) {
 	env := lastEnvelope(t, "std-docker-happy")
-	now := fixture.T0.Add(time.Duration(env.Meta.TPlusS) * time.Second)
+	now := fixture.NowFor(env)
 	res := fold.Fold(env, fold.Options{Now: now})
 	_, ok := why.Rank(env, res, why.Options{Now: now})
 	require.False(t, ok)
@@ -257,7 +257,7 @@ func TestUX_ActivityConditionsAreNotFailures(t *testing.T) {
 		o["status"].(map[string]any)["conditions"] = conditions
 	}
 
-	now := fixture.T0.Add(time.Duration(env.Meta.TPlusS) * time.Second)
+	now := fixture.NowFor(env)
 	res := fold.Fold(env, fold.Options{Now: now})
 	stall, ok := why.Rank(env, res, why.Options{Now: now})
 	require.True(t, ok)
@@ -286,7 +286,7 @@ func TestUX_SummaryConditionsRankBelowSpecificOnes(t *testing.T) {
 		o["status"].(map[string]any)["conditions"] = conditions
 	}
 
-	now := fixture.T0.Add(time.Duration(env.Meta.TPlusS) * time.Second)
+	now := fixture.NowFor(env)
 	res := fold.Fold(env, fold.Options{Now: now})
 	stall, ok := why.Rank(env, res, why.Options{Now: now})
 	require.True(t, ok)

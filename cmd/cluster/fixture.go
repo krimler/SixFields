@@ -1,9 +1,13 @@
 package main
 
 import (
+	"fmt"
+	"time"
+
 	"github.com/spf13/cobra"
 
 	"capi-distro/internal/fixture"
+	"capi-distro/internal/fold"
 	"capi-distro/internal/msg"
 	"capi-distro/internal/snapshot"
 )
@@ -21,40 +25,92 @@ func newFixtureCmd(g *globals) *cobra.Command {
 }
 
 func newFixtureRecordCmd(g *globals) *cobra.Command {
-	var name, out string
-	var points []int
+	var name, clusterName, out string
+	var every time.Duration
+	var maxPoints int
 	cmd := &cobra.Command{
-		Use:     "record",
-		Short:   "Record a real run into testdata/fixtures/<name>/",
-		Example: "  cluster fixture record --name std-docker-happy --cluster dev-1",
+		Use:   "record",
+		Short: "Record a real run into testdata/fixtures/<name>/",
+		Long: "Watches a cluster and writes an envelope every --every until it is ready or\n" +
+			"--max-points is reached. Timestamps are relative to the Cluster's creation, so a\n" +
+			"recording replays at the speed it happened.",
+		Example: "  cluster fixture record --name std-docker-happy --cluster dev-1\n" +
+			"  cluster fixture record --name scale-up --cluster dev-1 --every 15s --max-points 20",
 		RunE: func(cmd *cobra.Command, _ []string) error {
-			src, err := newLiveSource(g, name, false)
+			src, err := newLiveSource(g, clusterName, false)
 			if err != nil {
 				return err
 			}
 			defer func() { _ = src.Close() }()
+
 			snapshots, err := src.Snapshots(cmd.Context())
 			if err != nil {
 				return err
 			}
-			tl := fixture.Timeline{Name: name, Note: "recorded from a live management cluster"}
+
+			tl := fixture.Timeline{
+				Name: name,
+				Note: fmt.Sprintf("recorded from cluster %s on %s", clusterName, time.Now().UTC().Format(time.RFC3339)),
+			}
+			var start time.Time
+			var lastWrite time.Time
+
 			for env := range snapshots {
+				cluster, ok := env.Cluster()
+				if !ok {
+					continue
+				}
+				if start.IsZero() {
+					start = cluster.CreationTimestamp()
+				}
+				now := time.Now()
+				if !lastWrite.IsZero() && now.Sub(lastWrite) < every {
+					continue
+				}
+				lastWrite = now
+
 				env.Meta.Scenario = name
 				env.Meta.Synthetic = false
+				env.Meta.CAPI = capiVersion(env)
+				env.Meta.RecordedAt = now.UTC().Format(time.RFC3339)
+				env.Meta.TPlusS = int(now.Sub(start).Round(time.Second).Seconds())
 				tl.Envelopes = append(tl.Envelopes, env)
-				cmd.Printf("recorded t+%ds (%d objects)\n", env.Meta.TPlusS, len(env.Objects))
-				if len(tl.Envelopes) >= len(points) && len(points) > 0 {
+				cmd.Printf("t+%ds  %d objects\n", env.Meta.TPlusS, len(env.Objects))
+
+				res := fold.Fold(env, fold.Options{Now: now})
+				if res.Ready || len(tl.Envelopes) >= maxPoints {
 					break
 				}
 			}
-			return fixture.Write(out, tl)
+			if len(tl.Envelopes) == 0 {
+				return msg.New(msg.ClusterNotFound, msg.Vars{Object: clusterName, Namespace: g.namespace})
+			}
+			if err := fixture.Write(out, tl); err != nil {
+				return err
+			}
+			cmd.Printf("wrote %d envelopes to %s/%s\n", len(tl.Envelopes), out, name)
+			return nil
 		},
 	}
-	cmd.Flags().StringVar(&name, "name", "", "scenario name")
+	cmd.Flags().StringVar(&name, "name", "", "scenario name; becomes the directory")
+	cmd.Flags().StringVar(&clusterName, "cluster", "", "the cluster to record")
 	cmd.Flags().StringVar(&out, "out", "testdata/fixtures", "fixtures directory")
-	cmd.Flags().IntSliceVar(&points, "at", nil, "seconds after start to capture; empty records every change")
+	cmd.Flags().DurationVar(&every, "every", 30*time.Second, "minimum interval between envelopes")
+	cmd.Flags().IntVar(&maxPoints, "max-points", 30, "stop after this many envelopes")
 	_ = cmd.MarkFlagRequired("name")
+	_ = cmd.MarkFlagRequired("cluster")
 	return cmd
+}
+
+// capiVersion records which release a fixture was taken from, so a fold that
+// changes with a CAPI bump can be traced to the recording that predates it.
+func capiVersion(env snapshot.Envelope) string {
+	for _, o := range env.Objects {
+		if o.Kind() == "Cluster" {
+			return o.APIVersion()
+		}
+	}
+	return ""
 }
 
 func newFixtureSynthCmd() *cobra.Command {

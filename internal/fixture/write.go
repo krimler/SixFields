@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"capi-distro/internal/snapshot"
 )
@@ -25,6 +26,14 @@ func Write(dir string, tl Timeline) error {
 	}
 	wanted := map[string]bool{}
 	for _, e := range tl.Envelopes {
+		// Provenance travels with the envelope, not with the directory: a fixture
+		// file read on its own must still say where it came from.
+		if e.Meta.Note == "" {
+			e.Meta.Note = tl.Note
+		}
+		if e.Meta.Scenario == "" {
+			e.Meta.Scenario = tl.Name
+		}
 		name := Filename(e)
 		wanted[name] = true
 		b, err := json.MarshalIndent(e, "", "  ")
@@ -86,4 +95,17 @@ func Scenarios(dir string) ([]string, error) {
 		}
 	}
 	return out, nil
+}
+
+// NowFor is the instant an envelope was taken: the cluster's creation time plus
+// _meta.t_plus_s. A synthetic timeline starts at T0 and a recorded one starts
+// whenever it was recorded, and this is what lets both fold the same way.
+func NowFor(env snapshot.Envelope) time.Time {
+	start := T0
+	if cluster, ok := env.Cluster(); ok {
+		if created := cluster.CreationTimestamp(); !created.IsZero() {
+			start = created
+		}
+	}
+	return start.Add(time.Duration(env.Meta.TPlusS) * time.Second)
 }

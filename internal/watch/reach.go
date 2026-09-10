@@ -50,6 +50,15 @@ func Reachable(objects []snapshot.Object, clusterName string) []snapshot.Object 
 			visit(o)
 		}
 	}
+	// A ClusterResourceSetBinding carries no cluster label and is owned by the
+	// ClusterResourceSet rather than by the Cluster; spec.clusterName is its only
+	// link. Without this the add-ons phase reported "none" on a cluster that had
+	// just had a CNI applied to it.
+	for _, o := range objects {
+		if o.String("spec", "clusterName") == clusterName {
+			visit(o)
+		}
+	}
 
 	for i := 0; i < len(queue); i++ {
 		current := queue[i]

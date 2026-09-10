@@ -44,7 +44,7 @@ func TestFold_EveryFixtureMatchesItsGolden(t *testing.T) {
 }
 
 func optionsFor(env snapshot.Envelope) fold.Options {
-	return fold.Options{Now: fixture.T0.Add(time.Duration(env.Meta.TPlusS) * time.Second)}
+	return fold.Options{Now: fixture.NowFor(env)}
 }
 
 func lastEnvelope(t *testing.T, scenario string) snapshot.Envelope {
@@ -234,4 +234,38 @@ func conditionValues(t *testing.T) map[string]bool {
 		}
 	}
 	return out
+}
+
+// CLAUDE.md rule 4: fixtures are recorded, not written. A synthetic one is the
+// exception and must declare itself and say what it stands in for, so a reader
+// can tell at a glance which assertions rest on a real run.
+func TestFixtures_SyntheticAreDeclared(t *testing.T) {
+	scenarios, err := fixture.Scenarios(fixturesDir)
+	require.NoError(t, err)
+
+	recorded := 0
+	for _, name := range scenarios {
+		envelopes, err := fixture.Load(filepath.Join(fixturesDir, name))
+		require.NoError(t, err)
+		require.NotEmpty(t, envelopes, name)
+
+		for _, env := range envelopes {
+			require.NotEmpty(t, env.Meta.Note, "%s/%s has no note saying where it came from",
+				name, fixture.Filename(env))
+			if env.Meta.Synthetic {
+				// Two honest kinds of synthetic: one that stands in for a run
+				// nobody has recorded yet, and one built by hand to isolate a rule
+				// no real run would produce on demand.
+				require.Regexp(t, `^(stands in for|hand-built|hand-made)`, env.Meta.Note,
+					"%s is synthetic but its note does not say which kind it is", name)
+				continue
+			}
+			require.NotEmpty(t, env.Meta.RecordedAt,
+				"%s is not marked synthetic, so it must say when it was recorded", name)
+		}
+		if !envelopes[0].Meta.Synthetic {
+			recorded++
+		}
+	}
+	require.NotZero(t, recorded, "no fixture has been recorded from a real run")
 }

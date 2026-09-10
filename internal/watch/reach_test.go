@@ -98,3 +98,20 @@ func TestWatch_ReachableOverAFixtureIsTheWholeFixture(t *testing.T) {
 		require.Len(t, watch.Reachable(env.Objects, cluster.Name()), len(env.Objects), tl.Name)
 	}
 }
+
+// A ClusterResourceSetBinding carries no cluster label and is owned by the
+// ClusterResourceSet, not by the Cluster. spec.clusterName is its only link, and
+// missing it made the add-ons phase report "none" on a cluster that had just had
+// a CNI applied.
+func TestWatch_ResourceSetBindingIsReachedByClusterName(t *testing.T) {
+	binding := obj("ClusterResourceSetBinding", "dev-1", func(o snapshot.Object) {
+		o["apiVersion"] = "addons.cluster.x-k8s.io/v1beta2"
+		o["spec"].(map[string]any)["clusterName"] = "dev-1"
+	})
+	other := obj("ClusterResourceSetBinding", "other", func(o snapshot.Object) {
+		o["apiVersion"] = "addons.cluster.x-k8s.io/v1beta2"
+		o["spec"].(map[string]any)["clusterName"] = "other"
+	})
+	got := names(watch.Reachable([]snapshot.Object{obj("Cluster", "dev-1"), binding, other}, "dev-1"))
+	require.ElementsMatch(t, []string{"Cluster/dev-1", "ClusterResourceSetBinding/dev-1"}, got)
+}

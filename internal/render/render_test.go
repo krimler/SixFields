@@ -33,7 +33,7 @@ func load(t *testing.T, scenario string) []snapshot.Envelope {
 }
 
 func viewAt(env snapshot.Envelope, estimates map[fold.PhaseName]eta.Estimate) render.View {
-	now := fixture.T0.Add(time.Duration(env.Meta.TPlusS) * time.Second)
+	now := fixture.NowFor(env)
 	res := fold.Fold(env, fold.Options{Now: now})
 	v := render.View{Result: res, Estimates: estimates, Elapsed: now.Sub(fixture.T0)}
 	if stall, ok := why.Rank(env, res, why.Options{Now: now}); ok && res.Phases != nil {
@@ -162,14 +162,14 @@ func TestUX_NoHistorySaysSo(t *testing.T) {
 // (D2.1). The stream must speak within a second and never go quiet for long.
 func TestUX_FirstFeedbackUnder1sAndNoSilentGaps(t *testing.T) {
 	envelopes := load(t, "std-docker-happy")
-	clock := fixture.T0
+	clock := fixture.NowFor(envelopes[0])
 	var buf bytes.Buffer
 	stream := &render.Stream{
 		Out: &buf, Renderer: &render.Plain{}, Now: func() time.Time { return clock },
 		Width: func() int { return 80 },
 	}
 	for _, env := range envelopes {
-		clock = fixture.T0.Add(time.Duration(env.Meta.TPlusS) * time.Second)
+		clock = fixture.NowFor(env)
 		require.NoError(t, stream.Update(viewAt(env, sampleEstimates())))
 	}
 	require.Less(t, stream.TimeToFirstOutput(), time.Second)
@@ -180,7 +180,7 @@ func TestUX_FirstFeedbackUnder1sAndNoSilentGaps(t *testing.T) {
 // more than two frames a second, and no frame may repeat the one before it (D2.7).
 func TestUX_RenderBudgetAndNoFlicker(t *testing.T) {
 	envelopes := load(t, "inmem-happy")
-	clock := fixture.T0
+	clock := fixture.NowFor(envelopes[0])
 	var buf bytes.Buffer
 	tty := &render.TTY{}
 	stream := &render.Stream{
@@ -191,7 +191,7 @@ func TestUX_RenderBudgetAndNoFlicker(t *testing.T) {
 	// Fifty updates per simulated second, the speed a --replay --speed 50 reaches.
 	frames := []string{}
 	for _, env := range envelopes {
-		base := fixture.T0.Add(time.Duration(env.Meta.TPlusS) * time.Second)
+		base := fixture.NowFor(env)
 		for i := 0; i < 50; i++ {
 			clock = base.Add(time.Duration(i) * 20 * time.Millisecond)
 			require.NoError(t, stream.Update(viewAt(env, sampleEstimates())))
@@ -200,7 +200,7 @@ func TestUX_RenderBudgetAndNoFlicker(t *testing.T) {
 			}
 		}
 	}
-	span := clock.Sub(fixture.T0).Seconds()
+	span := clock.Sub(fixture.NowFor(envelopes[0])).Seconds()
 	require.LessOrEqual(t, float64(stream.Renders()), 2*span+1,
 		"%d renders over %.0fs simulated is more than 2/s", stream.Renders(), span)
 	for i := 1; i < len(frames); i++ {

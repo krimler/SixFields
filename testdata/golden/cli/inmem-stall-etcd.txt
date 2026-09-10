@@ -4,4 +4,5 @@ t+3m20s workers         running  0/2 nodes
 t+3m20s addons          done     none
 DevMachine/inmem-1-cp-abcde — etcd is not coming up (3m12s)
 raw: kubectl get devmachine.infrastructure.cluster.x-k8s.io inmem-1-cp-abcde -n default -o yaml
+typical: p50 34m13s · p95 34m13s
 next: cluster docs CAPI-CP-003

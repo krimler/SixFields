@@ -418,7 +418,11 @@ func foldAddons(env snapshot.Envelope, cluster snapshot.Object) Phase {
 	p := Phase{Name: Addons, State: Done, Detail: "none"}
 	var contributors []snapshot.Object
 	for _, b := range env.ByKind("ClusterResourceSetBinding") {
-		if b.Name() != cluster.Name() && b.Labels()["cluster.x-k8s.io/cluster-name"] != cluster.Name() {
+		// The binding is named after the cluster and also names it in
+		// spec.clusterName; it carries no label at all.
+		if b.Name() != cluster.Name() &&
+			b.String("spec", "clusterName") != cluster.Name() &&
+			b.Labels()["cluster.x-k8s.io/cluster-name"] != cluster.Name() {
 			continue
 		}
 		contributors = append(contributors, b)

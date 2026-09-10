@@ -55,6 +55,8 @@ kubectl apply -f "bin/render/${OVERLAY:-docker}.yaml" \
   --as-group capi-distro:break-glass \
   --as-group system:masters
 
+hack/addons.sh
+
 if [[ "${WITH_POLICY:-true}" == "true" ]]; then
   kubectl apply -f policy/vap/
 fi
