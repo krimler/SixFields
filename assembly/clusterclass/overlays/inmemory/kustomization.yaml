@@ -7,3 +7,12 @@ kind: Kustomization
 resources:
 - ../../base
 - infrastructure.yaml
+
+# Installing the assembly means writing kinds the policy manages (*Template). That
+# is the operator break-glass case, not a hole: this label is one half, and
+# hack/dev-up.sh supplies the other half by impersonating the break-glass group.
+# Every install is recorded in the binding's audit annotation. See docs/eject.md.
+labels:
+- includeSelectors: false
+  pairs:
+    capi-distro.io/break-glass: "true"

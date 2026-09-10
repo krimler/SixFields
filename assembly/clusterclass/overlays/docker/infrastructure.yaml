@@ -17,9 +17,14 @@ spec:
   template:
     spec:
       backend:
-        # customImage is filled in by the nodeImage patch below; an empty docker
-        # backend is what makes the JSON patch path resolvable.
-        docker: {}
+        # The image is an operator opinion, not a user variable. It is written here
+        # rather than patched from a ClusterClass variable because CAPI's mutating
+        # webhook defaults every class variable onto the Cluster, which would put
+        # nodeImage into spec.topology.variables on an ordinary user's write and
+        # the admission policy would reject it. hack/render.sh substitutes it from
+        # WORKLOAD_NODE_IMAGE in versions.env.
+        docker:
+          customImage: ${WORKLOAD_NODE_IMAGE}
 ---
 apiVersion: infrastructure.cluster.x-k8s.io/v1beta2
 kind: DevMachineTemplate
@@ -29,4 +34,5 @@ spec:
   template:
     spec:
       backend:
-        docker: {}
+        docker:
+          customImage: ${WORKLOAD_NODE_IMAGE}

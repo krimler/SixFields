@@ -63,14 +63,3 @@ spec:
         enum: ["self", "hosted"]
         default: self
         description: "self runs the control plane on machines, hosted runs it as pods."
-  # hack/render.sh pipes kustomize build through envsubst, so this placeholder is
-  # replaced with WORKLOAD_NODE_IMAGE from versions.env in the rendered class.
-  # Only the docker overlay consumes it; the inMemory backend has no image
-  # (test@v1.14.2 infrastructure/docker/api/v1beta2/devmachine_types.go:357).
-  - name: nodeImage
-    required: true
-    schema:
-      openAPIV3Schema:
-        type: string
-        default: ${WORKLOAD_NODE_IMAGE}
-        description: "Container image the Dev machines boot."

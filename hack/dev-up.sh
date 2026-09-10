@@ -19,10 +19,41 @@ fi
 kubectl config use-context "kind-${KIND_CLUSTER}"
 
 hack/clusterctl-init.sh
-kubectl wait --for=condition=Available --timeout=5m -n capi-system deployment/capi-controller-manager
+
+# Every provider registers admitting webhooks, and applying the class calls all of
+# them. Waiting only for the core manager is not enough: the first `make dev-up`
+# on a clean machine failed with "connection refused" from the CAPD and kubeadm
+# webhook services because their pods were still starting.
+kubectl wait --for=condition=Available --timeout=5m --all-namespaces \
+  --selector cluster.x-k8s.io/provider deployment
+
+# A deployment is Available before its Service has endpoints. Wait for the
+# endpoints too, or the apply below races the webhook it is about to call.
+for service in $(kubectl get service --all-namespaces \
+      --selector cluster.x-k8s.io/provider \
+      -o jsonpath='{range .items[*]}{.metadata.namespace}/{.metadata.name}{"\n"}{end}'); do
+  namespace=${service%%/*}
+  name=${service##*/}
+  for _ in $(seq 1 60); do
+    addresses=$(kubectl get endpointslice -n "$namespace" \
+      -l "kubernetes.io/service-name=$name" -o jsonpath='{.items[*].endpoints[*].addresses[*]}' 2>/dev/null || true)
+    [[ -n "$addresses" ]] && break
+    sleep 2
+  done
+  [[ -n "${addresses:-}" ]] || echo "dev-up: $service still has no endpoints; the apply may fail" >&2
+done
 
 hack/render.sh
-kubectl apply -f "bin/render/${OVERLAY:-docker}.yaml"
+
+# The assembly is made of kinds the policy manages, so applying it is a
+# break-glass write: the objects carry the label (see the base kustomization) and
+# this supplies the group. Both halves are required, and the binding records the
+# use in the audit log — which is the point. RBAC still comes from the caller, so
+# system:masters is impersonated alongside.
+kubectl apply -f "bin/render/${OVERLAY:-docker}.yaml" \
+  --as "${BREAK_GLASS_USER:-capi-distro-installer}" \
+  --as-group capi-distro:break-glass \
+  --as-group system:masters
 
 if [[ "${WITH_POLICY:-true}" == "true" ]]; then
   kubectl apply -f policy/vap/

@@ -1,6 +1,8 @@
 apiVersion: bootstrap.cluster.x-k8s.io/v1beta2
 kind: KubeadmConfigTemplate
 metadata:
+  labels:
+    capi-distro.io/break-glass: "true"
   name: std-default-bootstrap
 spec:
   template:
@@ -14,6 +16,8 @@ spec:
 apiVersion: cluster.x-k8s.io/v1beta2
 kind: ClusterClass
 metadata:
+  labels:
+    capi-distro.io/break-glass: "true"
   name: std
 spec:
   controlPlane:
@@ -31,23 +35,6 @@ spec:
       apiVersion: infrastructure.cluster.x-k8s.io/v1beta2
       kind: DevClusterTemplate
       name: std-cluster
-  patches:
-  - definitions:
-    - jsonPatches:
-      - op: add
-        path: /spec/template/spec/backend/docker/customImage
-        valueFrom:
-          variable: nodeImage
-      selector:
-        apiVersion: infrastructure.cluster.x-k8s.io/v1beta2
-        kind: DevMachineTemplate
-        matchResources:
-          controlPlane: true
-          machineDeploymentClass:
-            names:
-            - default
-    description: Boots control-plane and worker machines from the pinned node image.
-    name: nodeImage
   variables:
   - name: size
     required: true
@@ -69,13 +56,6 @@ spec:
         - self
         - hosted
         type: string
-  - name: nodeImage
-    required: true
-    schema:
-      openAPIV3Schema:
-        default: kindest/node:v1.34.11@sha256:44e222ee2132dab25ff87301682f89eb82c7880ea3a1bf543bfe9708fd08d67d
-        description: Container image the Dev machines boot.
-        type: string
   workers:
     machineDeployments:
     - bootstrap:
@@ -93,6 +73,8 @@ spec:
 apiVersion: controlplane.cluster.x-k8s.io/v1beta2
 kind: KubeadmControlPlaneTemplate
 metadata:
+  labels:
+    capi-distro.io/break-glass: "true"
   name: std-control-plane
 spec:
   template:
@@ -121,6 +103,8 @@ spec:
 apiVersion: infrastructure.cluster.x-k8s.io/v1beta2
 kind: DevClusterTemplate
 metadata:
+  labels:
+    capi-distro.io/break-glass: "true"
   name: std-cluster
 spec:
   template:
@@ -131,19 +115,25 @@ spec:
 apiVersion: infrastructure.cluster.x-k8s.io/v1beta2
 kind: DevMachineTemplate
 metadata:
+  labels:
+    capi-distro.io/break-glass: "true"
   name: std-control-plane-machine
 spec:
   template:
     spec:
       backend:
-        docker: {}
+        docker:
+          customImage: kindest/node:v1.34.11@sha256:44e222ee2132dab25ff87301682f89eb82c7880ea3a1bf543bfe9708fd08d67d
 ---
 apiVersion: infrastructure.cluster.x-k8s.io/v1beta2
 kind: DevMachineTemplate
 metadata:
+  labels:
+    capi-distro.io/break-glass: "true"
   name: std-default-machine
 spec:
   template:
     spec:
       backend:
-        docker: {}
+        docker:
+          customImage: kindest/node:v1.34.11@sha256:44e222ee2132dab25ff87301682f89eb82c7880ea3a1bf543bfe9708fd08d67d

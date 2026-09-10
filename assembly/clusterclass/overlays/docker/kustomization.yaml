@@ -4,32 +4,12 @@ kind: Kustomization
 resources:
 - ../../base
 - infrastructure.yaml
-patches:
-# spec.patches is absent in the base and MinItems=1 forbids an empty list
-# (api@v1.14.2 core/v1beta2/clusterclass_types.go:135), so the overlay adds the
-# whole array rather than appending to it.
-- target:
-    group: cluster.x-k8s.io
-    version: v1beta2
-    kind: ClusterClass
-    name: std
-  patch: |-
-    - op: add
-      path: /spec/patches
-      value:
-      - name: nodeImage
-        description: "Boots control-plane and worker machines from the pinned node image."
-        definitions:
-        - selector:
-            apiVersion: infrastructure.cluster.x-k8s.io/v1beta2
-            kind: DevMachineTemplate
-            matchResources:
-              controlPlane: true
-              machineDeploymentClass:
-                names:
-                - default
-          jsonPatches:
-          - op: add
-            path: /spec/template/spec/backend/docker/customImage
-            valueFrom:
-              variable: nodeImage
+
+# Installing the assembly means writing kinds the policy manages (*Template). That
+# is the operator break-glass case, not a hole: this label is one half, and
+# hack/dev-up.sh supplies the other half by impersonating the break-glass group.
+# Every install is recorded in the binding's audit annotation. See docs/eject.md.
+labels:
+- includeSelectors: false
+  pairs:
+    capi-distro.io/break-glass: "true"

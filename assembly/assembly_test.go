@@ -86,8 +86,8 @@ func TestAssembly_ExposesOnlyTheDocumentedVariables(t *testing.T) {
 			for _, v := range spec["variables"].([]any) {
 				names = append(names, v.(map[string]any)["name"].(string))
 			}
-			require.ElementsMatch(t, []string{"size", "placement", "nodeImage"}, names,
-				"the user-facing variables are size and placement; nodeImage is set by the overlay")
+			require.ElementsMatch(t, []string{"size", "placement"}, names,
+				"size and placement are the whole variable surface")
 		})
 	}
 }
@@ -102,11 +102,9 @@ func TestAssembly_VariableSchemasRejectAndDefault(t *testing.T) {
 	want := map[string]struct {
 		enum       []string
 		defaultsTo string
-		hasDefault bool
 	}{
-		"size":      {enum: []string{"dev", "ha"}, defaultsTo: "dev", hasDefault: true},
-		"placement": {enum: []string{"self", "hosted"}, defaultsTo: "self", hasDefault: true},
-		"nodeImage": {hasDefault: true},
+		"size":      {enum: []string{"dev", "ha"}, defaultsTo: "dev"},
+		"placement": {enum: []string{"self", "hosted"}, defaultsTo: "self"},
 	}
 
 	for _, item := range variables {
@@ -118,12 +116,10 @@ func TestAssembly_VariableSchemasRejectAndDefault(t *testing.T) {
 		schema := v["schema"].(map[string]any)["openAPIV3Schema"].(map[string]any)
 		require.Equal(t, "string", schema["type"], "%s", name)
 
-		if expect.hasDefault {
-			require.NotNil(t, schema["default"], "%s has no default, so a user must set it", name)
-		}
-		if expect.defaultsTo != "" {
-			require.Equal(t, expect.defaultsTo, schema["default"], "%s", name)
-		}
+		// Every variable has a default. CAPI's mutating webhook writes defaults back
+		// onto the Cluster, so a variable without one would force a user to set it,
+		// and a variable a user must set is a seventh field.
+		require.Equal(t, expect.defaultsTo, schema["default"], "%s", name)
 		if len(expect.enum) > 0 {
 			var got []string
 			for _, e := range schema["enum"].([]any) {
@@ -179,23 +175,34 @@ func TestAssembly_UsesNoDeprecatedKinds(t *testing.T) {
 	}
 }
 
-// The class must not pin a node image that versions.env does not know about.
-func TestAssembly_NodeImageComesFromVersionsEnv(t *testing.T) {
+// The node image is written into the machine templates, not exposed as a class
+// variable: CAPI's mutating webhook defaults every class variable onto the
+// Cluster, so a nodeImage variable would appear in an ordinary user's
+// spec.topology.variables and the admission policy would reject their write.
+func TestAssembly_NodeImageIsInTheTemplateAndComesFromVersionsEnv(t *testing.T) {
 	want := pinned(t, "WORKLOAD_NODE_IMAGE")
 	require.NotEmpty(t, want)
 
-	class := find(t, render(t, "docker"), "ClusterClass")
-	for _, item := range class["spec"].(map[string]any)["variables"].([]any) {
-		v := item.(map[string]any)
-		if v["name"] != "nodeImage" {
+	docs := render(t, "docker")
+	found := 0
+	for _, doc := range docs {
+		if doc["kind"] != "DevMachineTemplate" {
 			continue
 		}
-		schema := v["schema"].(map[string]any)["openAPIV3Schema"].(map[string]any)
-		require.Equal(t, want, schema["default"],
-			"the class default drifted from versions.env; run: make render")
-		return
+		spec := doc["spec"].(map[string]any)["template"].(map[string]any)["spec"].(map[string]any)
+		docker, ok := spec["backend"].(map[string]any)["docker"].(map[string]any)
+		require.True(t, ok, "%v has no docker backend", doc["metadata"])
+		require.Equal(t, want, docker["customImage"],
+			"the image drifted from versions.env; run: make render")
+		found++
 	}
-	t.Fatal("no nodeImage variable")
+	require.Equal(t, 2, found, "both the control-plane and the worker template carry the image")
+
+	class := find(t, docs, "ClusterClass")
+	for _, item := range class["spec"].(map[string]any)["variables"].([]any) {
+		require.NotEqual(t, "nodeImage", item.(map[string]any)["name"],
+			"nodeImage must not be a class variable; see the comment in the docker overlay")
+	}
 }
 
 func pinned(t *testing.T, key string) string {
@@ -208,4 +215,24 @@ func pinned(t *testing.T, key string) string {
 		}
 	}
 	return ""
+}
+
+// Installing the assembly writes kinds the policy manages, so every rendered
+// object carries one half of the break-glass; hack/dev-up.sh supplies the other
+// by impersonating the group. Without this the second `make dev-up` on a machine
+// that already has the policy is denied — which is how it was found.
+func TestAssembly_RenderedObjectsCarryTheBreakGlassLabel(t *testing.T) {
+	for _, overlay := range overlays {
+		t.Run(overlay, func(t *testing.T) {
+			docs := render(t, overlay)
+			require.NotEmpty(t, docs)
+			for _, doc := range docs {
+				metadata := doc["metadata"].(map[string]any)
+				labels, ok := metadata["labels"].(map[string]any)
+				require.True(t, ok, "%v has no labels", metadata["name"])
+				require.Equal(t, "true", labels["capi-distro.io/break-glass"],
+					"%v cannot be installed while the policy is enforcing", metadata["name"])
+			}
+		})
+	}
 }
