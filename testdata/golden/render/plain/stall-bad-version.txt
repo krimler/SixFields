@@ -7,4 +7,4 @@ t+6m00s control plane   stalled  0/1 nodes
 DevMachine/dev-1-cp-abcde — the requested Kubernetes version is not available (4m30s)
 raw: kubectl get devmachine.infrastructure.cluster.x-k8s.io dev-1-cp-abcde -n default -o yaml
 typical: p50 1m15s · p95 2m00s
-next: cluster docs CAPI-VERSION-001
+next: set spec.topology.version to a version the provider publishes

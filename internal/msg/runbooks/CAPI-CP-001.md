@@ -7,8 +7,8 @@ no machine, no certificates, no bootstrap — and read the object that knows whi
 
 ```
 KubeadmControlPlane/dev-1 — control plane is not initializing (3m41s)
-  raw: kubectl get kubeadmcontrolplane.controlplane.cluster.x-k8s.io dev-1 -n default -o yaml
-  Next: cluster docs CAPI-CP-001
+raw: kubectl get kubeadmcontrolplane.controlplane.cluster.x-k8s.io dev-1 -n default -o yaml
+next: cluster docs CAPI-CP-001
 ```
 
 The `infrastructure` row of `cluster status` reads `done`; `control plane` reads

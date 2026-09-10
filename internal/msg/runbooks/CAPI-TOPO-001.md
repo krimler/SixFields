@@ -10,8 +10,8 @@ This is the one stall class that is almost always a mistake in the `Cluster` you
 
 ```
 Cluster/dev-1 — the topology could not be reconciled (2m30s)
-  raw: kubectl get cluster.cluster.x-k8s.io dev-1 -n default -o yaml
-  Next: cluster docs CAPI-TOPO-001
+raw: kubectl get cluster.cluster.x-k8s.io dev-1 -n default -o yaml
+next: cluster docs CAPI-TOPO-001
 ```
 
 The stall line names the `Cluster` itself, not a provider object, and usually the

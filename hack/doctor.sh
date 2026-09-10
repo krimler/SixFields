@@ -18,7 +18,7 @@ check_version go         "$(go version 2>/dev/null | awk '{print $3}' | sed 's/^
 check_version kind       "$(kind version 2>/dev/null | awk '{print $2}')"               "$KIND_VERSION"
 check_version kubectl    "$(kubectl version --client -o json 2>/dev/null | jq -r .clientVersion.gitVersion)" "$KUBECTL_VERSION"
 check_version clusterctl "$(clusterctl version -o short 2>/dev/null)"                   "$CLUSTERCTL_VERSION"
-for t in kustomize golangci-lint yamllint kubeconform jq; do
+for t in kustomize golangci-lint yamllint kubeconform jq envsubst; do
   command -v "$t" >/dev/null && ok "$t" || bad "$t is not installed — run: make bootstrap"
 done
 

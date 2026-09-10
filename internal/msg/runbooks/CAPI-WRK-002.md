@@ -8,8 +8,8 @@ the only place the answer exists.
 
 ```
 Machine/dev-1-default-6b9c8-mn4tp — a node is not joining the cluster (7m10s)
-  raw: kubectl get machine.cluster.x-k8s.io dev-1-default-6b9c8-mn4tp -n default -o yaml
-  Next: cluster docs CAPI-WRK-002
+raw: kubectl get machine.cluster.x-k8s.io dev-1-default-6b9c8-mn4tp -n default -o yaml
+next: cluster docs CAPI-WRK-002
 ```
 
 The `workers` row of `cluster status` reads `stalled`. This code is narrower than

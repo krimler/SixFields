@@ -8,8 +8,8 @@ faults with different fixes.
 
 ```
 MachineDeployment/dev-1-default — worker machines are not becoming ready (4m55s)
-  raw: kubectl get machinedeployment.cluster.x-k8s.io dev-1-default -n default -o yaml
-  Next: cluster docs CAPI-WRK-001
+raw: kubectl get machinedeployment.cluster.x-k8s.io dev-1-default -n default -o yaml
+next: cluster docs CAPI-WRK-001
 ```
 
 The `workers` row of `cluster status` reads `stalled` with a count like `1/3 nodes`. The

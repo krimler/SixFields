@@ -8,8 +8,8 @@ this most of the time.
 
 ```
 DevCluster/dev-1 — infrastructure is not ready (4m12s)
-  raw: kubectl get devcluster.infrastructure.cluster.x-k8s.io dev-1 -n default -o yaml
-  Next: cluster docs CAPI-INFRA-001
+raw: kubectl get devcluster.infrastructure.cluster.x-k8s.io dev-1 -n default -o yaml
+next: cluster docs CAPI-INFRA-001
 ```
 
 The `infrastructure` row of `cluster status` reads `stalled`. Every row below it reads

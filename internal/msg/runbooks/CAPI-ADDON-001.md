@@ -8,8 +8,8 @@ recognise the case where the cluster is up but has no CNI.
 
 ```
 ClusterResourceSetBinding/dev-1 — add-ons were not applied (3m18s)
-  raw: kubectl get clusterresourcesetbinding.addons.cluster.x-k8s.io dev-1 -n default -o yaml
-  Next: cluster docs CAPI-ADDON-001
+raw: kubectl get clusterresourcesetbinding.addons.cluster.x-k8s.io dev-1 -n default -o yaml
+next: cluster docs CAPI-ADDON-001
 ```
 
 The `addons` row of `cluster status` reads `stalled` with a count like `1/3 applied`.

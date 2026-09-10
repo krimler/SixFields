@@ -9,3 +9,5 @@ brew "golangci-lint"
 brew "yamllint"
 brew "kubeconform"
 brew "jq"
+# envsubst: hack/render.sh and hack/dev-up.sh substitute pinned values after kustomize.
+brew "gettext"

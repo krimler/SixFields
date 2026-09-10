@@ -8,8 +8,8 @@ fix by deleting a machine.
 
 ```
 KubeadmControlPlane/dev-1 — etcd is not coming up (6m20s)
-  raw: kubectl get kubeadmcontrolplane.controlplane.cluster.x-k8s.io dev-1 -n default -o yaml
-  Next: cluster docs CAPI-CP-003
+raw: kubectl get kubeadmcontrolplane.controlplane.cluster.x-k8s.io dev-1 -n default -o yaml
+next: cluster docs CAPI-CP-003
 ```
 
 The `control plane` row of `cluster status` reads `stalled`. With `size: ha` the count is

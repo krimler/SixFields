@@ -185,3 +185,24 @@ func TestUX_RunbookPerStallClass(t *testing.T) {
 		require.False(t, ok, "%s is not a stall class but has a runbook", code)
 	}
 }
+
+// A runbook opens by showing what the user just saw. If the renderer's stall
+// block changes shape, that opening becomes a lie, so the prefixes are checked
+// against the ones internal/render actually emits.
+func TestUX_RunbookExamplesMatchTheRealStallBlock(t *testing.T) {
+	for _, code := range Codes() {
+		entry, _ := Get(code)
+		if entry.Class != Stall {
+			continue
+		}
+		text, ok := Runbook(code)
+		require.True(t, ok, "%s", code)
+
+		require.Contains(t, text, "## What you are seeing", "%s", code)
+		require.Contains(t, text, "\nraw: kubectl get ", "%s: the raw line is unindented and copy-pasteable", code)
+		require.Contains(t, text, "\nnext: "+entry.NextAction,
+			"%s: the next line must be the registry's action, which is what the renderer prints", code)
+		require.NotContains(t, text, "\n  raw: ", "%s: the raw line must not be indented", code)
+		require.NotContains(t, text, "\n  Next: ", "%s: the renderer writes `next:`, not `Next:`", code)
+	}
+}

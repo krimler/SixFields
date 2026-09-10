@@ -64,13 +64,17 @@ func anonymizeByDefault(name string) bool { return name == "anthropic" }
 // the model is slow, wrong or absent, the runbook stands alone — the ladder never
 // depends on the top rung.
 func explainStall(ctx context.Context, cmd *cobra.Command, stall why.Stall, view render.View, env snapshot.Envelope, opt aiOptions) {
+	if !opt.enabled {
+		// The runbook is its own rung: `cluster docs <code>` prints it. Printing it
+		// unasked would bury the one line `why` exists to show.
+		return
+	}
+	// --explain prints the runbook first and streams the model's lines under it, so
+	// a slow or absent model costs nothing but itself (D4.1, the latency contract).
 	runbook, hasRunbook := msg.Runbook(stall.Code)
 	if hasRunbook {
 		cmd.Println()
 		cmd.Print(runbook)
-	}
-	if !opt.enabled {
-		return
 	}
 
 	explainer, name, err := backend()

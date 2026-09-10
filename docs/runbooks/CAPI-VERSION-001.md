@@ -8,8 +8,8 @@ without waiting for another ten-minute timeout.
 
 ```
 KubeadmControlPlane/dev-1 — the requested Kubernetes version is not available (5m40s)
-  raw: kubectl get kubeadmcontrolplane.controlplane.cluster.x-k8s.io dev-1 -n default -o yaml
-  Next: set spec.topology.version to a version the provider publishes
+raw: kubectl get kubeadmcontrolplane.controlplane.cluster.x-k8s.io dev-1 -n default -o yaml
+next: set spec.topology.version to a version the provider publishes
 ```
 
 The `control plane` row of `cluster status` reads `stalled` at `0/1 nodes`, and it has

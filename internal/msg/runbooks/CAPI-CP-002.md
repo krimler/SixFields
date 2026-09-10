@@ -8,8 +8,8 @@ one object that owns that step.
 
 ```
 Machine/dev-1-control-plane-7fk2x — a control-plane machine is stuck provisioning (5m03s)
-  raw: kubectl get machine.cluster.x-k8s.io dev-1-control-plane-7fk2x -n default -o yaml
-  Next: cluster docs CAPI-CP-002
+raw: kubectl get machine.cluster.x-k8s.io dev-1-control-plane-7fk2x -n default -o yaml
+next: cluster docs CAPI-CP-002
 ```
 
 The `control plane` row of `cluster status` reads `stalled` with a count like `1/3 nodes`.

@@ -13,6 +13,7 @@ import (
 
 	"capi-distro/internal/eta"
 	"capi-distro/internal/fold"
+	"capi-distro/internal/msg"
 	"capi-distro/internal/snapshot"
 	"capi-distro/internal/why"
 )
@@ -181,7 +182,13 @@ func stallBlock(v View, theme Theme) []string {
 	return lines
 }
 
+// nextAction comes from the message registry, so the action a user is given is
+// the same one `cluster explain` and the runbook give. Most stall classes send
+// them to the runbook; one sends them to the field to change.
 func nextAction(s why.Stall) string {
+	if entry, ok := msg.Get(s.Code); ok {
+		return entry.NextAction
+	}
 	return "cluster docs " + string(s.Code)
 }
 
