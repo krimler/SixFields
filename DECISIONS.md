@@ -3,6 +3,64 @@
 Newest first. Each entry: date, decision, alternatives, why, `REVISIT` if a human
 should confirm.
 
+## 2026-09-10 — The next action comes from the message registry, not from the renderer
+
+The renderer used to print `cluster docs <code>` under every stall. It now prints
+`msg.Get(code).NextAction`, so the action a user is given is the same one
+`cluster explain` gives and the same one the runbook's own example shows. One stall class
+(`CAPI-VERSION-001`) sends the user to a field to change rather than to a runbook, and
+that difference is now visible everywhere instead of only in the registry.
+`TestUX_RunbookExamplesMatchTheRealStallBlock` fails if a runbook's opening example drifts
+from what the renderer emits.
+
+## 2026-09-10 — The runbook is its own rung; `cluster why` does not print it
+
+`cluster why` prints the stall line, the raw line and the next action. It prints the
+runbook only under `--explain`, where the runbook is the thing the model's three lines sit
+under and the thing that stands alone when the model is slow or absent. Printing a
+two-page runbook unasked would bury the one line the command exists to show.
+
+## 2026-09-10 — gocritic's hugeParam and rangeValCopy are off, with a reason
+
+The pure core takes values and returns values on purpose: a caller can never be surprised
+by a mutation, and a fixture can be folded twice with the same result. Those two checks
+trade that property for a copying win this workload — tens of objects per snapshot — does
+not need. `revive`'s `exported` rule is off for the same kind of reason: its failure mode
+is a comment that restates the declaration, which CLAUDE.md's no-slop rule forbids. Every
+other rule the plan names is on and the tree passes with zero issues.
+
+## 2026-09-10 — Runbooks and skills live in two places, and a test keeps them identical
+
+`docs/runbooks/` is where a person reads them; `internal/msg/runbooks/` is what
+`go:embed` can reach, so `cluster docs` works offline. `make sync-embeds` copies, and
+`TestUX_EmbeddedRunbooksMatchDocs` fails on drift. The same applies to `skills/` and
+`cmd/cluster/skills/`. Alternatives rejected: a symlink (go:embed does not follow them)
+and moving the canonical copy inside `internal/` (a reader would not find it).
+
+## 2026-09-10 — envtest uses minimal CRDs, not the real Cluster API ones
+
+`testdata/crds/minimal-capi.yaml` declares the group, version and names of the kinds the
+envtest layer needs, with `x-kubernetes-preserve-unknown-fields`. That is enough for what
+this layer checks — that the admission policy compiles under the API server's own type
+checker and denies, and that the watcher's discovery finds the right resources. Vendoring
+the real CRDs would add megabytes to the repo and test the CRDs rather than this code;
+`make e2e` exercises the real ones against a live install.
+
+## 2026-09-10 — `--redact-ips` is one-way
+
+Names are replaced reversibly, so a user reads their own vocabulary in the answer.
+Addresses are replaced with a placeholder that cannot be reversed, so a model can never
+repeat one back. Redaction defaults off (an address is often the whole answer) and
+anonymisation defaults on only for the `anthropic` backend, because with `local` nothing
+leaves the machine.
+
+## 2026-09-10 — `CLUSTER_AI` defaults to `explain`
+
+`off | explain | all`, defaulting to `explain`: the one AI rung that has earned its place
+is the one a user asks for by name. `make test` never calls a model — the default gate
+runs `go test ./...`, and every AI path is covered by the `noop` and `cassette` backends.
+`docs/ai.md` states what leaves the machine per backend.
+
 ## 2026-09-10 — PLAN.md is wrong: `spec.topology.class` is `classRef` at v1beta2
 
 Finding. PLAN.md Phase 1's example Cluster and Phase 2's allow-list both name
