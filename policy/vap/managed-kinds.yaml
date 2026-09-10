@@ -116,6 +116,10 @@ spec:
         variables.kind
         + " needs both the capi-distro.io/break-glass label and membership"
         + " of group capi-distro:break-glass. Use break-glass (docs/eject.md)."
+    # 'std' is a literal here, where cluster-fields.yaml reads it from
+    # spec.topology.classRef.name. These objects carry no class name: the topology
+    # controller labels what it creates with cluster.x-k8s.io/cluster-name, never with the
+    # class. Change this string with the class this assembly ships.
     - expression: variables.breakGlass || variables.breakGlassPartial
       reason: Forbidden
       messageExpression: |-
