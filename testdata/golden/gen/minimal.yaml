@@ -5,7 +5,10 @@ metadata:
   namespace: default
 spec:
   topology:
-    class: std
+    classRef:
+      name: std
+    controlPlane:
+      replicas: 1
     variables:
     - name: size
       value: dev

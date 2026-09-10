@@ -174,7 +174,7 @@ func TestFold_NoWorkersSaysSo(t *testing.T) {
 		"apiVersion": "cluster.x-k8s.io/v1beta2",
 		"kind":       "Cluster",
 		"metadata":   map[string]any{"name": "empty", "namespace": "default"},
-		"spec":       map[string]any{"topology": map[string]any{"class": "std"}},
+		"spec":       map[string]any{"topology": map[string]any{"classRef": map[string]any{"name": "std"}}},
 		"status":     map[string]any{},
 	}}}
 	res := fold.Fold(env, fold.Options{Now: fixture.T0})

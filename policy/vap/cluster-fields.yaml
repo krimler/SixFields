@@ -2,20 +2,34 @@
 # Subtraction for the Cluster kind (PLAN.md Phase 2).
 #
 # A non-exempt identity may write metadata.{name,namespace,labels,annotations} and:
-#   spec.topology.classRef            (v1beta1 spelling: spec.topology.class)
+#   spec.topology.classRef.{name,namespace}   (v1beta1 spelling: spec.topology.class)
 #   spec.topology.version
 #   spec.topology.workers.machineDeployments[].{name,class,replicas}
 #   spec.topology.workers.machinePools[].{name,class,replicas}
-#   spec.topology.variables[]         only for the names in variableAllowList below
+#   spec.topology.variables[]                 only for the names in variableAllowList below
+#   spec.topology.controlPlane.replicas       only when it agrees with the size variable
 # Everything else under spec is denied. metadata is not policed beyond reading the
 # break-glass label: the API server owns creationTimestamp, resourceVersion, managedFields,
 # ownerReferences and finalizers, and denying those would deny every controller write.
+#
+# spec.topology.controlPlane.replicas is the one managed-looking field that has to stay
+# writable. KubeadmControlPlaneTemplate has no replicas field and the topology patch engine
+# preserves spec.replicas on the control-plane object (PreserveFields, CAPI v1.14.2
+# core/reconcilers/topology/cluster/patches/engine.go), so a ClusterClass patch cannot set
+# control-plane replicas at this release — a patch that tried would be dropped in silence.
+# Cluster.spec.topology.controlPlane.replicas is the only input, and the generator expands
+# the size variable into it. The policy therefore allows the field only at the value size
+# implies: size ha means 3, size dev or absent means 1. Every other key under
+# spec.topology.controlPlane stays denied.
 #
 # Field names come from the pinned release, not from memory (CLAUDE.md hard rule 2):
 # sigs.k8s.io/cluster-api/api@v1.14.2 core/v1beta2/cluster_types.go
 #   ClusterSpec               paused clusterNetwork controlPlaneEndpoint controlPlaneRef
 #                             infrastructureRef topology availabilityGates
 #   Topology                  classRef version controlPlane workers variables
+#   ClusterClassRef           name namespace
+#   ControlPlaneTopology      metadata replicas rollout healthCheck deletion taints
+#                             readinessGates variables
 #   WorkersTopology           machineDeployments machinePools
 #   MachineDeploymentTopology metadata class name failureDomain replicas healthCheck deletion
 #                             taints minReadySeconds readinessGates rollout variables
@@ -23,10 +37,12 @@
 #                             minReadySeconds replicas variables nodeDrainTimeoutSeconds
 #                             nodeVolumeDetachTimeoutSeconds nodeDeletionTimeoutSeconds
 #
-# v1beta2 renamed spec.topology.class (string) to spec.topology.classRef (name + namespace).
-# clusters.cluster.x-k8s.io serves both v1beta1 and v1beta2 in CAPI v1.14.2, so the policy
-# matches apiVersions ["*"] and allows both key spellings. Matching only v1beta2 would let
-# anyone bypass the policy by writing the v1beta1 endpoint.
+# v1beta2 renamed spec.topology.class (string) to spec.topology.classRef (name + namespace);
+# spec.topology.class does not exist at v1beta2. clusters.cluster.x-k8s.io serves both
+# v1beta1 and v1beta2 in CAPI v1.14.2, so the policy matches apiVersions ["*"] and tolerates
+# both key spellings — matching only v1beta2 would let anyone bypass the policy by writing
+# the v1beta1 endpoint, and denying `class` outright would deny every v1beta1 write with a
+# message about a field the client cannot avoid sending.
 #
 # The decision is default-deny: unknown keys are denied by iterating the object, so a CAPI
 # bump that adds a Cluster spec field does not silently open a hole. The known field names
@@ -112,6 +128,23 @@ spec:
       expression: "'topology' in variables.spec ? variables.spec.topology : {}"
     - name: oldTopology
       expression: "'topology' in variables.oldSpec ? variables.oldSpec.topology : {}"
+    - name: classRef
+      expression: "'classRef' in variables.topology ? variables.topology.classRef : {}"
+    - name: oldClassRef
+      expression: "'classRef' in variables.oldTopology ? variables.oldTopology.classRef : {}"
+    # The name the denial messages quote. classRef.name at v1beta2, class at v1beta1, and
+    # 'std' when the request has no topology at all — a Cluster written without one is
+    # denied for its spec.infrastructureRef, and the class it should have used is std.
+    - name: className
+      expression: |-
+        'name' in variables.classRef ? string(variables.classRef.name)
+        : ('class' in variables.topology ? string(variables.topology.class) : 'std')
+    - name: controlPlane
+      expression: |-
+        'controlPlane' in variables.topology ? variables.topology.controlPlane : {}
+    - name: oldControlPlane
+      expression: |-
+        'controlPlane' in variables.oldTopology ? variables.oldTopology.controlPlane : {}
     - name: workers
       expression: "'workers' in variables.topology ? variables.topology.workers : {}"
     - name: oldWorkers
@@ -149,14 +182,30 @@ spec:
                   'infrastructureRef', 'paused', 'availabilityGates'])
           && (!(k in variables.oldSpec) || variables.spec[k] != variables.oldSpec[k])
         ).map(k, 'spec.' + string(k))
-    # spec.topology.*: controlPlane is the whole managed subtree; classRef/class, version,
-    # workers and variables are the user's.
-    - name: deniedTopology
+    # spec.topology.*: classRef/class, version, workers, variables and the one replicas field
+    # under controlPlane are the user's; the rest of controlPlane is the class's.
+    - name: deniedClassRef
       expression: |-
-        ['controlPlane'].filter(k,
-          k in variables.topology
-          && (!(k in variables.oldTopology) || variables.topology[k] != variables.oldTopology[k])
-        ).map(k, 'spec.topology.' + k)
+        variables.classRef.filter(k,
+          !(k in ['name', 'namespace'])
+          && (!(k in variables.oldClassRef) || variables.classRef[k] != variables.oldClassRef[k])
+        ).map(k, 'spec.topology.classRef.' + string(k))
+    - name: deniedControlPlane
+      expression: |-
+        ['metadata', 'rollout', 'healthCheck', 'deletion', 'taints', 'readinessGates',
+         'variables'].filter(k,
+          k in variables.controlPlane
+          && (!(k in variables.oldControlPlane)
+              || variables.controlPlane[k] != variables.oldControlPlane[k])
+        ).map(k, 'spec.topology.controlPlane.' + k)
+    - name: deniedControlPlaneUnknown
+      expression: |-
+        variables.controlPlane.filter(k,
+          !(k in ['replicas', 'metadata', 'rollout', 'healthCheck', 'deletion', 'taints',
+                  'readinessGates', 'variables'])
+          && (!(k in variables.oldControlPlane)
+              || variables.controlPlane[k] != variables.oldControlPlane[k])
+        ).map(k, 'spec.topology.controlPlane.' + string(k))
     - name: deniedTopologyUnknown
       expression: |-
         variables.topology.filter(k,
@@ -216,10 +265,27 @@ spec:
           !(v in variables.oldClusterVariables)
           && ('name' in v ? !(v.name in variables.variableAllowList) : false)
         ).map(v, 'spec.topology.variables[' + string(v.name) + ']')
+    # size ha means a 3-machine control plane, size dev or no size at all means 1. Not gated
+    # on oldObject: replicas and size are both user input, so they have to agree on every
+    # write, including one that changes size and leaves replicas behind.
+    - name: sizeVariable
+      expression: "variables.clusterVariables.filter(v, 'name' in v && v.name == 'size')"
+    - name: expectedControlPlaneReplicas
+      expression: |-
+        size(variables.sizeVariable) > 0 && 'value' in variables.sizeVariable[0]
+          && variables.sizeVariable[0].value == 'ha' ? 3 : 1
+    - name: deniedControlPlaneReplicas
+      expression: |-
+        'replicas' in variables.controlPlane
+          && variables.controlPlane.replicas != variables.expectedControlPlaneReplicas
+          ? ['spec.topology.controlPlane.replicas'] : []
     - name: denied
       expression: |-
         variables.deniedSpec + variables.deniedSpecUnknown
-        + variables.deniedTopology + variables.deniedTopologyUnknown
+        + variables.deniedClassRef
+        + variables.deniedControlPlane + variables.deniedControlPlaneUnknown
+        + variables.deniedControlPlaneReplicas
+        + variables.deniedTopologyUnknown
         + variables.deniedWorkers
         + variables.deniedMachineDeployments + variables.deniedMachinePools
         + variables.deniedClusterVariables
@@ -247,22 +313,25 @@ spec:
         size(variables.denied) == 0 || variables.breakGlass || variables.breakGlassPartial
       reason: Forbidden
       messageExpression: |-
-        string(variables.denied[0]) + " is managed by ClusterClass 'std'."
-        + " Set it via the class or use break-glass (docs/eject.md)."
+        string(variables.denied[0]) + " is managed by ClusterClass '" + variables.className
+        + "'. Set it via the class or use break-glass (docs/eject.md)."
   # auditAnnotations live on the policy in admissionregistration.k8s.io/v1; the binding's
-  # validationActions is what makes them recorded. The key is written to the audit event as
-  # capi-distro-cluster-fields/break-glass. A null value records nothing, so ordinary
-  # requests do not add an annotation.
+  # validationActions is what makes them recorded. The key reaches the audit event as
+  # capi-distro-cluster-fields/break-glass.
+  #
+  # The Kubernetes documentation's shape for "record nothing here" is
+  # `condition ? 'value' : null`. That does not compile on a v1.34 API server: CEL has no
+  # conditional overload for (bool, string, null) and dyn() is rejected because the field
+  # must type-check as string or null_type, so a conditional cannot be used at all. The
+  # expression is string-typed throughout and yields "" for a request that used no
+  # break-glass; the API server drops empty audit annotation values.
   auditAnnotations:
     - key: break-glass
       valueExpression: |-
-        size(variables.denied) == 0 ? null
-        : variables.breakGlass
-          ? "granted user=" + variables.username + " field=" + string(variables.denied[0])
-          : (variables.breakGlassPartial
-              ? "incomplete user=" + variables.username
-                + " field=" + string(variables.denied[0])
-              : null)
+        size(variables.denied) == 0 || !(variables.breakGlass || variables.breakGlassPartial)
+          ? ""
+          : (variables.breakGlass ? "granted" : "incomplete")
+            + " user=" + variables.username + " field=" + string(variables.denied[0])
 ---
 apiVersion: admissionregistration.k8s.io/v1
 kind: ValidatingAdmissionPolicyBinding

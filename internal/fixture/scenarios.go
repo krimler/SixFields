@@ -71,8 +71,8 @@ func build(o opts) (*scenario, map[string]*object) {
 
 	cluster := s.add(newObject(coreAPI, "Cluster", o.cluster))
 	cluster.spec("topology", map[string]any{
-		"class":   "std",
-		"version": "v1.34.11",
+		"classRef": map[string]any{"name": "std"},
+		"version":  "v1.34.11",
 		"variables": []any{
 			map[string]any{"name": "size", "value": "dev"},
 			map[string]any{"name": "placement", "value": o.placement},

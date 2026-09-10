@@ -61,6 +61,15 @@ type Spec struct {
 	Backend Backend `json:"-"`
 }
 
+// ControlPlaneReplicas is what a size means. One value, used by the generator, by
+// the admission policy's consistency check, and by the class docs.
+func ControlPlaneReplicas(size string) int64 {
+	if size == "ha" {
+		return 3
+	}
+	return 1
+}
+
 // AllowedVariables is the allow-list the admission policy enforces. It lives here
 // so the CLI and the policy cannot drift apart silently.
 var AllowedVariables = []string{"size", "placement"}
@@ -149,12 +158,20 @@ func (s Spec) Cluster() map[string]any {
 	}
 
 	topology := map[string]any{
-		"class":   s.Class,
-		"version": s.Version,
+		// v1beta2 spells the class reference spec.topology.classRef.{name,namespace}
+		// (api@v1.14.2 core/v1beta2/cluster_types.go, Topology.ClassRef).
+		"classRef": map[string]any{"name": s.Class},
+		"version":  s.Version,
 		"variables": []any{
 			map[string]any{"name": "size", "value": s.Size},
 			map[string]any{"name": "placement", "value": s.Placement},
 		},
+		// size is expanded here rather than by a class patch: a
+		// KubeadmControlPlaneTemplate has no replicas field, and the topology patch
+		// engine preserves spec.replicas on the control-plane object
+		// (core/reconcilers/topology/cluster/patches/engine.go, PreserveFields), so a
+		// patch would be dropped without an error. The user still never writes it.
+		"controlPlane": map[string]any{"replicas": ControlPlaneReplicas(s.Size)},
 	}
 	if len(s.Pools) > 0 {
 		pools := make([]any, 0, len(s.Pools))
@@ -213,7 +230,14 @@ func FromObject(obj map[string]any) (Spec, []*msg.Error) {
 		}
 	}
 	topology, _ := root["topology"].(map[string]any)
-	spec.Class, _ = topology["class"].(string)
+	if classRef, ok := topology["classRef"].(map[string]any); ok {
+		spec.Class, _ = classRef["name"].(string)
+		for field := range classRef {
+			if field != "name" && field != "namespace" {
+				errs = append(errs, msg.New(msg.FieldManaged, msg.Vars{Field: "spec.topology.classRef." + field, Class: class}))
+			}
+		}
+	}
 	if spec.Class != "" {
 		class = spec.Class
 	}
@@ -221,7 +245,7 @@ func FromObject(obj map[string]any) (Spec, []*msg.Error) {
 
 	for field := range topology {
 		switch field {
-		case "class", "version", "variables", "workers":
+		case "classRef", "version", "variables", "workers", "controlPlane":
 		default:
 			errs = append(errs, msg.New(msg.FieldManaged, msg.Vars{Field: "spec.topology." + field, Class: class}))
 		}
@@ -238,6 +262,17 @@ func FromObject(obj map[string]any) (Spec, []*msg.Error) {
 			spec.Placement = value
 		default:
 			errs = append(errs, msg.New(msg.VariableUnknown, msg.Vars{Variable: name, Class: class}))
+		}
+	}
+
+	if cp, ok := topology["controlPlane"].(map[string]any); ok {
+		for field := range cp {
+			if field != "replicas" {
+				errs = append(errs, msg.New(msg.FieldManaged, msg.Vars{Field: "spec.topology.controlPlane." + field, Class: class}))
+			}
+		}
+		if replicas, present := cp["replicas"]; present && intOf(replicas) != ControlPlaneReplicas(spec.Size) {
+			errs = append(errs, msg.New(msg.FieldManaged, msg.Vars{Field: "spec.topology.controlPlane.replicas", Class: class}))
 		}
 	}
 

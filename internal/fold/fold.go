@@ -106,7 +106,10 @@ func Fold(env snapshot.Envelope, opt Options) Result {
 	}
 	res := Result{
 		Cluster:   cluster.Ref(),
-		Class:     cluster.String("spec", "topology", "class"),
+		// v1beta2 spells this spec.topology.classRef.{name,namespace}; the
+		// v1beta1 spelling (spec.topology.class) is gone
+		// (api@v1.14.2 core/v1beta2/cluster_types.go, Topology.ClassRef).
+		Class:     cluster.String("spec", "topology", "classRef", "name"),
 		Version:   cluster.String("spec", "topology", "version"),
 		Placement: placement(cluster),
 		At:        opt.Now,

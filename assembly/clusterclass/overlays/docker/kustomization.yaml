@@ -6,7 +6,7 @@ resources:
 - infrastructure.yaml
 patches:
 # spec.patches is absent in the base and MinItems=1 forbids an empty list
-# (api@v1.14.2 core/v1beta2/clusterclass_types.go:133), so the overlay adds the
+# (api@v1.14.2 core/v1beta2/clusterclass_types.go:135), so the overlay adds the
 # whole array rather than appending to it.
 - target:
     group: cluster.x-k8s.io

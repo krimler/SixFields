@@ -46,7 +46,7 @@ func stallBadVersion() Timeline {
 	tl := Timeline{Name: s.name, Note: note}
 
 	objs["cluster"].spec("topology", map[string]any{
-		"class": "std", "version": "v1.99.0",
+		"classRef": map[string]any{"name": "std"}, "version": "v1.99.0",
 		"variables": []any{map[string]any{"name": "size", "value": "dev"}},
 		"workers": map[string]any{"machineDeployments": []any{
 			map[string]any{"name": "default", "class": "default", "replicas": int64(2)}}},

@@ -3,6 +3,52 @@
 Newest first. Each entry: date, decision, alternatives, why, `REVISIT` if a human
 should confirm.
 
+## 2026-09-10 — PLAN.md is wrong: `spec.topology.class` is `classRef` at v1beta2
+
+Finding. PLAN.md Phase 1's example Cluster and Phase 2's allow-list both name
+`spec.topology.class`. That field does not exist in the pinned release: v1beta2 spells it
+`spec.topology.classRef.{name,namespace}` (`api@v1.14.2 core/v1beta2/cluster_types.go`,
+`Topology.ClassRef ClusterClassRef`), and upstream's own CAPD examples at this tag use
+`classRef:`.
+Taken: `internal/gen` writes and reads `classRef`, `internal/fold` reads
+`spec.topology.classRef.name`, the fixtures use it, and the admission policy allows
+`classRef.{name,namespace}`. Writing the v1beta1 spelling is now a denial with its own
+negative test (`TestGen_DeniedFieldsAreRejected/v1beta1 class spelling`), because a user
+copying an older example is the likeliest way to hit it.
+Proposed PLAN.md fix: replace `class: std` with `classRef: {name: std}` in the Phase 1
+snippet and in the Phase 2 allow-list. Left unedited so the human sees the original.
+
+## 2026-09-10 — `size` is expanded by the generator, not by a class patch
+
+Finding, then a decision. PLAN.md Phase 1 says "Patches: set control-plane replicas from
+`size`". That cannot work at v1.14.2 and would fail *silently*: `KubeadmControlPlaneTemplate`
+has no `replicas` field, and the topology patch engine lists the control plane's
+`spec.replicas` in `PreserveFields`, so a patched value is discarded without an error
+(`core/reconcilers/topology/cluster/patches/engine.go`). The only input is
+`Cluster.spec.topology.controlPlane.replicas`.
+Alternatives: drop `size` (no way to ask for HA); expose `controlPlane.replicas` as a
+seventh user field (breaks the six-field thesis).
+Taken: `size` stays the user-facing variable, `gen.ControlPlaneReplicas` maps it
+(`dev`->1, `ha`->3), and the generator writes `spec.topology.controlPlane.replicas`. The
+admission policy therefore cannot simply deny that field: it allows it only when it agrees
+with `size`, and denies every other field under `spec.topology.controlPlane`. One function
+holds the mapping, so the CLI and the policy cannot drift.
+`REVISIT` if CAPI ever lets a class patch reach control-plane replicas.
+
+## 2026-09-10 — Golden files update by environment variable as well as by flag
+
+`-update` is registered by `internal/golden`, so `go test ./... -update` fails in packages
+that do not import it. `make golden` sets `UPDATE_GOLDEN=1` instead, which works across the
+whole tree; the flag still works inside a single package.
+
+## 2026-09-10 — Only the frontier phase can stall
+
+A phase is called stalled only when it is the earliest phase that is not done. Workers
+sitting at 0/2 while the control plane is stuck are waiting, not stuck, and naming them
+would point the user at the wrong object. The same rule suppresses the ETA on phases behind
+the frontier: their own history says nothing about how long the thing in front of them will
+take.
+
 ## 2026-09-10 — Pin CAPI v1.14.2, contract v1beta2
 
 Decision: `CAPI_VERSION=v1.14.2`, `CAPD_VERSION=v1.14.2`, `CLUSTERCTL_VERSION=v1.14.2`.

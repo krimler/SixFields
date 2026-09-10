@@ -12,9 +12,10 @@ import (
 
 var update = flag.Bool("update", false, "rewrite golden files instead of comparing")
 
-// Updating reports whether -update was passed, for tests that must generate
-// several files at once.
-func Updating() bool { return *update }
+// Updating reports whether this run should rewrite goldens. The -update flag only
+// exists in packages that import this one, so `make golden` sets UPDATE_GOLDEN=1
+// instead and a whole-tree run works either way.
+func Updating() bool { return *update || os.Getenv("UPDATE_GOLDEN") != "" }
 
 // JSON compares v against the golden file at path, pretty-printed so the diff is
 // readable line by line.
@@ -36,7 +37,7 @@ func Text(t *testing.T, path string, got string) {
 
 func compare(t *testing.T, path string, got []byte) {
 	t.Helper()
-	if *update {
+	if Updating() {
 		if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
 			t.Fatal(err)
 		}
@@ -47,9 +48,9 @@ func compare(t *testing.T, path string, got []byte) {
 	}
 	want, err := os.ReadFile(path)
 	if err != nil {
-		t.Fatalf("%s: %v\nrun: go test ./... -update", path, err)
+		t.Fatalf("%s: %v\nrun: make golden", path, err)
 	}
 	if string(want) != string(got) {
-		t.Errorf("%s does not match.\n--- want ---\n%s\n--- got ---\n%s\nrun: go test ./... -update", path, want, got)
+		t.Errorf("%s does not match.\n--- want ---\n%s\n--- got ---\n%s\nrun: make golden", path, want, got)
 	}
 }

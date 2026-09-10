@@ -29,7 +29,9 @@
           "name": "hosted-1"
         },
         "topology": {
-          "class": "std",
+          "classRef": {
+            "name": "std"
+          },
           "variables": [
             {
               "name": "size",

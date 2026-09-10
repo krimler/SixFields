@@ -29,7 +29,9 @@
           "name": "inmem-1"
         },
         "topology": {
-          "class": "std",
+          "classRef": {
+            "name": "std"
+          },
           "variables": [
             {
               "name": "size",

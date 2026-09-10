@@ -120,7 +120,7 @@ replay: build ## F=<fixture dir> replay a recorded timeline into the renderer
 
 .PHONY: golden
 golden: ## Regenerate every golden file (review the diff)
-	go test ./... -update
+	UPDATE_GOLDEN=1 go test ./...
 
 ## --- bench ---
 

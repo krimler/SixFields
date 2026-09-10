@@ -81,7 +81,9 @@ func TestGen_DeniedFieldsAreRejected(t *testing.T) {
 		{"controlPlaneRef", "spec:\n  controlPlaneRef:\n    kind: KubeadmControlPlane\n    name: x\n", "spec.controlPlaneRef"},
 		{"infrastructureRef", "spec:\n  infrastructureRef:\n    kind: DevCluster\n    name: x\n", "spec.infrastructureRef"},
 		{"paused", "spec:\n  paused: true\n", "spec.paused"},
-		{"topology.controlPlane", "spec:\n  topology:\n    controlPlane:\n      replicas: 5\n", "spec.topology.controlPlane"},
+		{"topology.controlPlane.replicas disagrees with size", "spec:\n  topology:\n    controlPlane:\n      replicas: 5\n", "spec.topology.controlPlane.replicas"},
+		{"topology.controlPlane.taints", "spec:\n  topology:\n    controlPlane:\n      taints: []\n", "spec.topology.controlPlane.taints"},
+		{"v1beta1 class spelling", "spec:\n  topology:\n    class: std\n", "spec.topology.class"},
 		{"topology.workers.other", "spec:\n  topology:\n    workers:\n      somethingElse: []\n", "spec.topology.workers.somethingElse"},
 		{"pool.machineHealthCheck", "spec:\n  topology:\n    workers:\n      machineDeployments:\n      - name: default\n        class: default\n        replicas: 1\n        machineHealthCheck: {}\n", "spec.topology.workers.machineDeployments[default].machineHealthCheck"},
 	} {
@@ -97,6 +99,26 @@ func TestGen_DeniedFieldsAreRejected(t *testing.T) {
 	}
 }
 
+// size is the user's word for how many control-plane nodes; the generator turns it
+// into spec.topology.controlPlane.replicas because a ClusterClass patch cannot
+// (KubeadmControlPlaneTemplate has no replicas field, and the patch engine
+// preserves spec.replicas on the control-plane object).
+func TestGen_SizeExpandsToControlPlaneReplicas(t *testing.T) {
+	dev := minimal()
+	out, err := dev.YAML()
+	require.NoError(t, err)
+	require.Contains(t, string(out), "replicas: 1")
+
+	ha := minimal()
+	ha.Size = "ha"
+	out, err = ha.YAML()
+	require.NoError(t, err)
+	require.Contains(t, string(out), "replicas: 3")
+
+	require.Equal(t, int64(1), gen.ControlPlaneReplicas("dev"))
+	require.Equal(t, int64(3), gen.ControlPlaneReplicas("ha"))
+}
+
 // An unknown variable is denied by name, so the user can see which one.
 func TestGen_UnknownVariableIsDeniedByName(t *testing.T) {
 	doc := `apiVersion: cluster.x-k8s.io/v1beta2
@@ -105,7 +127,8 @@ metadata:
   name: dev-1
 spec:
   topology:
-    class: std
+    classRef:
+      name: std
     version: v1.34.11
     variables:
     - name: gpuPool
@@ -129,8 +152,11 @@ metadata:
     note: "first cluster"
 spec:
   topology:
-    class: std
+    classRef:
+      name: std
     version: v1.34.11
+    controlPlane:
+      replicas: 3
     variables:
     - name: size
       value: ha
