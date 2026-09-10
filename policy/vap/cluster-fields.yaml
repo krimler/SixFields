@@ -1,0 +1,276 @@
+---
+# Subtraction for the Cluster kind (PLAN.md Phase 2).
+#
+# A non-exempt identity may write metadata.{name,namespace,labels,annotations} and:
+#   spec.topology.classRef            (v1beta1 spelling: spec.topology.class)
+#   spec.topology.version
+#   spec.topology.workers.machineDeployments[].{name,class,replicas}
+#   spec.topology.workers.machinePools[].{name,class,replicas}
+#   spec.topology.variables[]         only for the names in variableAllowList below
+# Everything else under spec is denied. metadata is not policed beyond reading the
+# break-glass label: the API server owns creationTimestamp, resourceVersion, managedFields,
+# ownerReferences and finalizers, and denying those would deny every controller write.
+#
+# Field names come from the pinned release, not from memory (CLAUDE.md hard rule 2):
+# sigs.k8s.io/cluster-api/api@v1.14.2 core/v1beta2/cluster_types.go
+#   ClusterSpec               paused clusterNetwork controlPlaneEndpoint controlPlaneRef
+#                             infrastructureRef topology availabilityGates
+#   Topology                  classRef version controlPlane workers variables
+#   WorkersTopology           machineDeployments machinePools
+#   MachineDeploymentTopology metadata class name failureDomain replicas healthCheck deletion
+#                             taints minReadySeconds readinessGates rollout variables
+#   MachinePoolTopology       metadata class name failureDomains deletion taints
+#                             minReadySeconds replicas variables nodeDrainTimeoutSeconds
+#                             nodeVolumeDetachTimeoutSeconds nodeDeletionTimeoutSeconds
+#
+# v1beta2 renamed spec.topology.class (string) to spec.topology.classRef (name + namespace).
+# clusters.cluster.x-k8s.io serves both v1beta1 and v1beta2 in CAPI v1.14.2, so the policy
+# matches apiVersions ["*"] and allows both key spellings. Matching only v1beta2 would let
+# anyone bypass the policy by writing the v1beta1 endpoint.
+#
+# The decision is default-deny: unknown keys are denied by iterating the object, so a CAPI
+# bump that adds a Cluster spec field does not silently open a hole. The known field names
+# above are only used to make the *message* deterministic — CEL map iteration order is not,
+# so a message built from an arbitrary offending key could differ between two identical
+# requests, and internal/msg is tested for byte equality.
+#
+# UPDATE compares object against oldObject: a managed field is denied only when it *changed*.
+# This is what keeps the happy path working. After the topology controller has written
+# spec.infrastructureRef and spec.controlPlaneRef back onto the Cluster, every later user
+# edit still carries them; denying on presence would make the second `kubectl apply` of a
+# replica change fail with a message about a field the user never typed.
+#
+# Exemption. PLAN.md Phase 2 says to determine empirically which of the two mechanisms holds
+# on a real run. There is no cluster here, so both are implemented:
+#   (a) identity — the load-bearing check. request.userInfo.username against the controller
+#       service accounts listed in the not-a-provider-controller match condition. The names
+#       were read out of the pinned provider manifests, not from memory:
+#         clusterctl generate provider --core cluster-api:v1.14.2 |
+#           grep -A3 'kind: ServiceAccount'
+#       and the same for --infrastructure docker:v1.14.2, --bootstrap kubeadm:v1.14.2,
+#       --control-plane kubeadm:v1.14.2 and k0sproject-k0smotron:v1.10.9 (three providers).
+#   (b) ownership label — the second check. topology.cluster.x-k8s.io/owned, the name in
+#       api@v1.14.2 core/v1beta2/common_types.go:33 (ClusterTopologyOwnedLabel).
+# Which one actually holds must be confirmed against an audit of a real run, as PLAN.md
+# Phase 2 requires ("record who creates what from the audit of a std-docker-happy run").
+# Until that audit exists, (a) is assumed to be the one carrying the weight and (b) is
+# belt-and-braces. On the Cluster kind (b) is inert by construction: the topology controller
+# labels the objects it creates, never the Cluster that owns them.
+#
+# (b) is scoped to service-account requesters. A bare "has the label, is exempt" rule would
+# let any user self-exempt by adding the label — and metadata.labels is inside the allowed
+# surface. Scoped this way, (b) still catches a provider controller whose service-account
+# name in (a) is wrong, which is the only thing it is for.
+#
+# system:masters and system:serviceaccounts are deliberately NOT exempt. The dev-loop
+# kubeconfig is in system:masters, so exempting it would make this policy a no-op for
+# exactly the identity the phase exists to constrain; exempting the system:serviceaccounts
+# group would exempt every workload in the management cluster, CI included.
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: capi-distro-cluster-fields
+spec:
+  # Fail: a policy that fails open is not subtraction. docs/eject.md is how you turn it off
+  # on purpose.
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+      - apiGroups: ["cluster.x-k8s.io"]
+        apiVersions: ["*"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["clusters"]
+  matchConditions:
+    - name: not-a-provider-controller
+      expression: |-
+        !(request.userInfo.username in [
+          'system:serviceaccount:capi-system:capi-manager',
+          'system:serviceaccount:capi-kubeadm-bootstrap-system:capi-kubeadm-bootstrap-manager',
+          'system:serviceaccount:capi-kubeadm-control-plane-system:capi-kubeadm-control-plane-manager',
+          'system:serviceaccount:capd-system:capd-manager',
+          'system:serviceaccount:k0smotron:k0smotron-controller-manager-bootstrap',
+          'system:serviceaccount:k0smotron:k0smotron-controller-manager-control-plane',
+          'system:serviceaccount:k0smotron:k0smotron-controller-manager-infrastructure'
+        ])
+    - name: not-topology-owned
+      expression: |-
+        !(request.userInfo.username.startsWith('system:serviceaccount:')
+          && has(object.metadata.labels)
+          && 'topology.cluster.x-k8s.io/owned' in object.metadata.labels)
+  variables:
+    - name: username
+      expression: request.userInfo.username
+    - name: variableAllowList
+      expression: "['size', 'placement']"
+    # Every level is read through a variable so that a missing parent is an empty map or
+    # list rather than a CEL error, and so oldObject == null (CREATE) needs saying once.
+    - name: spec
+      expression: "has(object.spec) ? object.spec : {}"
+    - name: oldSpec
+      expression: "oldObject != null && has(oldObject.spec) ? oldObject.spec : {}"
+    - name: topology
+      expression: "'topology' in variables.spec ? variables.spec.topology : {}"
+    - name: oldTopology
+      expression: "'topology' in variables.oldSpec ? variables.oldSpec.topology : {}"
+    - name: workers
+      expression: "'workers' in variables.topology ? variables.topology.workers : {}"
+    - name: oldWorkers
+      expression: "'workers' in variables.oldTopology ? variables.oldTopology.workers : {}"
+    - name: machineDeployments
+      expression: |-
+        'machineDeployments' in variables.workers ? variables.workers.machineDeployments : []
+    - name: oldMachineDeployments
+      expression: |-
+        'machineDeployments' in variables.oldWorkers
+          ? variables.oldWorkers.machineDeployments : []
+    - name: machinePools
+      expression: "'machinePools' in variables.workers ? variables.workers.machinePools : []"
+    - name: oldMachinePools
+      expression: |-
+        'machinePools' in variables.oldWorkers ? variables.oldWorkers.machinePools : []
+    - name: clusterVariables
+      expression: "'variables' in variables.topology ? variables.topology.variables : []"
+    - name: oldClusterVariables
+      expression: |-
+        'variables' in variables.oldTopology ? variables.oldTopology.variables : []
+    # spec.*: the six managed siblings of spec.topology, in a fixed order so the message is
+    # reproducible, then everything else this build of CAPI does not know about.
+    - name: deniedSpec
+      expression: |-
+        ['clusterNetwork', 'controlPlaneEndpoint', 'controlPlaneRef', 'infrastructureRef',
+         'paused', 'availabilityGates'].filter(k,
+          k in variables.spec
+          && (!(k in variables.oldSpec) || variables.spec[k] != variables.oldSpec[k])
+        ).map(k, 'spec.' + k)
+    - name: deniedSpecUnknown
+      expression: |-
+        variables.spec.filter(k,
+          !(k in ['topology', 'clusterNetwork', 'controlPlaneEndpoint', 'controlPlaneRef',
+                  'infrastructureRef', 'paused', 'availabilityGates'])
+          && (!(k in variables.oldSpec) || variables.spec[k] != variables.oldSpec[k])
+        ).map(k, 'spec.' + string(k))
+    # spec.topology.*: controlPlane is the whole managed subtree; classRef/class, version,
+    # workers and variables are the user's.
+    - name: deniedTopology
+      expression: |-
+        ['controlPlane'].filter(k,
+          k in variables.topology
+          && (!(k in variables.oldTopology) || variables.topology[k] != variables.oldTopology[k])
+        ).map(k, 'spec.topology.' + k)
+    - name: deniedTopologyUnknown
+      expression: |-
+        variables.topology.filter(k,
+          !(k in ['classRef', 'class', 'version', 'workers', 'variables', 'controlPlane'])
+          && (!(k in variables.oldTopology) || variables.topology[k] != variables.oldTopology[k])
+        ).map(k, 'spec.topology.' + string(k))
+    - name: deniedWorkers
+      expression: |-
+        variables.workers.filter(k,
+          !(k in ['machineDeployments', 'machinePools'])
+          && (!(k in variables.oldWorkers) || variables.workers[k] != variables.oldWorkers[k])
+        ).map(k, 'spec.topology.workers.' + string(k))
+    # List entries are compared whole: an entry byte-identical to one already in oldObject is
+    # unchanged, so a pre-existing entry never blocks an edit to a different pool.
+    - name: deniedMachineDeployments
+      expression: |-
+        variables.machineDeployments.filter(m,
+          !(m in variables.oldMachineDeployments)
+          && m.exists(k, !(k in ['name', 'class', 'replicas']))
+        ).map(m,
+          'spec.topology.workers.machineDeployments[' + ('name' in m ? string(m.name) : '')
+          + '].'
+          + ('metadata' in m ? 'metadata'
+            : 'failureDomain' in m ? 'failureDomain'
+            : 'healthCheck' in m ? 'healthCheck'
+            : 'deletion' in m ? 'deletion'
+            : 'taints' in m ? 'taints'
+            : 'minReadySeconds' in m ? 'minReadySeconds'
+            : 'readinessGates' in m ? 'readinessGates'
+            : 'rollout' in m ? 'rollout'
+            : 'variables' in m ? 'variables'
+            : string(m.filter(k, !(k in ['name', 'class', 'replicas']))[0])))
+    - name: deniedMachinePools
+      expression: |-
+        variables.machinePools.filter(m,
+          !(m in variables.oldMachinePools)
+          && m.exists(k, !(k in ['name', 'class', 'replicas']))
+        ).map(m,
+          'spec.topology.workers.machinePools[' + ('name' in m ? string(m.name) : '') + '].'
+          + ('metadata' in m ? 'metadata'
+            : 'failureDomains' in m ? 'failureDomains'
+            : 'deletion' in m ? 'deletion'
+            : 'taints' in m ? 'taints'
+            : 'minReadySeconds' in m ? 'minReadySeconds'
+            : 'variables' in m ? 'variables'
+            : 'nodeDrainTimeoutSeconds' in m ? 'nodeDrainTimeoutSeconds'
+            : 'nodeVolumeDetachTimeoutSeconds' in m ? 'nodeVolumeDetachTimeoutSeconds'
+            : 'nodeDeletionTimeoutSeconds' in m ? 'nodeDeletionTimeoutSeconds'
+            : string(m.filter(k, !(k in ['name', 'class', 'replicas']))[0])))
+    # The allow-list has to match the variable set the ClusterClass exposes: CAPI's Cluster
+    # mutating webhook injects a default for every class variable that has one, and VAP runs
+    # after mutating admission, so a class variable outside this list would be denied on a
+    # create the user never touched.
+    - name: deniedClusterVariables
+      expression: |-
+        variables.clusterVariables.filter(v,
+          !(v in variables.oldClusterVariables)
+          && ('name' in v ? !(v.name in variables.variableAllowList) : false)
+        ).map(v, 'spec.topology.variables[' + string(v.name) + ']')
+    - name: denied
+      expression: |-
+        variables.deniedSpec + variables.deniedSpecUnknown
+        + variables.deniedTopology + variables.deniedTopologyUnknown
+        + variables.deniedWorkers
+        + variables.deniedMachineDeployments + variables.deniedMachinePools
+        + variables.deniedClusterVariables
+    - name: breakGlassLabel
+      expression: |-
+        has(object.metadata.labels)
+        && 'capi-distro.io/break-glass' in object.metadata.labels
+        && object.metadata.labels['capi-distro.io/break-glass'] == 'true'
+    - name: breakGlassGroup
+      expression: "'capi-distro:break-glass' in request.userInfo.groups"
+    - name: breakGlass
+      expression: variables.breakGlassLabel && variables.breakGlassGroup
+    - name: breakGlassPartial
+      expression: variables.breakGlassLabel != variables.breakGlassGroup
+  validations:
+    # Half a break-glass is not a break-glass. This runs first so that a request carrying
+    # only one half gets told which half is missing instead of the generic denial.
+    - expression: size(variables.denied) == 0 || !variables.breakGlassPartial
+      reason: Forbidden
+      messageExpression: |-
+        string(variables.denied[0])
+        + " needs both the capi-distro.io/break-glass label and membership"
+        + " of group capi-distro:break-glass. Use break-glass (docs/eject.md)."
+    - expression: |-
+        size(variables.denied) == 0 || variables.breakGlass || variables.breakGlassPartial
+      reason: Forbidden
+      messageExpression: |-
+        string(variables.denied[0]) + " is managed by ClusterClass 'std'."
+        + " Set it via the class or use break-glass (docs/eject.md)."
+  # auditAnnotations live on the policy in admissionregistration.k8s.io/v1; the binding's
+  # validationActions is what makes them recorded. The key is written to the audit event as
+  # capi-distro-cluster-fields/break-glass. A null value records nothing, so ordinary
+  # requests do not add an annotation.
+  auditAnnotations:
+    - key: break-glass
+      valueExpression: |-
+        size(variables.denied) == 0 ? null
+        : variables.breakGlass
+          ? "granted user=" + variables.username + " field=" + string(variables.denied[0])
+          : (variables.breakGlassPartial
+              ? "incomplete user=" + variables.username
+                + " field=" + string(variables.denied[0])
+              : null)
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicyBinding
+metadata:
+  name: capi-distro-cluster-fields
+spec:
+  policyName: capi-distro-cluster-fields
+  # Deny enforces; Audit is what puts the break-glass auditAnnotation on the audit event.
+  validationActions: [Deny, Audit]
+  # No matchResources: the binding applies wherever the policy's matchConstraints match,
+  # in every namespace.

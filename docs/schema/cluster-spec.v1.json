@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://capi-distro.io/schema/cluster-spec.v1.json",
+  "title": "Cluster (user-facing surface)",
+  "description": "The whole of what a user may write. Every constraint below is copied from sigs.k8s.io/cluster-api/api@v1.14.2 core/v1beta2/cluster_types.go; the class supplies everything else. `cluster new` and `cluster plan` validate against this file, then expand it into a full Cluster: spec.topology.controlPlane.replicas is derived from the `size` variable, because the control plane replica count cannot be reached by a ClusterClass patch on this release.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  "properties": {
+    "apiVersion": {"const": "cluster.x-k8s.io/v1beta2"},
+    "kind": {"const": "Cluster"},
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 253,
+          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$"
+        },
+        "namespace": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 63,
+          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
+        },
+        "labels": {"type": "object", "additionalProperties": {"type": "string"}},
+        "annotations": {"type": "object", "additionalProperties": {"type": "string"}}
+      }
+    },
+    "spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["topology"],
+      "properties": {
+        "topology": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["classRef", "version"],
+          "properties": {
+            "classRef": {
+              "description": "The v1beta2 contract replaced spec.topology.class with classRef (Topology.ClassRef). Only the name is user-facing; the namespace defaults to the Cluster's.",
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["name"],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 253,
+                  "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$"
+                }
+              }
+            },
+            "version": {"type": "string", "minLength": 1, "maxLength": 256},
+            "workers": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "machineDeployments": {
+                  "description": "A pool. The class decides that a pool is a MachineDeployment here; on a provider with a native scaling group an overlay may back it with a MachinePool instead.",
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 2000,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["name", "class"],
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 63,
+                        "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$"
+                      },
+                      "class": {"type": "string", "minLength": 1, "maxLength": 256},
+                      "replicas": {"type": "integer", "minimum": 0, "maximum": 2147483647}
+                    }
+                  }
+                }
+              }
+            },
+            "variables": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 2,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["name", "value"],
+                "properties": {
+                  "name": {"enum": ["size", "placement"]},
+                  "value": {"enum": ["dev", "ha", "self", "hosted"]}
+                },
+                "oneOf": [
+                  {
+                    "properties": {
+                      "name": {"const": "size"},
+                      "value": {"enum": ["dev", "ha"]}
+                    }
+                  },
+                  {
+                    "properties": {
+                      "name": {"const": "placement"},
+                      "value": {"enum": ["self", "hosted"]}
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

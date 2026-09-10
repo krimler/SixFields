@@ -4,37 +4,83 @@
   "title": "cluster status --json, v1",
   "description": "The output of `cluster status --json` and `cluster up --json`. This is a stability contract: any change to a field's name, type or presence requires a new file, status.v2.json, and a new value of the top-level `version`. Field names and optionality are taken from the json tags on fold.Result, fold.Phase and snapshot.Ref.",
   "type": "object",
-  "required": ["version", "status"],
+  "required": [
+    "version",
+    "status",
+    "elapsed_ns"
+  ],
   "additionalProperties": false,
   "properties": {
     "version": {
       "description": "Schema version. The cluster's Kubernetes version is status.version, which keeps that name because it is fold.Result's json tag.",
       "const": "v1"
     },
-    "status": { "$ref": "#/$defs/result" },
+    "status": {
+      "$ref": "#/$defs/result"
+    },
     "envelope": {
       "description": "The snapshot the status was folded from, emitted with --verbose. Objects are raw Kubernetes JSON of a dozen kinds from three providers; this tool owns none of their schemas and does not constrain them.",
       "type": "object",
-      "required": ["_meta", "objects"],
+      "required": [
+        "_meta",
+        "objects"
+      ],
       "additionalProperties": false,
       "properties": {
         "_meta": {
           "type": "object",
-          "required": ["scenario", "t_plus_s", "capi", "note"],
+          "required": [
+            "scenario",
+            "t_plus_s",
+            "capi",
+            "note"
+          ],
           "additionalProperties": false,
           "properties": {
-            "scenario": { "type": "string" },
-            "t_plus_s": { "type": "integer" },
-            "capi": { "type": "string" },
-            "note": { "type": "string" },
-            "synthetic": { "type": "boolean" },
-            "recorded_at": { "type": "string" }
+            "scenario": {
+              "type": "string"
+            },
+            "t_plus_s": {
+              "type": "integer"
+            },
+            "capi": {
+              "type": "string"
+            },
+            "note": {
+              "type": "string"
+            },
+            "synthetic": {
+              "type": "boolean"
+            },
+            "recorded_at": {
+              "type": "string"
+            }
           }
         },
         "objects": {
-          "type": ["array", "null"],
-          "items": { "type": "object" }
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object"
+          }
         }
+      }
+    },
+    "elapsed_ns": {
+      "type": "integer",
+      "description": "How long the command has been watching, in nanoseconds."
+    },
+    "stall": {
+      "$ref": "#/$defs/stall",
+      "description": "The one object worth looking at, present only when a phase is stalled."
+    },
+    "estimates": {
+      "type": "object",
+      "description": "Per-phase estimate from local history, keyed by phase name. Absent phases have no history.",
+      "additionalProperties": {
+        "$ref": "#/$defs/estimate"
       }
     }
   },
@@ -42,10 +88,18 @@
     "result": {
       "description": "fold.Result: one cluster folded into four phases at one instant.",
       "type": "object",
-      "required": ["cluster", "phases", "ready", "at", "elapsed_ns"],
+      "required": [
+        "cluster",
+        "phases",
+        "ready",
+        "at",
+        "elapsed_ns"
+      ],
       "additionalProperties": false,
       "properties": {
-        "cluster": { "$ref": "#/$defs/ref" },
+        "cluster": {
+          "$ref": "#/$defs/ref"
+        },
         "class": {
           "description": "spec.topology.class. Absent when the Cluster has no topology.",
           "type": "string"
@@ -60,8 +114,13 @@
         },
         "phases": {
           "description": "Always four phases in fold.Order, or null when the envelope held no Cluster.",
-          "type": ["array", "null"],
-          "items": { "$ref": "#/$defs/phase" },
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/phase"
+          },
           "maxItems": 4
         },
         "ready": {
@@ -83,15 +142,31 @@
     "phase": {
       "description": "fold.Phase: one of the four user-facing phases.",
       "type": "object",
-      "required": ["name", "state", "detail", "elapsed_ns", "contributors"],
+      "required": [
+        "name",
+        "state",
+        "detail",
+        "elapsed_ns",
+        "contributors"
+      ],
       "additionalProperties": false,
       "properties": {
         "name": {
-          "enum": ["infrastructure", "control plane", "workers", "addons"]
+          "enum": [
+            "infrastructure",
+            "control plane",
+            "workers",
+            "addons"
+          ]
         },
         "state": {
           "description": "stalled is running with no condition transition on any contributing object for longer than the stall threshold.",
-          "enum": ["pending", "running", "done", "stalled"]
+          "enum": [
+            "pending",
+            "running",
+            "done",
+            "stalled"
+          ]
         },
         "detail": {
           "description": "The one thing worth showing next to the phase: \"2/3 nodes\", \"hosted\", \"no workers\".",
@@ -114,15 +189,23 @@
         },
         "contributors": {
           "description": "Every object whose conditions were read for this phase. Null when the phase has none, which is how \"no workers\" and \"addons: none\" appear.",
-          "type": ["array", "null"],
-          "items": { "$ref": "#/$defs/ref" }
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/ref"
+          }
         }
       }
     },
     "ref": {
       "description": "snapshot.Ref: one object, named the way a user sees it in a stall line.",
       "type": "object",
-      "required": ["kind", "name"],
+      "required": [
+        "kind",
+        "name"
+      ],
       "additionalProperties": false,
       "properties": {
         "kind": {
@@ -142,6 +225,158 @@
           "type": "string"
         }
       }
+    },
+    "estimate": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "p50 and p95 over the last runs of one phase. known is false below three samples, and then the renderer says so instead of showing a number.",
+      "properties": {
+        "known": {
+          "type": "boolean"
+        },
+        "p50_ns": {
+          "type": "integer"
+        },
+        "p95_ns": {
+          "type": "integer"
+        },
+        "samples": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "known",
+        "p50_ns",
+        "p95_ns",
+        "samples"
+      ]
+    },
+    "condition": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "A condition from either API generation, normalised. deprecated is true when it was read from status.deprecated.v1beta1.conditions.",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "True",
+            "False",
+            "Unknown"
+          ]
+        },
+        "reason": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "severity": {
+          "type": "string"
+        },
+        "lastTransitionTime": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "deprecated": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "type",
+        "status"
+      ]
+    },
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "One False condition that was considered. lost_to is empty on the winner and otherwise names the rule that decided it.",
+      "properties": {
+        "object": {
+          "$ref": "#/$defs/ref"
+        },
+        "condition": {
+          "$ref": "#/$defs/condition"
+        },
+        "specificity": {
+          "type": "integer"
+        },
+        "since_ns": {
+          "type": "integer"
+        },
+        "lost_to": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "object",
+        "condition",
+        "specificity",
+        "since_ns"
+      ]
+    },
+    "stall": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "The ranked answer to 'what is this waiting on'. condition_type is the raw CAPI condition name and is jargon: it belongs on the raw line and under --verbose only.",
+      "properties": {
+        "object": {
+          "$ref": "#/$defs/ref"
+        },
+        "code": {
+          "type": "string",
+          "pattern": "^CAPI-[A-Z]+-[0-9]{3}$"
+        },
+        "phase": {
+          "type": "string",
+          "enum": [
+            "infrastructure",
+            "control plane",
+            "workers",
+            "addons"
+          ]
+        },
+        "reason": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "full_message": {
+          "type": "string"
+        },
+        "since_ns": {
+          "type": "integer"
+        },
+        "raw": {
+          "type": "string",
+          "description": "A kubectl command that prints the object this line names."
+        },
+        "candidates": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/candidate"
+          }
+        },
+        "condition_type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "object",
+        "code",
+        "phase",
+        "reason",
+        "message",
+        "since_ns",
+        "raw",
+        "condition_type"
+      ]
     }
   }
 }

@@ -1,0 +1,9 @@
+t+10s   infrastructure  done     ready
+t+10s   control plane   running  0/1 nodes
+t+10s   workers         running  0/2 nodes
+t+10s   addons          done     none
+t+3m20s control plane   stalled  0/1 nodes
+DevMachine/inmem-1-cp-abcde — etcd is not coming up (3m12s)
+raw: kubectl get devmachine.infrastructure.cluster.x-k8s.io inmem-1-cp-abcde -n default -o yaml
+typical: p50 1m15s · p95 2m00s
+next: cluster docs CAPI-CP-003

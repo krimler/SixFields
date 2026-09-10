@@ -1,0 +1,143 @@
+---
+# Subtraction for the kinds the ClusterClass owns (PLAN.md Phase 2).
+#
+# Users write exactly one kind, Cluster. Everything the topology controller and the providers
+# derive from it is off limits to a non-exempt identity, on CREATE and on UPDATE. DELETE is
+# not matched: taking a broken Machine away is how you recover, and the topology controller
+# recreates it.
+#
+# Denied kinds, and the CRD each one was read from (clusterctl generate provider, pinned
+# versions from versions.env):
+#   KubeadmControlPlane        controlplane.cluster.x-k8s.io   kubeadm control-plane v1.14.2
+#   K0sControlPlane            controlplane.cluster.x-k8s.io   k0smotron v1.10.9
+#   K0smotronControlPlane      controlplane.cluster.x-k8s.io   k0smotron v1.10.9
+#   MachineDeployment          cluster.x-k8s.io                core v1.14.2
+#   MachineSet                 cluster.x-k8s.io                core v1.14.2
+#   Machine                    cluster.x-k8s.io                core v1.14.2
+#   MachinePool                cluster.x-k8s.io                core v1.14.2 (core group in
+#                                                              v1beta2, no longer exp)
+#   DockerCluster              infrastructure.cluster.x-k8s.io CAPD v1.14.2
+#   DevCluster                 infrastructure.cluster.x-k8s.io CAPD v1.14.2
+#   KubeadmConfig              bootstrap.cluster.x-k8s.io      kubeadm bootstrap v1.14.2
+#   KubeadmConfigTemplate      bootstrap.cluster.x-k8s.io      kubeadm bootstrap v1.14.2
+# plus any kind whose name ends in Template, which covers the ClusterClass's own templates
+# and the copies the topology controller clones from them.
+#
+# Consequence worth knowing before you run `make dev-up`: the templates the ClusterClass
+# references are *Template kinds, so installing or updating the assembly is itself a denied
+# write for a non-exempt identity. Install it with break-glass (docs/eject.md) or from one of
+# the exempt identities below.
+#
+# Exemption, identical to cluster-fields.yaml, which carries the long version of this note:
+#   (a) identity — the load-bearing check, an allow-list of the provider controller service
+#       accounts, read out of the pinned provider manifests with
+#         clusterctl generate provider --core cluster-api:v1.14.2 |
+#           grep -A3 'kind: ServiceAccount'
+#       and the same for --infrastructure docker:v1.14.2, --bootstrap kubeadm:v1.14.2,
+#       --control-plane kubeadm:v1.14.2 and k0sproject-k0smotron:v1.10.9.
+#   (b) ownership label — the second check. topology.cluster.x-k8s.io/owned, the name in
+#       api@v1.14.2 core/v1beta2/common_types.go:33 (ClusterTopologyOwnedLabel), and the
+#       label the topology controller puts on everything it creates.
+# Which one actually holds must be confirmed against an audit of a real run (PLAN.md
+# Phase 2). Until then (a) is assumed load-bearing and (b) is belt-and-braces.
+#
+# (b) is scoped to service-account requesters, because an unscoped label exemption would let
+# any user edit every object the topology controller owns simply by keeping the label on it.
+# Scoped this way it still does its one job: covering a provider controller whose service
+# account name in (a) is wrong.
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: capi-distro-managed-kinds
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+      - apiGroups: ["cluster.x-k8s.io"]
+        apiVersions: ["*"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["machinedeployments", "machinesets", "machines", "machinepools"]
+      # The provider groups are matched whole and narrowed to the managed kinds by the
+      # is-a-managed-kind match condition below, so adding a provider does not mean editing
+      # a resource list here.
+      - apiGroups:
+          - "controlplane.cluster.x-k8s.io"
+          - "bootstrap.cluster.x-k8s.io"
+          - "infrastructure.cluster.x-k8s.io"
+        apiVersions: ["*"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["*"]
+  matchConditions:
+    - name: not-a-provider-controller
+      expression: |-
+        !(request.userInfo.username in [
+          'system:serviceaccount:capi-system:capi-manager',
+          'system:serviceaccount:capi-kubeadm-bootstrap-system:capi-kubeadm-bootstrap-manager',
+          'system:serviceaccount:capi-kubeadm-control-plane-system:capi-kubeadm-control-plane-manager',
+          'system:serviceaccount:capd-system:capd-manager',
+          'system:serviceaccount:k0smotron:k0smotron-controller-manager-bootstrap',
+          'system:serviceaccount:k0smotron:k0smotron-controller-manager-control-plane',
+          'system:serviceaccount:k0smotron:k0smotron-controller-manager-infrastructure'
+        ])
+    - name: not-topology-owned
+      expression: |-
+        !(request.userInfo.username.startsWith('system:serviceaccount:')
+          && has(object.metadata.labels)
+          && 'topology.cluster.x-k8s.io/owned' in object.metadata.labels)
+    - name: is-a-managed-kind
+      expression: |-
+        request.kind.kind in [
+          'KubeadmControlPlane', 'K0sControlPlane', 'K0smotronControlPlane',
+          'MachineDeployment', 'MachineSet', 'Machine', 'MachinePool',
+          'DockerCluster', 'DevCluster', 'KubeadmConfig', 'KubeadmConfigTemplate'
+        ] || request.kind.kind.endsWith('Template')
+  variables:
+    - name: username
+      expression: request.userInfo.username
+    - name: kind
+      expression: request.kind.kind
+    - name: breakGlassLabel
+      expression: |-
+        has(object.metadata.labels)
+        && 'capi-distro.io/break-glass' in object.metadata.labels
+        && object.metadata.labels['capi-distro.io/break-glass'] == 'true'
+    - name: breakGlassGroup
+      expression: "'capi-distro:break-glass' in request.userInfo.groups"
+    - name: breakGlass
+      expression: variables.breakGlassLabel && variables.breakGlassGroup
+    - name: breakGlassPartial
+      expression: variables.breakGlassLabel != variables.breakGlassGroup
+  validations:
+    # Half a break-glass is not a break-glass. First, so that a request carrying only one
+    # half is told which half is missing instead of getting the generic denial.
+    - expression: "!variables.breakGlassPartial"
+      reason: Forbidden
+      messageExpression: |-
+        variables.kind
+        + " needs both the capi-distro.io/break-glass label and membership"
+        + " of group capi-distro:break-glass. Use break-glass (docs/eject.md)."
+    - expression: variables.breakGlass || variables.breakGlassPartial
+      reason: Forbidden
+      messageExpression: |-
+        variables.kind + " is managed by ClusterClass 'std'."
+        + " Set it via the class or use break-glass (docs/eject.md)."
+  # Written to the audit event as capi-distro-managed-kinds/break-glass. Null records
+  # nothing, so ordinary denials do not add an annotation.
+  auditAnnotations:
+    - key: break-glass
+      valueExpression: |-
+        variables.breakGlass
+          ? "granted user=" + variables.username + " kind=" + variables.kind
+          : (variables.breakGlassPartial
+              ? "incomplete user=" + variables.username + " kind=" + variables.kind
+              : null)
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicyBinding
+metadata:
+  name: capi-distro-managed-kinds
+spec:
+  policyName: capi-distro-managed-kinds
+  validationActions: [Deny, Audit]
+  # No matchResources: the binding applies wherever the policy's matchConstraints match,
+  # in every namespace.
