@@ -1,10 +1,10 @@
 {
   "_meta": {
     "scenario": "std-docker-happy",
-    "t_plus_s": 60,
+    "t_plus_s": 23,
     "capi": "cluster.x-k8s.io/v1beta2",
     "note": "recorded from cluster dev-4 on 2026-09-10T18:53:53Z",
-    "recorded_at": "2026-09-10T18:54:49Z"
+    "recorded_at": "2026-09-10T18:54:12Z"
   },
   "objects": [
     {
@@ -281,7 +281,6 @@
                 },
                 "f:initialization": {
                   ".": {},
-                  "f:controlPlaneInitialized": {},
                   "f:infrastructureProvisioned": {}
                 },
                 "f:observedGeneration": {},
@@ -300,12 +299,12 @@
             "manager": "manager",
             "operation": "Update",
             "subresource": "status",
-            "time": "2026-09-10T18:54:48Z"
+            "time": "2026-09-10T18:54:11Z"
           }
         ],
         "name": "dev-4",
         "namespace": "default",
-        "resourceVersion": "16031",
+        "resourceVersion": "15756",
         "uid": "0faa55ee-e3f0-4dca-a835-6829c01803cf"
       },
       "spec": {
@@ -353,18 +352,18 @@
         "conditions": [
           {
             "lastTransitionTime": "2026-09-10T18:53:51Z",
-            "message": "* WorkersAvailable:\n  * MachineDeployment dev-4-default-2hxx9: 0 available replicas, at least 2 required (spec.strategy.rollout.maxUnavailable is 0, spec.replicas is 2)",
+            "message": "* RemoteConnectionProbe: Remote connection not established yet\n* ControlPlaneAvailable: Control plane not yet initialized\n* WorkersAvailable:\n  * MachineDeployment dev-4-default-2hxx9: 0 available replicas, at least 2 required (spec.strategy.rollout.maxUnavailable is 0, spec.replicas is 2)",
             "observedGeneration": 3,
             "reason": "NotAvailable",
             "status": "False",
             "type": "Available"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:25Z",
-            "message": "",
-            "observedGeneration": 3,
-            "reason": "ProbeSucceeded",
-            "status": "True",
+            "lastTransitionTime": "2026-09-10T18:53:51Z",
+            "message": "Remote connection not established yet",
+            "observedGeneration": 2,
+            "reason": "ProbeFailed",
+            "status": "False",
             "type": "RemoteConnectionProbe"
           },
           {
@@ -376,19 +375,19 @@
             "type": "InfrastructureReady"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:26Z",
-            "message": "",
+            "lastTransitionTime": "2026-09-10T18:53:51Z",
+            "message": "Control plane not yet initialized",
             "observedGeneration": 3,
-            "reason": "Initialized",
-            "status": "True",
+            "reason": "NotInitialized",
+            "status": "False",
             "type": "ControlPlaneInitialized"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:38Z",
-            "message": "",
+            "lastTransitionTime": "2026-09-10T18:53:51Z",
+            "message": "Control plane not yet initialized",
             "observedGeneration": 3,
-            "reason": "Available",
-            "status": "True",
+            "reason": "NotAvailable",
+            "status": "False",
             "type": "ControlPlaneAvailable"
           },
           {
@@ -440,16 +439,16 @@
             "type": "ScalingUp"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:39Z",
-            "message": "",
+            "lastTransitionTime": "2026-09-10T18:53:58Z",
+            "message": "* Machine dev-4-6zh89-49zkr:\n  * InfrastructureReady:\n    * BootstrapCompleted: Running boostrap command [ /bin/sh -c cat \u003e /run/kubeadm/kubeadm.yaml /dev/stdin ] (26 of 31)\n  * NodeHealthy: Waiting for Cluster control plane to be initialized\n  * NodeKubeadmLabelsAndTaintsSet: Waiting for Cluster control plane to be initialized\n  * Control plane components: Waiting for Cluster control plane to be initialized\n  * EtcdMemberHealthy: Waiting for Cluster control plane to be initialized",
             "observedGeneration": 3,
-            "reason": "Ready",
-            "status": "True",
+            "reason": "NotReady",
+            "status": "False",
             "type": "ControlPlaneMachinesReady"
           },
           {
             "lastTransitionTime": "2026-09-10T18:53:58Z",
-            "message": "* Machines dev-4-default-2hxx9-xbstm-n827c, dev-4-default-2hxx9-xbstm-pxmd5:\n  * NodeHealthy:\n    * Node.Ready: [container runtime network not ready: NetworkReady=false reason:NetworkPluginNotReady message:Network plugin returns error: cni plugin not initialized, CSINode is not yet initialized]",
+            "message": "* Machines dev-4-default-2hxx9-xbstm-n827c, dev-4-default-2hxx9-xbstm-pxmd5:\n  * BootstrapConfigReady:\n    * DataSecretAvailable: Waiting for Cluster control plane to be initialized\n    * CertificatesAvailable: Condition not yet reported\n  * InfrastructureReady:\n    * CGroupsReady: WaitingForContainer\n    * ContainerProvisioned: WaitingForControlPlaneInitialized\n    * PreLoadedImagesReady: WaitingForContainer\n    * BootstrapCompleted: WaitingForContainer\n  * NodeHealthy: Waiting for Cluster control plane to be initialized",
             "observedGeneration": 3,
             "reason": "NotReady",
             "status": "False",
@@ -489,9 +488,9 @@
           }
         ],
         "controlPlane": {
-          "availableReplicas": 1,
+          "availableReplicas": 0,
           "desiredReplicas": 1,
-          "readyReplicas": 1,
+          "readyReplicas": 0,
           "replicas": 1,
           "upToDateReplicas": 1,
           "versions": [
@@ -505,18 +504,27 @@
           "v1beta1": {
             "conditions": [
               {
-                "lastTransitionTime": "2026-09-10T18:54:39Z",
-                "status": "True",
+                "lastTransitionTime": "2026-09-10T18:53:54Z",
+                "message": "Scaling up control plane to 1 replicas (actual 0)",
+                "reason": "ScalingUp",
+                "severity": "Warning",
+                "status": "False",
                 "type": "Ready"
               },
               {
-                "lastTransitionTime": "2026-09-10T18:54:26Z",
-                "status": "True",
+                "lastTransitionTime": "2026-09-10T18:53:51Z",
+                "message": "Waiting for control plane provider to indicate the control plane has been initialized",
+                "reason": "WaitingForControlPlaneProviderInitialized",
+                "severity": "Info",
+                "status": "False",
                 "type": "ControlPlaneInitialized"
               },
               {
-                "lastTransitionTime": "2026-09-10T18:54:39Z",
-                "status": "True",
+                "lastTransitionTime": "2026-09-10T18:53:54Z",
+                "message": "Scaling up control plane to 1 replicas (actual 0)",
+                "reason": "ScalingUp",
+                "severity": "Warning",
+                "status": "False",
                 "type": "ControlPlaneReady"
               },
               {
@@ -533,7 +541,6 @@
           }
         },
         "initialization": {
-          "controlPlaneInitialized": true,
           "infrastructureProvisioned": true
         },
         "observedGeneration": 3,
@@ -558,7 +565,7 @@
       "kind": "ClusterResourceSetBinding",
       "metadata": {
         "creationTimestamp": "2026-09-10T18:53:49Z",
-        "generation": 3,
+        "generation": 2,
         "managedFields": [
           {
             "apiVersion": "addons.cluster.x-k8s.io/v1beta2",
@@ -578,7 +585,7 @@
             },
             "manager": "manager",
             "operation": "Update",
-            "time": "2026-09-10T18:54:26Z"
+            "time": "2026-09-10T18:53:49Z"
           }
         ],
         "name": "dev-4",
@@ -591,22 +598,13 @@
             "uid": "768e21dc-a97e-4564-9398-aa42abb17fe1"
           }
         ],
-        "resourceVersion": "15820",
+        "resourceVersion": "15482",
         "uid": "486faa1c-ff79-4418-b219-ed864d099fc0"
       },
       "spec": {
         "bindings": [
           {
-            "clusterResourceSetName": "calico",
-            "resources": [
-              {
-                "applied": true,
-                "hash": "sha256:a8c828a06a87c629a282ebbc424895b77f3a030251993e41ea400a743675bb02",
-                "kind": "ConfigMap",
-                "lastAppliedTime": "2026-09-10T18:54:26Z",
-                "name": "calico-v3.32.2"
-              }
-            ]
+            "clusterResourceSetName": "calico"
           }
         ],
         "clusterName": "dev-4"
@@ -962,7 +960,7 @@
             "manager": "manager",
             "operation": "Update",
             "subresource": "status",
-            "time": "2026-09-10T18:54:19Z"
+            "time": "2026-09-10T18:54:11Z"
           }
         ],
         "name": "dev-4-6zh89-49zkr",
@@ -977,7 +975,7 @@
             "uid": "0b91088d-1cb9-43c5-b531-37d37e4cbc3f"
           }
         ],
-        "resourceVersion": "15793",
+        "resourceVersion": "15755",
         "uid": "8179dbe1-35cc-40c6-b5a7-b278f43897cb"
       },
       "spec": {
@@ -1005,19 +1003,19 @@
         ],
         "conditions": [
           {
-            "lastTransitionTime": "2026-09-10T18:54:19Z",
-            "message": "",
+            "lastTransitionTime": "2026-09-10T18:54:00Z",
+            "message": "* BootstrapCompleted: Running boostrap command [ /bin/sh -c echo started \u003e /run/cluster-api/capd.bootstrap.started \u0026\u0026 kubeadm init --ignore-preflight-errors=SystemVerification,Swap,FileContent--proc-sys-net-bridge-bridge-nf-call-iptables --config /run/kubeadm/kubeadm.yaml  \u0026\u0026 echo success \u003e /run/cluster-api/bootstrap-success.complete ] (31 of 31)",
             "observedGeneration": 2,
-            "reason": "Ready",
-            "status": "True",
+            "reason": "NotReady",
+            "status": "False",
             "type": "Ready"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:19Z",
-            "message": "",
+            "lastTransitionTime": "2026-09-10T18:54:00Z",
+            "message": "Running boostrap command [ /bin/sh -c echo started \u003e /run/cluster-api/capd.bootstrap.started \u0026\u0026 kubeadm init --ignore-preflight-errors=SystemVerification,Swap,FileContent--proc-sys-net-bridge-bridge-nf-call-iptables --config /run/kubeadm/kubeadm.yaml  \u0026\u0026 echo success \u003e /run/cluster-api/bootstrap-success.complete ] (31 of 31)",
             "observedGeneration": 2,
-            "reason": "Completed",
-            "status": "True",
+            "reason": "NotReady",
+            "status": "False",
             "type": "BootstrapCompleted"
           },
           {
@@ -1070,7 +1068,7 @@
         "finalizers": [
           "dockermachine.infrastructure.cluster.x-k8s.io"
         ],
-        "generation": 2,
+        "generation": 1,
         "labels": {
           "cluster.x-k8s.io/cluster-name": "dev-4",
           "cluster.x-k8s.io/deployment-name": "dev-4-default-2hxx9",
@@ -1127,14 +1125,11 @@
                 "f:ownerReferences": {
                   "k:{\"uid\":\"e652db72-490a-4e1e-86a3-81335d04719d\"}": {}
                 }
-              },
-              "f:spec": {
-                "f:providerID": {}
               }
             },
             "manager": "manager",
             "operation": "Update",
-            "time": "2026-09-10T18:54:41Z"
+            "time": "2026-09-10T18:53:58Z"
           },
           {
             "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
@@ -1142,7 +1137,6 @@
             "fieldsV1": {
               "f:status": {
                 ".": {},
-                "f:addresses": {},
                 "f:conditions": {
                   ".": {},
                   "k:{\"type\":\"BootstrapCompleted\"}": {
@@ -1199,17 +1193,13 @@
                     "f:status": {},
                     "f:type": {}
                   }
-                },
-                "f:initialization": {
-                  ".": {},
-                  "f:provisioned": {}
                 }
               }
             },
             "manager": "manager",
             "operation": "Update",
             "subresource": "status",
-            "time": "2026-09-10T18:54:45Z"
+            "time": "2026-09-10T18:54:00Z"
           }
         ],
         "name": "dev-4-default-2hxx9-xbstm-n827c",
@@ -1224,7 +1214,7 @@
             "uid": "e652db72-490a-4e1e-86a3-81335d04719d"
           }
         ],
-        "resourceVersion": "16004",
+        "resourceVersion": "15657",
         "uid": "e4cf8293-d828-4a55-9a8c-d3183c2670f6"
       },
       "spec": {
@@ -1232,77 +1222,59 @@
           "docker": {
             "customImage": "kindest/node:v1.34.11@sha256:44e222ee2132dab25ff87301682f89eb82c7880ea3a1bf543bfe9708fd08d67d"
           }
-        },
-        "providerID": "docker:////dev-4-default-2hxx9-xbstm-n827c"
+        }
       },
       "status": {
-        "addresses": [
-          {
-            "address": "dev-4-default-2hxx9-xbstm-n827c",
-            "type": "Hostname"
-          },
-          {
-            "address": "172.19.0.18",
-            "type": "InternalIP"
-          },
-          {
-            "address": "172.19.0.18",
-            "type": "ExternalIP"
-          }
-        ],
         "conditions": [
           {
-            "lastTransitionTime": "2026-09-10T18:54:45Z",
-            "message": "",
-            "observedGeneration": 2,
-            "reason": "Ready",
-            "status": "True",
+            "lastTransitionTime": "2026-09-10T18:54:00Z",
+            "message": "* CGroupsReady: WaitingForContainer\n* ContainerProvisioned: WaitingForControlPlaneInitialized\n* PreLoadedImagesReady: WaitingForContainer\n* BootstrapCompleted: WaitingForContainer",
+            "observedGeneration": 1,
+            "reason": "NotReady",
+            "status": "False",
             "type": "Ready"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:45Z",
+            "lastTransitionTime": "2026-09-10T18:54:00Z",
             "message": "",
-            "observedGeneration": 2,
-            "reason": "Completed",
-            "status": "True",
+            "observedGeneration": 1,
+            "reason": "WaitingForContainer",
+            "status": "False",
             "type": "BootstrapCompleted"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:40Z",
+            "lastTransitionTime": "2026-09-10T18:54:00Z",
             "message": "",
             "observedGeneration": 1,
-            "reason": "Ready",
-            "status": "True",
+            "reason": "WaitingForContainer",
+            "status": "False",
             "type": "CGroupsReady"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:33Z",
+            "lastTransitionTime": "2026-09-10T18:54:00Z",
             "message": "",
             "observedGeneration": 1,
-            "reason": "Provisioned",
-            "status": "True",
+            "reason": "WaitingForControlPlaneInitialized",
+            "status": "False",
             "type": "ContainerProvisioned"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:40Z",
+            "lastTransitionTime": "2026-09-10T18:54:00Z",
             "message": "",
             "observedGeneration": 1,
-            "reason": "Ready",
-            "status": "True",
+            "reason": "WaitingForContainer",
+            "status": "False",
             "type": "PreLoadedImagesReady"
           },
           {
             "lastTransitionTime": "2026-09-10T18:53:59Z",
             "message": "",
-            "observedGeneration": 2,
+            "observedGeneration": 1,
             "reason": "NotPaused",
             "status": "False",
             "type": "Paused"
           }
-        ],
-        "initialization": {
-          "provisioned": true
-        }
+        ]
       }
     },
     {
@@ -1317,7 +1289,7 @@
         "finalizers": [
           "dockermachine.infrastructure.cluster.x-k8s.io"
         ],
-        "generation": 2,
+        "generation": 1,
         "labels": {
           "cluster.x-k8s.io/cluster-name": "dev-4",
           "cluster.x-k8s.io/deployment-name": "dev-4-default-2hxx9",
@@ -1374,14 +1346,11 @@
                 "f:ownerReferences": {
                   "k:{\"uid\":\"cb72c826-10db-4c98-9db2-54fc9be021d0\"}": {}
                 }
-              },
-              "f:spec": {
-                "f:providerID": {}
               }
             },
             "manager": "manager",
             "operation": "Update",
-            "time": "2026-09-10T18:54:41Z"
+            "time": "2026-09-10T18:53:58Z"
           },
           {
             "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
@@ -1389,7 +1358,6 @@
             "fieldsV1": {
               "f:status": {
                 ".": {},
-                "f:addresses": {},
                 "f:conditions": {
                   ".": {},
                   "k:{\"type\":\"BootstrapCompleted\"}": {
@@ -1446,17 +1414,13 @@
                     "f:status": {},
                     "f:type": {}
                   }
-                },
-                "f:initialization": {
-                  ".": {},
-                  "f:provisioned": {}
                 }
               }
             },
             "manager": "manager",
             "operation": "Update",
             "subresource": "status",
-            "time": "2026-09-10T18:54:45Z"
+            "time": "2026-09-10T18:54:00Z"
           }
         ],
         "name": "dev-4-default-2hxx9-xbstm-pxmd5",
@@ -1471,7 +1435,7 @@
             "uid": "cb72c826-10db-4c98-9db2-54fc9be021d0"
           }
         ],
-        "resourceVersion": "16005",
+        "resourceVersion": "15655",
         "uid": "c0ec505a-f2e8-4902-8580-47cfe2e3e69c"
       },
       "spec": {
@@ -1479,77 +1443,59 @@
           "docker": {
             "customImage": "kindest/node:v1.34.11@sha256:44e222ee2132dab25ff87301682f89eb82c7880ea3a1bf543bfe9708fd08d67d"
           }
-        },
-        "providerID": "docker:////dev-4-default-2hxx9-xbstm-pxmd5"
+        }
       },
       "status": {
-        "addresses": [
-          {
-            "address": "dev-4-default-2hxx9-xbstm-pxmd5",
-            "type": "Hostname"
-          },
-          {
-            "address": "172.19.0.17",
-            "type": "InternalIP"
-          },
-          {
-            "address": "172.19.0.17",
-            "type": "ExternalIP"
-          }
-        ],
         "conditions": [
           {
-            "lastTransitionTime": "2026-09-10T18:54:45Z",
-            "message": "",
-            "observedGeneration": 2,
-            "reason": "Ready",
-            "status": "True",
+            "lastTransitionTime": "2026-09-10T18:54:00Z",
+            "message": "* CGroupsReady: WaitingForContainer\n* ContainerProvisioned: WaitingForControlPlaneInitialized\n* PreLoadedImagesReady: WaitingForContainer\n* BootstrapCompleted: WaitingForContainer",
+            "observedGeneration": 1,
+            "reason": "NotReady",
+            "status": "False",
             "type": "Ready"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:45Z",
+            "lastTransitionTime": "2026-09-10T18:54:00Z",
             "message": "",
-            "observedGeneration": 2,
-            "reason": "Completed",
-            "status": "True",
+            "observedGeneration": 1,
+            "reason": "WaitingForContainer",
+            "status": "False",
             "type": "BootstrapCompleted"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:41Z",
+            "lastTransitionTime": "2026-09-10T18:54:00Z",
             "message": "",
             "observedGeneration": 1,
-            "reason": "Ready",
-            "status": "True",
+            "reason": "WaitingForContainer",
+            "status": "False",
             "type": "CGroupsReady"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:33Z",
+            "lastTransitionTime": "2026-09-10T18:54:00Z",
             "message": "",
             "observedGeneration": 1,
-            "reason": "Provisioned",
-            "status": "True",
+            "reason": "WaitingForControlPlaneInitialized",
+            "status": "False",
             "type": "ContainerProvisioned"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:41Z",
+            "lastTransitionTime": "2026-09-10T18:54:00Z",
             "message": "",
             "observedGeneration": 1,
-            "reason": "Ready",
-            "status": "True",
+            "reason": "WaitingForContainer",
+            "status": "False",
             "type": "PreLoadedImagesReady"
           },
           {
             "lastTransitionTime": "2026-09-10T18:53:59Z",
             "message": "",
-            "observedGeneration": 2,
+            "observedGeneration": 1,
             "reason": "NotPaused",
             "status": "False",
             "type": "Paused"
           }
-        ],
-        "initialization": {
-          "provisioned": true
-        }
+        ]
       }
     },
     {
@@ -1758,9 +1704,6 @@
       "apiVersion": "bootstrap.cluster.x-k8s.io/v1beta2",
       "kind": "KubeadmConfig",
       "metadata": {
-        "annotations": {
-          "machine.cluster.x-k8s.io/certificates-expiry": "2027-09-10T18:54:11Z"
-        },
         "creationTimestamp": "2026-09-10T18:53:55Z",
         "generation": 2,
         "labels": {
@@ -1817,6 +1760,25 @@
             "manager": "capi-kubeadmcontrolplane-metadata",
             "operation": "Apply",
             "time": "2026-09-10T18:54:01Z"
+          },
+          {
+            "apiVersion": "bootstrap.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:ownerReferences": {
+                  "k:{\"uid\":\"0b91088d-1cb9-43c5-b531-37d37e4cbc3f\"}": {}
+                }
+              },
+              "f:spec": {
+                "f:clusterConfiguration": {
+                  "f:controlPlaneEndpoint": {}
+                }
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "time": "2026-09-10T18:53:59Z"
           },
           {
             "apiVersion": "bootstrap.cluster.x-k8s.io/v1beta2",
@@ -1882,29 +1844,6 @@
             "operation": "Update",
             "subresource": "status",
             "time": "2026-09-10T18:54:00Z"
-          },
-          {
-            "apiVersion": "bootstrap.cluster.x-k8s.io/v1beta2",
-            "fieldsType": "FieldsV1",
-            "fieldsV1": {
-              "f:metadata": {
-                "f:annotations": {
-                  ".": {},
-                  "f:machine.cluster.x-k8s.io/certificates-expiry": {}
-                },
-                "f:ownerReferences": {
-                  "k:{\"uid\":\"0b91088d-1cb9-43c5-b531-37d37e4cbc3f\"}": {}
-                }
-              },
-              "f:spec": {
-                "f:clusterConfiguration": {
-                  "f:controlPlaneEndpoint": {}
-                }
-              }
-            },
-            "manager": "manager",
-            "operation": "Update",
-            "time": "2026-09-10T18:54:29Z"
           }
         ],
         "name": "dev-4-6zh89-49zkr",
@@ -1919,7 +1858,7 @@
             "uid": "0b91088d-1cb9-43c5-b531-37d37e4cbc3f"
           }
         ],
-        "resourceVersion": "15885",
+        "resourceVersion": "15675",
         "uid": "ee904014-6be1-482c-8918-cf618bad0239"
       },
       "spec": {
@@ -2022,7 +1961,7 @@
           "cluster.x-k8s.io/cloned-from-name": "dev-4-default-ch4sf"
         },
         "creationTimestamp": "2026-09-10T18:53:56Z",
-        "generation": 2,
+        "generation": 1,
         "labels": {
           "cluster.x-k8s.io/cluster-name": "dev-4",
           "cluster.x-k8s.io/deployment-name": "dev-4-default-2hxx9",
@@ -2081,24 +2020,11 @@
                 "f:ownerReferences": {
                   "k:{\"uid\":\"e652db72-490a-4e1e-86a3-81335d04719d\"}": {}
                 }
-              },
-              "f:spec": {
-                "f:joinConfiguration": {
-                  "f:discovery": {
-                    ".": {},
-                    "f:bootstrapToken": {
-                      ".": {},
-                      "f:apiServerEndpoint": {},
-                      "f:caCertHashes": {},
-                      "f:token": {}
-                    }
-                  }
-                }
               }
             },
             "manager": "manager",
             "operation": "Update",
-            "time": "2026-09-10T18:54:27Z"
+            "time": "2026-09-10T18:53:57Z"
           },
           {
             "apiVersion": "bootstrap.cluster.x-k8s.io/v1beta2",
@@ -2108,15 +2034,6 @@
                 ".": {},
                 "f:conditions": {
                   ".": {},
-                  "k:{\"type\":\"CertificatesAvailable\"}": {
-                    ".": {},
-                    "f:lastTransitionTime": {},
-                    "f:message": {},
-                    "f:observedGeneration": {},
-                    "f:reason": {},
-                    "f:status": {},
-                    "f:type": {}
-                  },
                   "k:{\"type\":\"DataSecretAvailable\"}": {
                     ".": {},
                     "f:lastTransitionTime": {},
@@ -2145,7 +2062,6 @@
                     "f:type": {}
                   }
                 },
-                "f:dataSecretName": {},
                 "f:deprecated": {
                   ".": {},
                   "f:v1beta1": {
@@ -2153,17 +2069,13 @@
                     "f:conditions": {}
                   }
                 },
-                "f:initialization": {
-                  ".": {},
-                  "f:dataSecretCreated": {}
-                },
                 "f:observedGeneration": {}
               }
             },
             "manager": "manager",
             "operation": "Update",
             "subresource": "status",
-            "time": "2026-09-10T18:54:27Z"
+            "time": "2026-09-10T18:53:59Z"
           }
         ],
         "name": "dev-4-default-2hxx9-xbstm-n827c",
@@ -2178,20 +2090,11 @@
             "uid": "e652db72-490a-4e1e-86a3-81335d04719d"
           }
         ],
-        "resourceVersion": "15854",
+        "resourceVersion": "15642",
         "uid": "451adaf4-0356-4041-8677-1592bcec86fc"
       },
       "spec": {
         "joinConfiguration": {
-          "discovery": {
-            "bootstrapToken": {
-              "apiServerEndpoint": "172.19.0.15:6443",
-              "caCertHashes": [
-                "sha256:68e68fe45843460bfcdec271a61bd2f61126f9ca05cf0584df31d754e92ba806"
-              ],
-              "token": "8xh6tq.udr0pzzv7j27ys8w"
-            }
-          },
           "nodeRegistration": {
             "kubeletExtraArgs": [
               {
@@ -2205,64 +2108,51 @@
       "status": {
         "conditions": [
           {
-            "lastTransitionTime": "2026-09-10T18:54:27Z",
-            "message": "",
-            "observedGeneration": 2,
-            "reason": "Ready",
-            "status": "True",
+            "lastTransitionTime": "2026-09-10T18:53:59Z",
+            "message": "* DataSecretAvailable: Waiting for Cluster control plane to be initialized\n* CertificatesAvailable: Condition not yet reported",
+            "observedGeneration": 1,
+            "reason": "NotReady",
+            "status": "False",
             "type": "Ready"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:26Z",
-            "message": "",
-            "observedGeneration": 2,
-            "reason": "Available",
-            "status": "True",
-            "type": "CertificatesAvailable"
-          },
-          {
-            "lastTransitionTime": "2026-09-10T18:54:27Z",
-            "message": "",
-            "observedGeneration": 2,
-            "reason": "Available",
-            "status": "True",
+            "lastTransitionTime": "2026-09-10T18:53:59Z",
+            "message": "Waiting for Cluster control plane to be initialized",
+            "observedGeneration": 1,
+            "reason": "NotAvailable",
+            "status": "False",
             "type": "DataSecretAvailable"
           },
           {
             "lastTransitionTime": "2026-09-10T18:53:58Z",
             "message": "",
-            "observedGeneration": 2,
+            "observedGeneration": 1,
             "reason": "NotPaused",
             "status": "False",
             "type": "Paused"
           }
         ],
-        "dataSecretName": "dev-4-default-2hxx9-xbstm-n827c",
         "deprecated": {
           "v1beta1": {
             "conditions": [
               {
-                "lastTransitionTime": "2026-09-10T18:54:27Z",
-                "status": "True",
+                "lastTransitionTime": "2026-09-10T18:53:59Z",
+                "reason": "WaitingForControlPlaneAvailable",
+                "severity": "Info",
+                "status": "False",
                 "type": "Ready"
               },
               {
-                "lastTransitionTime": "2026-09-10T18:54:26Z",
-                "status": "True",
-                "type": "CertificatesAvailable"
-              },
-              {
-                "lastTransitionTime": "2026-09-10T18:54:27Z",
-                "status": "True",
+                "lastTransitionTime": "2026-09-10T18:53:59Z",
+                "reason": "WaitingForControlPlaneAvailable",
+                "severity": "Info",
+                "status": "False",
                 "type": "DataSecretAvailable"
               }
             ]
           }
         },
-        "initialization": {
-          "dataSecretCreated": true
-        },
-        "observedGeneration": 2
+        "observedGeneration": 1
       }
     },
     {
@@ -2274,7 +2164,7 @@
           "cluster.x-k8s.io/cloned-from-name": "dev-4-default-ch4sf"
         },
         "creationTimestamp": "2026-09-10T18:53:56Z",
-        "generation": 2,
+        "generation": 1,
         "labels": {
           "cluster.x-k8s.io/cluster-name": "dev-4",
           "cluster.x-k8s.io/deployment-name": "dev-4-default-2hxx9",
@@ -2333,24 +2223,11 @@
                 "f:ownerReferences": {
                   "k:{\"uid\":\"cb72c826-10db-4c98-9db2-54fc9be021d0\"}": {}
                 }
-              },
-              "f:spec": {
-                "f:joinConfiguration": {
-                  "f:discovery": {
-                    ".": {},
-                    "f:bootstrapToken": {
-                      ".": {},
-                      "f:apiServerEndpoint": {},
-                      "f:caCertHashes": {},
-                      "f:token": {}
-                    }
-                  }
-                }
               }
             },
             "manager": "manager",
             "operation": "Update",
-            "time": "2026-09-10T18:54:27Z"
+            "time": "2026-09-10T18:53:57Z"
           },
           {
             "apiVersion": "bootstrap.cluster.x-k8s.io/v1beta2",
@@ -2360,15 +2237,6 @@
                 ".": {},
                 "f:conditions": {
                   ".": {},
-                  "k:{\"type\":\"CertificatesAvailable\"}": {
-                    ".": {},
-                    "f:lastTransitionTime": {},
-                    "f:message": {},
-                    "f:observedGeneration": {},
-                    "f:reason": {},
-                    "f:status": {},
-                    "f:type": {}
-                  },
                   "k:{\"type\":\"DataSecretAvailable\"}": {
                     ".": {},
                     "f:lastTransitionTime": {},
@@ -2397,7 +2265,6 @@
                     "f:type": {}
                   }
                 },
-                "f:dataSecretName": {},
                 "f:deprecated": {
                   ".": {},
                   "f:v1beta1": {
@@ -2405,17 +2272,13 @@
                     "f:conditions": {}
                   }
                 },
-                "f:initialization": {
-                  ".": {},
-                  "f:dataSecretCreated": {}
-                },
                 "f:observedGeneration": {}
               }
             },
             "manager": "manager",
             "operation": "Update",
             "subresource": "status",
-            "time": "2026-09-10T18:54:27Z"
+            "time": "2026-09-10T18:53:59Z"
           }
         ],
         "name": "dev-4-default-2hxx9-xbstm-pxmd5",
@@ -2430,20 +2293,11 @@
             "uid": "cb72c826-10db-4c98-9db2-54fc9be021d0"
           }
         ],
-        "resourceVersion": "15853",
+        "resourceVersion": "15639",
         "uid": "f9378e06-0e37-40c1-abd8-7e242855e025"
       },
       "spec": {
         "joinConfiguration": {
-          "discovery": {
-            "bootstrapToken": {
-              "apiServerEndpoint": "172.19.0.15:6443",
-              "caCertHashes": [
-                "sha256:68e68fe45843460bfcdec271a61bd2f61126f9ca05cf0584df31d754e92ba806"
-              ],
-              "token": "qq4i9d.0l5iqk9b7w62cnq8"
-            }
-          },
           "nodeRegistration": {
             "kubeletExtraArgs": [
               {
@@ -2457,64 +2311,51 @@
       "status": {
         "conditions": [
           {
-            "lastTransitionTime": "2026-09-10T18:54:27Z",
-            "message": "",
-            "observedGeneration": 2,
-            "reason": "Ready",
-            "status": "True",
+            "lastTransitionTime": "2026-09-10T18:53:59Z",
+            "message": "* DataSecretAvailable: Waiting for Cluster control plane to be initialized\n* CertificatesAvailable: Condition not yet reported",
+            "observedGeneration": 1,
+            "reason": "NotReady",
+            "status": "False",
             "type": "Ready"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:26Z",
-            "message": "",
-            "observedGeneration": 2,
-            "reason": "Available",
-            "status": "True",
-            "type": "CertificatesAvailable"
-          },
-          {
-            "lastTransitionTime": "2026-09-10T18:54:27Z",
-            "message": "",
-            "observedGeneration": 2,
-            "reason": "Available",
-            "status": "True",
+            "lastTransitionTime": "2026-09-10T18:53:59Z",
+            "message": "Waiting for Cluster control plane to be initialized",
+            "observedGeneration": 1,
+            "reason": "NotAvailable",
+            "status": "False",
             "type": "DataSecretAvailable"
           },
           {
             "lastTransitionTime": "2026-09-10T18:53:58Z",
             "message": "",
-            "observedGeneration": 2,
+            "observedGeneration": 1,
             "reason": "NotPaused",
             "status": "False",
             "type": "Paused"
           }
         ],
-        "dataSecretName": "dev-4-default-2hxx9-xbstm-pxmd5",
         "deprecated": {
           "v1beta1": {
             "conditions": [
               {
-                "lastTransitionTime": "2026-09-10T18:54:27Z",
-                "status": "True",
+                "lastTransitionTime": "2026-09-10T18:53:59Z",
+                "reason": "WaitingForControlPlaneAvailable",
+                "severity": "Info",
+                "status": "False",
                 "type": "Ready"
               },
               {
-                "lastTransitionTime": "2026-09-10T18:54:26Z",
-                "status": "True",
-                "type": "CertificatesAvailable"
-              },
-              {
-                "lastTransitionTime": "2026-09-10T18:54:27Z",
-                "status": "True",
+                "lastTransitionTime": "2026-09-10T18:53:59Z",
+                "reason": "WaitingForControlPlaneAvailable",
+                "severity": "Info",
+                "status": "False",
                 "type": "DataSecretAvailable"
               }
             ]
           }
         },
-        "initialization": {
-          "dataSecretCreated": true
-        },
-        "observedGeneration": 2
+        "observedGeneration": 1
       }
     },
     {
@@ -2845,11 +2686,6 @@
                     "f:updatedReplicas": {}
                   }
                 },
-                "f:initialization": {
-                  ".": {},
-                  "f:controlPlaneInitialized": {}
-                },
-                "f:observedGeneration": {},
                 "f:readyReplicas": {},
                 "f:replicas": {},
                 "f:selector": {},
@@ -2868,7 +2704,7 @@
             "manager": "manager",
             "operation": "Update",
             "subresource": "status",
-            "time": "2026-09-10T18:54:39Z"
+            "time": "2026-09-10T18:54:10Z"
           }
         ],
         "name": "dev-4-6zh89",
@@ -2883,7 +2719,7 @@
             "uid": "0faa55ee-e3f0-4dca-a835-6829c01803cf"
           }
         ],
-        "resourceVersion": "15945",
+        "resourceVersion": "15747",
         "uid": "bacba15b-a8f9-4c81-94dd-446d68afe003"
       },
       "spec": {
@@ -2948,14 +2784,14 @@
         "version": "v1.34.11"
       },
       "status": {
-        "availableReplicas": 1,
+        "availableReplicas": 0,
         "conditions": [
           {
-            "lastTransitionTime": "2026-09-10T18:54:38Z",
-            "message": "",
+            "lastTransitionTime": "2026-09-10T18:53:53Z",
+            "message": "Control plane not yet initialized",
             "observedGeneration": 1,
-            "reason": "Available",
-            "status": "True",
+            "reason": "NotAvailable",
+            "status": "False",
             "type": "Available"
           },
           {
@@ -2967,27 +2803,27 @@
             "type": "CertificatesAvailable"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:25Z",
+            "lastTransitionTime": "2026-09-10T18:53:53Z",
             "message": "",
             "observedGeneration": 1,
-            "reason": "Initialized",
-            "status": "True",
+            "reason": "NotInitialized",
+            "status": "False",
             "type": "Initialized"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:29Z",
-            "message": "",
+            "lastTransitionTime": "2026-09-10T18:53:53Z",
+            "message": "Waiting for Cluster control plane to be initialized",
             "observedGeneration": 1,
-            "reason": "Healthy",
-            "status": "True",
+            "reason": "InspectionFailed",
+            "status": "Unknown",
             "type": "EtcdClusterHealthy"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:38Z",
-            "message": "",
+            "lastTransitionTime": "2026-09-10T18:53:53Z",
+            "message": "Waiting for Cluster control plane to be initialized",
             "observedGeneration": 1,
-            "reason": "Healthy",
-            "status": "True",
+            "reason": "InspectionFailed",
+            "status": "Unknown",
             "type": "ControlPlaneComponentsHealthy"
           },
           {
@@ -3023,11 +2859,11 @@
             "type": "ScalingUp"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:39Z",
-            "message": "",
+            "lastTransitionTime": "2026-09-10T18:53:58Z",
+            "message": "* Machine dev-4-6zh89-49zkr:\n  * InfrastructureReady:\n    * BootstrapCompleted: Running boostrap command [ /bin/sh -c cat \u003e /etc/kubernetes/pki/sa.pub /dev/stdin ] (20 of 31)\n  * NodeHealthy: Waiting for Cluster control plane to be initialized\n  * NodeKubeadmLabelsAndTaintsSet: Waiting for Cluster control plane to be initialized\n  * Control plane components: Waiting for Cluster control plane to be initialized\n  * EtcdMemberHealthy: Waiting for Cluster control plane to be initialized",
             "observedGeneration": 1,
-            "reason": "Ready",
-            "status": "True",
+            "reason": "NotReady",
+            "status": "False",
             "type": "MachinesReady"
           },
           {
@@ -3059,29 +2895,24 @@
           "v1beta1": {
             "conditions": [
               {
-                "lastTransitionTime": "2026-09-10T18:54:39Z",
-                "status": "True",
+                "lastTransitionTime": "2026-09-10T18:53:53Z",
+                "message": "Scaling up control plane to 1 replicas (actual 0)",
+                "reason": "ScalingUp",
+                "severity": "Warning",
+                "status": "False",
                 "type": "Ready"
               },
               {
-                "lastTransitionTime": "2026-09-10T18:54:25Z",
-                "status": "True",
+                "lastTransitionTime": "2026-09-10T18:53:55Z",
+                "reason": "WaitingForKubeadmInit",
+                "severity": "Info",
+                "status": "False",
                 "type": "Available"
               },
               {
                 "lastTransitionTime": "2026-09-10T18:53:55Z",
                 "status": "True",
                 "type": "CertificatesAvailable"
-              },
-              {
-                "lastTransitionTime": "2026-09-10T18:54:38Z",
-                "status": "True",
-                "type": "ControlPlaneComponentsHealthy"
-              },
-              {
-                "lastTransitionTime": "2026-09-10T18:54:29Z",
-                "status": "True",
-                "type": "EtcdClusterHealthy"
               },
               {
                 "lastTransitionTime": "2026-09-10T18:53:56Z",
@@ -3094,21 +2925,20 @@
                 "type": "MachinesReady"
               },
               {
-                "lastTransitionTime": "2026-09-10T18:54:39Z",
-                "status": "True",
+                "lastTransitionTime": "2026-09-10T18:53:53Z",
+                "message": "Scaling up control plane to 1 replicas (actual 0)",
+                "reason": "ScalingUp",
+                "severity": "Warning",
+                "status": "False",
                 "type": "Resized"
               }
             ],
-            "readyReplicas": 1,
-            "unavailableReplicas": 0,
+            "readyReplicas": 0,
+            "unavailableReplicas": 1,
             "updatedReplicas": 1
           }
         },
-        "initialization": {
-          "controlPlaneInitialized": true
-        },
-        "observedGeneration": 1,
-        "readyReplicas": 1,
+        "readyReplicas": 0,
         "replicas": 1,
         "selector": "cluster.x-k8s.io/cluster-name=dev-4,cluster.x-k8s.io/control-plane",
         "upToDateReplicas": 1,
@@ -3233,7 +3063,6 @@
               "f:status": {
                 ".": {},
                 "f:addresses": {},
-                "f:certificatesExpiryDate": {},
                 "f:conditions": {
                   ".": {},
                   "k:{\"type\":\"APIServerPodHealthy\"}": {
@@ -3394,27 +3223,6 @@
                   "f:infrastructureProvisioned": {}
                 },
                 "f:lastUpdated": {},
-                "f:nodeInfo": {
-                  ".": {},
-                  "f:architecture": {},
-                  "f:bootID": {},
-                  "f:containerRuntimeVersion": {},
-                  "f:kernelVersion": {},
-                  "f:kubeProxyVersion": {},
-                  "f:kubeletVersion": {},
-                  "f:machineID": {},
-                  "f:operatingSystem": {},
-                  "f:osImage": {},
-                  "f:swap": {
-                    ".": {},
-                    "f:capacity": {}
-                  },
-                  "f:systemUUID": {}
-                },
-                "f:nodeRef": {
-                  ".": {},
-                  "f:name": {}
-                },
                 "f:observedGeneration": {},
                 "f:phase": {}
               }
@@ -3422,7 +3230,7 @@
             "manager": "manager",
             "operation": "Update",
             "subresource": "status",
-            "time": "2026-09-10T18:54:39Z"
+            "time": "2026-09-10T18:54:11Z"
           }
         ],
         "name": "dev-4-6zh89-49zkr",
@@ -3437,7 +3245,7 @@
             "uid": "bacba15b-a8f9-4c81-94dd-446d68afe003"
           }
         ],
-        "resourceVersion": "15943",
+        "resourceVersion": "15754",
         "uid": "0b91088d-1cb9-43c5-b531-37d37e4cbc3f"
       },
       "spec": {
@@ -3496,22 +3304,21 @@
             "type": "ExternalIP"
           }
         ],
-        "certificatesExpiryDate": "2027-09-10T18:54:11Z",
         "conditions": [
           {
-            "lastTransitionTime": "2026-09-10T18:54:39Z",
+            "lastTransitionTime": "2026-09-10T18:53:57Z",
             "message": "",
             "observedGeneration": 3,
-            "reason": "Available",
-            "status": "True",
+            "reason": "NotReady",
+            "status": "False",
             "type": "Available"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:39Z",
-            "message": "",
+            "lastTransitionTime": "2026-09-10T18:53:57Z",
+            "message": "* InfrastructureReady:\n  * BootstrapCompleted: Running boostrap command [ /bin/sh -c cat \u003e /run/kubeadm/kubeadm.yaml /dev/stdin ] (26 of 31)\n* NodeHealthy: Waiting for Cluster control plane to be initialized\n* NodeKubeadmLabelsAndTaintsSet: Waiting for Cluster control plane to be initialized\n* Control plane components: Waiting for Cluster control plane to be initialized\n* EtcdMemberHealthy: Waiting for Cluster control plane to be initialized",
             "observedGeneration": 3,
-            "reason": "Ready",
-            "status": "True",
+            "reason": "NotReady",
+            "status": "False",
             "type": "Ready"
           },
           {
@@ -3531,75 +3338,75 @@
             "type": "BootstrapConfigReady"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:19Z",
-            "message": "",
+            "lastTransitionTime": "2026-09-10T18:53:57Z",
+            "message": "* BootstrapCompleted: Running boostrap command [ /bin/sh -c cat \u003e /run/kubeadm/kubeadm.yaml /dev/stdin ] (26 of 31)",
             "observedGeneration": 3,
-            "reason": "Ready",
-            "status": "True",
+            "reason": "NotReady",
+            "status": "False",
             "type": "InfrastructureReady"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:38Z",
-            "message": "",
+            "lastTransitionTime": "2026-09-10T18:53:57Z",
+            "message": "Waiting for Cluster control plane to be initialized",
             "observedGeneration": 3,
-            "reason": "NodeHealthy",
-            "status": "True",
+            "reason": "InspectionFailed",
+            "status": "Unknown",
             "type": "NodeHealthy"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:37Z",
-            "message": "",
+            "lastTransitionTime": "2026-09-10T18:53:57Z",
+            "message": "Waiting for Cluster control plane to be initialized",
             "observedGeneration": 3,
-            "reason": "NodeReady",
-            "status": "True",
+            "reason": "InspectionFailed",
+            "status": "Unknown",
             "type": "NodeReady"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:29Z",
-            "message": "",
+            "lastTransitionTime": "2026-09-10T18:53:56Z",
+            "message": "Waiting for Cluster control plane to be initialized",
             "observedGeneration": 3,
-            "reason": "Set",
-            "status": "True",
+            "reason": "InspectionFailed",
+            "status": "Unknown",
             "type": "NodeKubeadmLabelsAndTaintsSet"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:29Z",
-            "message": "",
+            "lastTransitionTime": "2026-09-10T18:53:56Z",
+            "message": "Waiting for Cluster control plane to be initialized",
             "observedGeneration": 3,
-            "reason": "Running",
-            "status": "True",
+            "reason": "InspectionFailed",
+            "status": "Unknown",
             "type": "EtcdPodHealthy"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:29Z",
-            "message": "",
+            "lastTransitionTime": "2026-09-10T18:53:56Z",
+            "message": "Waiting for Cluster control plane to be initialized",
             "observedGeneration": 3,
-            "reason": "Healthy",
-            "status": "True",
+            "reason": "InspectionFailed",
+            "status": "Unknown",
             "type": "EtcdMemberHealthy"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:38Z",
-            "message": "",
+            "lastTransitionTime": "2026-09-10T18:53:56Z",
+            "message": "Waiting for Cluster control plane to be initialized",
             "observedGeneration": 3,
-            "reason": "Running",
-            "status": "True",
+            "reason": "InspectionFailed",
+            "status": "Unknown",
             "type": "APIServerPodHealthy"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:30Z",
-            "message": "",
+            "lastTransitionTime": "2026-09-10T18:53:56Z",
+            "message": "Waiting for Cluster control plane to be initialized",
             "observedGeneration": 3,
-            "reason": "Running",
-            "status": "True",
+            "reason": "InspectionFailed",
+            "status": "Unknown",
             "type": "ControllerManagerPodHealthy"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:38Z",
-            "message": "",
+            "lastTransitionTime": "2026-09-10T18:53:56Z",
+            "message": "Waiting for Cluster control plane to be initialized",
             "observedGeneration": 3,
-            "reason": "Running",
-            "status": "True",
+            "reason": "InspectionFailed",
+            "status": "Unknown",
             "type": "SchedulerPodHealthy"
           },
           {
@@ -3636,45 +3443,23 @@
                 "type": "Ready"
               },
               {
-                "lastTransitionTime": "2026-09-10T18:54:38Z",
-                "status": "True",
-                "type": "APIServerPodHealthy"
-              },
-              {
                 "lastTransitionTime": "2026-09-10T18:54:00Z",
                 "status": "True",
                 "type": "BootstrapReady"
               },
               {
-                "lastTransitionTime": "2026-09-10T18:54:31Z",
-                "status": "True",
-                "type": "ControllerManagerPodHealthy"
-              },
-              {
-                "lastTransitionTime": "2026-09-10T18:54:29Z",
-                "status": "True",
-                "type": "EtcdMemberHealthy"
-              },
-              {
-                "lastTransitionTime": "2026-09-10T18:54:29Z",
-                "status": "True",
-                "type": "EtcdPodHealthy"
-              },
-              {
-                "lastTransitionTime": "2026-09-10T18:54:20Z",
-                "reason": "Ready",
-                "status": "True",
+                "lastTransitionTime": "2026-09-10T18:54:11Z",
+                "message": "* BootstrapCompleted: Running boostrap command [ /bin/sh -c cat \u003e /run/kubeadm/kubeadm.yaml /dev/stdin ] (26 of 31)",
+                "reason": "NotReady",
+                "status": "False",
                 "type": "InfrastructureReady"
               },
               {
-                "lastTransitionTime": "2026-09-10T18:54:38Z",
-                "status": "True",
+                "lastTransitionTime": "2026-09-10T18:53:57Z",
+                "reason": "WaitingForNodeRef",
+                "severity": "Info",
+                "status": "False",
                 "type": "NodeHealthy"
-              },
-              {
-                "lastTransitionTime": "2026-09-10T18:54:38Z",
-                "status": "True",
-                "type": "SchedulerPodHealthy"
               }
             ]
           }
@@ -3683,27 +3468,9 @@
           "bootstrapDataSecretCreated": true,
           "infrastructureProvisioned": true
         },
-        "lastUpdated": "2026-09-10T18:54:28Z",
-        "nodeInfo": {
-          "architecture": "arm64",
-          "bootID": "fb5a880d-ea7a-48b0-a6b8-9025b8ca829c",
-          "containerRuntimeVersion": "containerd://2.3.4",
-          "kernelVersion": "7.0.12-linuxkit",
-          "kubeProxyVersion": "",
-          "kubeletVersion": "v1.34.11",
-          "machineID": "0e1b02c1a7654b8683fda8e8732304ae",
-          "operatingSystem": "linux",
-          "osImage": "Debian GNU/Linux 13 (trixie)",
-          "swap": {
-            "capacity": 1073737728
-          },
-          "systemUUID": "0e1b02c1a7654b8683fda8e8732304ae"
-        },
-        "nodeRef": {
-          "name": "dev-4-6zh89-49zkr"
-        },
-        "observedGeneration": 3,
-        "phase": "Running"
+        "lastUpdated": "2026-09-10T18:54:06Z",
+        "observedGeneration": 2,
+        "phase": "Provisioned"
       }
     },
     {
@@ -3714,7 +3481,7 @@
         "finalizers": [
           "machine.cluster.x-k8s.io"
         ],
-        "generation": 3,
+        "generation": 1,
         "labels": {
           "cluster.x-k8s.io/cluster-name": "dev-4",
           "cluster.x-k8s.io/deployment-name": "dev-4-default-2hxx9",
@@ -3769,24 +3536,8 @@
             "apiVersion": "cluster.x-k8s.io/v1beta2",
             "fieldsType": "FieldsV1",
             "fieldsV1": {
-              "f:spec": {
-                "f:bootstrap": {
-                  "f:dataSecretName": {}
-                },
-                "f:providerID": {}
-              }
-            },
-            "manager": "manager",
-            "operation": "Update",
-            "time": "2026-09-10T18:54:41Z"
-          },
-          {
-            "apiVersion": "cluster.x-k8s.io/v1beta2",
-            "fieldsType": "FieldsV1",
-            "fieldsV1": {
               "f:status": {
                 ".": {},
-                "f:addresses": {},
                 "f:conditions": {
                   ".": {},
                   "k:{\"type\":\"Available\"}": {
@@ -3887,33 +3638,7 @@
                     "f:conditions": {}
                   }
                 },
-                "f:initialization": {
-                  ".": {},
-                  "f:bootstrapDataSecretCreated": {},
-                  "f:infrastructureProvisioned": {}
-                },
                 "f:lastUpdated": {},
-                "f:nodeInfo": {
-                  ".": {},
-                  "f:architecture": {},
-                  "f:bootID": {},
-                  "f:containerRuntimeVersion": {},
-                  "f:kernelVersion": {},
-                  "f:kubeProxyVersion": {},
-                  "f:kubeletVersion": {},
-                  "f:machineID": {},
-                  "f:operatingSystem": {},
-                  "f:osImage": {},
-                  "f:swap": {
-                    ".": {},
-                    "f:capacity": {}
-                  },
-                  "f:systemUUID": {}
-                },
-                "f:nodeRef": {
-                  ".": {},
-                  "f:name": {}
-                },
                 "f:observedGeneration": {},
                 "f:phase": {}
               }
@@ -3921,7 +3646,7 @@
             "manager": "manager",
             "operation": "Update",
             "subresource": "status",
-            "time": "2026-09-10T18:54:46Z"
+            "time": "2026-09-10T18:54:01Z"
           }
         ],
         "name": "dev-4-default-2hxx9-xbstm-n827c",
@@ -3936,7 +3661,7 @@
             "uid": "3863c706-10d5-4314-8c6c-43dfb04008c5"
           }
         ],
-        "resourceVersion": "16013",
+        "resourceVersion": "15674",
         "uid": "e652db72-490a-4e1e-86a3-81335d04719d"
       },
       "spec": {
@@ -3945,8 +3670,7 @@
             "apiGroup": "bootstrap.cluster.x-k8s.io",
             "kind": "KubeadmConfig",
             "name": "dev-4-default-2hxx9-xbstm-n827c"
-          },
-          "dataSecretName": "dev-4-default-2hxx9-xbstm-n827c"
+          }
         },
         "clusterName": "dev-4",
         "deletion": {
@@ -3957,37 +3681,22 @@
           "kind": "DevMachine",
           "name": "dev-4-default-2hxx9-xbstm-n827c"
         },
-        "providerID": "docker:////dev-4-default-2hxx9-xbstm-n827c",
         "version": "v1.34.11"
       },
       "status": {
-        "addresses": [
-          {
-            "address": "dev-4-default-2hxx9-xbstm-n827c",
-            "type": "Hostname"
-          },
-          {
-            "address": "172.19.0.18",
-            "type": "InternalIP"
-          },
-          {
-            "address": "172.19.0.18",
-            "type": "ExternalIP"
-          }
-        ],
         "conditions": [
           {
             "lastTransitionTime": "2026-09-10T18:53:57Z",
             "message": "",
-            "observedGeneration": 3,
+            "observedGeneration": 1,
             "reason": "NotReady",
             "status": "False",
             "type": "Available"
           },
           {
             "lastTransitionTime": "2026-09-10T18:53:57Z",
-            "message": "* NodeHealthy:\n  * Node.Ready: [container runtime network not ready: NetworkReady=false reason:NetworkPluginNotReady message:Network plugin returns error: cni plugin not initialized, CSINode is not yet initialized]",
-            "observedGeneration": 3,
+            "message": "* BootstrapConfigReady:\n  * DataSecretAvailable: Waiting for Cluster control plane to be initialized\n  * CertificatesAvailable: Condition not yet reported\n* InfrastructureReady:\n  * CGroupsReady: WaitingForContainer\n  * ContainerProvisioned: WaitingForControlPlaneInitialized\n  * PreLoadedImagesReady: WaitingForContainer\n  * BootstrapCompleted: WaitingForContainer\n* NodeHealthy: Waiting for Cluster control plane to be initialized",
+            "observedGeneration": 1,
             "reason": "NotReady",
             "status": "False",
             "type": "Ready"
@@ -3995,47 +3704,47 @@
           {
             "lastTransitionTime": "2026-09-10T18:53:57Z",
             "message": "",
-            "observedGeneration": 3,
+            "observedGeneration": 1,
             "reason": "UpToDate",
             "status": "True",
             "type": "UpToDate"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:27Z",
-            "message": "",
-            "observedGeneration": 3,
-            "reason": "Ready",
-            "status": "True",
+            "lastTransitionTime": "2026-09-10T18:53:57Z",
+            "message": "* DataSecretAvailable: Waiting for Cluster control plane to be initialized\n* CertificatesAvailable: Condition not yet reported",
+            "observedGeneration": 1,
+            "reason": "NotReady",
+            "status": "False",
             "type": "BootstrapConfigReady"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:45Z",
-            "message": "",
-            "observedGeneration": 3,
-            "reason": "Ready",
-            "status": "True",
+            "lastTransitionTime": "2026-09-10T18:53:57Z",
+            "message": "* CGroupsReady: WaitingForContainer\n* ContainerProvisioned: WaitingForControlPlaneInitialized\n* PreLoadedImagesReady: WaitingForContainer\n* BootstrapCompleted: WaitingForContainer",
+            "observedGeneration": 1,
+            "reason": "NotReady",
+            "status": "False",
             "type": "InfrastructureReady"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:46Z",
-            "message": "* Node.Ready: [container runtime network not ready: NetworkReady=false reason:NetworkPluginNotReady message:Network plugin returns error: cni plugin not initialized, CSINode is not yet initialized]",
-            "observedGeneration": 3,
-            "reason": "NodeNotHealthy",
-            "status": "False",
+            "lastTransitionTime": "2026-09-10T18:53:57Z",
+            "message": "Waiting for Cluster control plane to be initialized",
+            "observedGeneration": 1,
+            "reason": "InspectionFailed",
+            "status": "Unknown",
             "type": "NodeHealthy"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:44Z",
-            "message": "* Node.Ready: [container runtime network not ready: NetworkReady=false reason:NetworkPluginNotReady message:Network plugin returns error: cni plugin not initialized, CSINode is not yet initialized]",
-            "observedGeneration": 3,
-            "reason": "NodeNotReady",
-            "status": "False",
+            "lastTransitionTime": "2026-09-10T18:53:57Z",
+            "message": "Waiting for Cluster control plane to be initialized",
+            "observedGeneration": 1,
+            "reason": "InspectionFailed",
+            "status": "Unknown",
             "type": "NodeReady"
           },
           {
             "lastTransitionTime": "2026-09-10T18:53:57Z",
             "message": "",
-            "observedGeneration": 3,
+            "observedGeneration": 1,
             "reason": "NotUpdating",
             "status": "False",
             "type": "Updating"
@@ -4043,7 +3752,7 @@
           {
             "lastTransitionTime": "2026-09-10T18:53:56Z",
             "message": "",
-            "observedGeneration": 3,
+            "observedGeneration": 1,
             "reason": "NotPaused",
             "status": "False",
             "type": "Paused"
@@ -4051,7 +3760,7 @@
           {
             "lastTransitionTime": "2026-09-10T18:53:57Z",
             "message": "",
-            "observedGeneration": 3,
+            "observedGeneration": 1,
             "reason": "NotDeleting",
             "status": "False",
             "type": "Deleting"
@@ -4061,57 +3770,40 @@
           "v1beta1": {
             "conditions": [
               {
-                "lastTransitionTime": "2026-09-10T18:54:27Z",
-                "status": "True",
+                "lastTransitionTime": "2026-09-10T18:54:01Z",
+                "message": "0 of 2 completed",
+                "reason": "WaitingForControlPlaneAvailable",
+                "severity": "Info",
+                "status": "False",
                 "type": "Ready"
               },
               {
-                "lastTransitionTime": "2026-09-10T18:54:27Z",
-                "status": "True",
+                "lastTransitionTime": "2026-09-10T18:54:00Z",
+                "reason": "WaitingForControlPlaneAvailable",
+                "severity": "Info",
+                "status": "False",
                 "type": "BootstrapReady"
               },
               {
-                "lastTransitionTime": "2026-09-10T18:54:46Z",
-                "reason": "Ready",
-                "status": "True",
+                "lastTransitionTime": "2026-09-10T18:54:01Z",
+                "message": "* CGroupsReady: WaitingForContainer\n* ContainerProvisioned: WaitingForControlPlaneInitialized\n* PreLoadedImagesReady: WaitingForContainer\n* BootstrapCompleted: WaitingForContainer",
+                "reason": "NotReady",
+                "status": "False",
                 "type": "InfrastructureReady"
               },
               {
-                "lastTransitionTime": "2026-09-10T18:54:46Z",
-                "message": "Node condition Ready is False",
-                "reason": "NodeConditionsFailed",
-                "severity": "Warning",
+                "lastTransitionTime": "2026-09-10T18:53:57Z",
+                "reason": "WaitingForNodeRef",
+                "severity": "Info",
                 "status": "False",
                 "type": "NodeHealthy"
               }
             ]
           }
         },
-        "initialization": {
-          "bootstrapDataSecretCreated": true,
-          "infrastructureProvisioned": true
-        },
-        "lastUpdated": "2026-09-10T18:54:46Z",
-        "nodeInfo": {
-          "architecture": "arm64",
-          "bootID": "fb5a880d-ea7a-48b0-a6b8-9025b8ca829c",
-          "containerRuntimeVersion": "containerd://2.3.4",
-          "kernelVersion": "7.0.12-linuxkit",
-          "kubeProxyVersion": "",
-          "kubeletVersion": "v1.34.11",
-          "machineID": "472216206cd5402885edfb17254ab9be",
-          "operatingSystem": "linux",
-          "osImage": "Debian GNU/Linux 13 (trixie)",
-          "swap": {
-            "capacity": 1073737728
-          },
-          "systemUUID": "472216206cd5402885edfb17254ab9be"
-        },
-        "nodeRef": {
-          "name": "dev-4-default-2hxx9-xbstm-n827c"
-        },
-        "observedGeneration": 3,
-        "phase": "Running"
+        "lastUpdated": "2026-09-10T18:53:57Z",
+        "observedGeneration": 1,
+        "phase": "Pending"
       }
     },
     {
@@ -4122,7 +3814,7 @@
         "finalizers": [
           "machine.cluster.x-k8s.io"
         ],
-        "generation": 3,
+        "generation": 1,
         "labels": {
           "cluster.x-k8s.io/cluster-name": "dev-4",
           "cluster.x-k8s.io/deployment-name": "dev-4-default-2hxx9",
@@ -4177,24 +3869,8 @@
             "apiVersion": "cluster.x-k8s.io/v1beta2",
             "fieldsType": "FieldsV1",
             "fieldsV1": {
-              "f:spec": {
-                "f:bootstrap": {
-                  "f:dataSecretName": {}
-                },
-                "f:providerID": {}
-              }
-            },
-            "manager": "manager",
-            "operation": "Update",
-            "time": "2026-09-10T18:54:42Z"
-          },
-          {
-            "apiVersion": "cluster.x-k8s.io/v1beta2",
-            "fieldsType": "FieldsV1",
-            "fieldsV1": {
               "f:status": {
                 ".": {},
-                "f:addresses": {},
                 "f:conditions": {
                   ".": {},
                   "k:{\"type\":\"Available\"}": {
@@ -4295,33 +3971,7 @@
                     "f:conditions": {}
                   }
                 },
-                "f:initialization": {
-                  ".": {},
-                  "f:bootstrapDataSecretCreated": {},
-                  "f:infrastructureProvisioned": {}
-                },
                 "f:lastUpdated": {},
-                "f:nodeInfo": {
-                  ".": {},
-                  "f:architecture": {},
-                  "f:bootID": {},
-                  "f:containerRuntimeVersion": {},
-                  "f:kernelVersion": {},
-                  "f:kubeProxyVersion": {},
-                  "f:kubeletVersion": {},
-                  "f:machineID": {},
-                  "f:operatingSystem": {},
-                  "f:osImage": {},
-                  "f:swap": {
-                    ".": {},
-                    "f:capacity": {}
-                  },
-                  "f:systemUUID": {}
-                },
-                "f:nodeRef": {
-                  ".": {},
-                  "f:name": {}
-                },
                 "f:observedGeneration": {},
                 "f:phase": {}
               }
@@ -4329,7 +3979,7 @@
             "manager": "manager",
             "operation": "Update",
             "subresource": "status",
-            "time": "2026-09-10T18:54:47Z"
+            "time": "2026-09-10T18:54:01Z"
           }
         ],
         "name": "dev-4-default-2hxx9-xbstm-pxmd5",
@@ -4344,7 +3994,7 @@
             "uid": "3863c706-10d5-4314-8c6c-43dfb04008c5"
           }
         ],
-        "resourceVersion": "16021",
+        "resourceVersion": "15673",
         "uid": "cb72c826-10db-4c98-9db2-54fc9be021d0"
       },
       "spec": {
@@ -4353,8 +4003,7 @@
             "apiGroup": "bootstrap.cluster.x-k8s.io",
             "kind": "KubeadmConfig",
             "name": "dev-4-default-2hxx9-xbstm-pxmd5"
-          },
-          "dataSecretName": "dev-4-default-2hxx9-xbstm-pxmd5"
+          }
         },
         "clusterName": "dev-4",
         "deletion": {
@@ -4365,37 +4014,22 @@
           "kind": "DevMachine",
           "name": "dev-4-default-2hxx9-xbstm-pxmd5"
         },
-        "providerID": "docker:////dev-4-default-2hxx9-xbstm-pxmd5",
         "version": "v1.34.11"
       },
       "status": {
-        "addresses": [
-          {
-            "address": "dev-4-default-2hxx9-xbstm-pxmd5",
-            "type": "Hostname"
-          },
-          {
-            "address": "172.19.0.17",
-            "type": "InternalIP"
-          },
-          {
-            "address": "172.19.0.17",
-            "type": "ExternalIP"
-          }
-        ],
         "conditions": [
           {
             "lastTransitionTime": "2026-09-10T18:53:57Z",
             "message": "",
-            "observedGeneration": 3,
+            "observedGeneration": 1,
             "reason": "NotReady",
             "status": "False",
             "type": "Available"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:47Z",
-            "message": "* NodeHealthy:\n  * Node.Ready: [container runtime network not ready: NetworkReady=false reason:NetworkPluginNotReady message:Network plugin returns error: cni plugin not initialized, CSINode is not yet initialized]",
-            "observedGeneration": 3,
+            "lastTransitionTime": "2026-09-10T18:53:57Z",
+            "message": "* BootstrapConfigReady:\n  * DataSecretAvailable: Waiting for Cluster control plane to be initialized\n  * CertificatesAvailable: Condition not yet reported\n* InfrastructureReady:\n  * CGroupsReady: WaitingForContainer\n  * ContainerProvisioned: WaitingForControlPlaneInitialized\n  * PreLoadedImagesReady: WaitingForContainer\n  * BootstrapCompleted: WaitingForContainer\n* NodeHealthy: Waiting for Cluster control plane to be initialized",
+            "observedGeneration": 1,
             "reason": "NotReady",
             "status": "False",
             "type": "Ready"
@@ -4403,47 +4037,47 @@
           {
             "lastTransitionTime": "2026-09-10T18:53:57Z",
             "message": "",
-            "observedGeneration": 3,
+            "observedGeneration": 1,
             "reason": "UpToDate",
             "status": "True",
             "type": "UpToDate"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:27Z",
-            "message": "",
-            "observedGeneration": 3,
-            "reason": "Ready",
-            "status": "True",
+            "lastTransitionTime": "2026-09-10T18:53:57Z",
+            "message": "* DataSecretAvailable: Waiting for Cluster control plane to be initialized\n* CertificatesAvailable: Condition not yet reported",
+            "observedGeneration": 1,
+            "reason": "NotReady",
+            "status": "False",
             "type": "BootstrapConfigReady"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:45Z",
-            "message": "",
-            "observedGeneration": 3,
-            "reason": "Ready",
-            "status": "True",
+            "lastTransitionTime": "2026-09-10T18:53:57Z",
+            "message": "* CGroupsReady: WaitingForContainer\n* ContainerProvisioned: WaitingForControlPlaneInitialized\n* PreLoadedImagesReady: WaitingForContainer\n* BootstrapCompleted: WaitingForContainer",
+            "observedGeneration": 1,
+            "reason": "NotReady",
+            "status": "False",
             "type": "InfrastructureReady"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:47Z",
-            "message": "* Node.Ready: [container runtime network not ready: NetworkReady=false reason:NetworkPluginNotReady message:Network plugin returns error: cni plugin not initialized, CSINode is not yet initialized]",
-            "observedGeneration": 3,
-            "reason": "NodeNotHealthy",
-            "status": "False",
+            "lastTransitionTime": "2026-09-10T18:53:57Z",
+            "message": "Waiting for Cluster control plane to be initialized",
+            "observedGeneration": 1,
+            "reason": "InspectionFailed",
+            "status": "Unknown",
             "type": "NodeHealthy"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:45Z",
-            "message": "* Node.Ready: [container runtime network not ready: NetworkReady=false reason:NetworkPluginNotReady message:Network plugin returns error: cni plugin not initialized, CSINode is not yet initialized]",
-            "observedGeneration": 3,
-            "reason": "NodeNotReady",
-            "status": "False",
+            "lastTransitionTime": "2026-09-10T18:53:57Z",
+            "message": "Waiting for Cluster control plane to be initialized",
+            "observedGeneration": 1,
+            "reason": "InspectionFailed",
+            "status": "Unknown",
             "type": "NodeReady"
           },
           {
             "lastTransitionTime": "2026-09-10T18:53:57Z",
             "message": "",
-            "observedGeneration": 3,
+            "observedGeneration": 1,
             "reason": "NotUpdating",
             "status": "False",
             "type": "Updating"
@@ -4451,7 +4085,7 @@
           {
             "lastTransitionTime": "2026-09-10T18:53:56Z",
             "message": "",
-            "observedGeneration": 3,
+            "observedGeneration": 1,
             "reason": "NotPaused",
             "status": "False",
             "type": "Paused"
@@ -4459,7 +4093,7 @@
           {
             "lastTransitionTime": "2026-09-10T18:53:57Z",
             "message": "",
-            "observedGeneration": 3,
+            "observedGeneration": 1,
             "reason": "NotDeleting",
             "status": "False",
             "type": "Deleting"
@@ -4469,57 +4103,40 @@
           "v1beta1": {
             "conditions": [
               {
-                "lastTransitionTime": "2026-09-10T18:54:27Z",
-                "status": "True",
+                "lastTransitionTime": "2026-09-10T18:54:01Z",
+                "message": "0 of 2 completed",
+                "reason": "WaitingForControlPlaneAvailable",
+                "severity": "Info",
+                "status": "False",
                 "type": "Ready"
               },
               {
-                "lastTransitionTime": "2026-09-10T18:54:27Z",
-                "status": "True",
+                "lastTransitionTime": "2026-09-10T18:53:59Z",
+                "reason": "WaitingForControlPlaneAvailable",
+                "severity": "Info",
+                "status": "False",
                 "type": "BootstrapReady"
               },
               {
-                "lastTransitionTime": "2026-09-10T18:54:46Z",
-                "reason": "Ready",
-                "status": "True",
+                "lastTransitionTime": "2026-09-10T18:54:01Z",
+                "message": "* CGroupsReady: WaitingForContainer\n* ContainerProvisioned: WaitingForControlPlaneInitialized\n* PreLoadedImagesReady: WaitingForContainer\n* BootstrapCompleted: WaitingForContainer",
+                "reason": "NotReady",
+                "status": "False",
                 "type": "InfrastructureReady"
               },
               {
-                "lastTransitionTime": "2026-09-10T18:54:47Z",
-                "message": "Node condition Ready is False",
-                "reason": "NodeConditionsFailed",
-                "severity": "Warning",
+                "lastTransitionTime": "2026-09-10T18:53:57Z",
+                "reason": "WaitingForNodeRef",
+                "severity": "Info",
                 "status": "False",
                 "type": "NodeHealthy"
               }
             ]
           }
         },
-        "initialization": {
-          "bootstrapDataSecretCreated": true,
-          "infrastructureProvisioned": true
-        },
-        "lastUpdated": "2026-09-10T18:54:47Z",
-        "nodeInfo": {
-          "architecture": "arm64",
-          "bootID": "fb5a880d-ea7a-48b0-a6b8-9025b8ca829c",
-          "containerRuntimeVersion": "containerd://2.3.4",
-          "kernelVersion": "7.0.12-linuxkit",
-          "kubeProxyVersion": "",
-          "kubeletVersion": "v1.34.11",
-          "machineID": "1250442722874e268be95ff36efe8537",
-          "operatingSystem": "linux",
-          "osImage": "Debian GNU/Linux 13 (trixie)",
-          "swap": {
-            "capacity": 1073737728
-          },
-          "systemUUID": "1250442722874e268be95ff36efe8537"
-        },
-        "nodeRef": {
-          "name": "dev-4-default-2hxx9-xbstm-pxmd5"
-        },
-        "observedGeneration": 3,
-        "phase": "Running"
+        "lastUpdated": "2026-09-10T18:53:57Z",
+        "observedGeneration": 1,
+        "phase": "Pending"
       }
     },
     {
@@ -4732,7 +4349,7 @@
             "manager": "manager",
             "operation": "Update",
             "subresource": "status",
-            "time": "2026-09-10T18:54:48Z"
+            "time": "2026-09-10T18:54:02Z"
           }
         ],
         "name": "dev-4-default-2hxx9",
@@ -4745,7 +4362,7 @@
             "uid": "0faa55ee-e3f0-4dca-a835-6829c01803cf"
           }
         ],
-        "resourceVersion": "16030",
+        "resourceVersion": "15682",
         "uid": "d5af661f-ec1a-4f14-802f-e886d74d675d"
       },
       "spec": {
@@ -4838,7 +4455,7 @@
           },
           {
             "lastTransitionTime": "2026-09-10T18:53:58Z",
-            "message": "* Machines dev-4-default-2hxx9-xbstm-n827c, dev-4-default-2hxx9-xbstm-pxmd5:\n  * NodeHealthy:\n    * Node.Ready: [container runtime network not ready: NetworkReady=false reason:NetworkPluginNotReady message:Network plugin returns error: cni plugin not initialized, CSINode is not yet initialized]",
+            "message": "* Machines dev-4-default-2hxx9-xbstm-n827c, dev-4-default-2hxx9-xbstm-pxmd5:\n  * BootstrapConfigReady:\n    * DataSecretAvailable: Waiting for Cluster control plane to be initialized\n    * CertificatesAvailable: Condition not yet reported\n  * InfrastructureReady:\n    * CGroupsReady: WaitingForContainer\n    * ContainerProvisioned: WaitingForControlPlaneInitialized\n    * PreLoadedImagesReady: WaitingForContainer\n    * BootstrapCompleted: WaitingForContainer\n  * NodeHealthy: Waiting for Cluster control plane to be initialized",
             "observedGeneration": 1,
             "reason": "NotReady",
             "status": "False",
@@ -5120,7 +4737,7 @@
             "manager": "manager",
             "operation": "Update",
             "subresource": "status",
-            "time": "2026-09-10T18:54:48Z"
+            "time": "2026-09-10T18:54:02Z"
           }
         ],
         "name": "dev-4-default-2hxx9-xbstm",
@@ -5135,7 +4752,7 @@
             "uid": "d5af661f-ec1a-4f14-802f-e886d74d675d"
           }
         ],
-        "resourceVersion": "16027",
+        "resourceVersion": "15683",
         "uid": "3863c706-10d5-4314-8c6c-43dfb04008c5"
       },
       "spec": {
@@ -5205,7 +4822,7 @@
           },
           {
             "lastTransitionTime": "2026-09-10T18:53:58Z",
-            "message": "* Machines dev-4-default-2hxx9-xbstm-n827c, dev-4-default-2hxx9-xbstm-pxmd5:\n  * NodeHealthy:\n    * Node.Ready: [container runtime network not ready: NetworkReady=false reason:NetworkPluginNotReady message:Network plugin returns error: cni plugin not initialized, CSINode is not yet initialized]",
+            "message": "* Machines dev-4-default-2hxx9-xbstm-n827c, dev-4-default-2hxx9-xbstm-pxmd5:\n  * BootstrapConfigReady:\n    * DataSecretAvailable: Waiting for Cluster control plane to be initialized\n    * CertificatesAvailable: Condition not yet reported\n  * InfrastructureReady:\n    * CGroupsReady: WaitingForContainer\n    * ContainerProvisioned: WaitingForControlPlaneInitialized\n    * PreLoadedImagesReady: WaitingForContainer\n    * BootstrapCompleted: WaitingForContainer\n  * NodeHealthy: Waiting for Cluster control plane to be initialized",
             "observedGeneration": 1,
             "reason": "NotReady",
             "status": "False",
@@ -5254,8 +4871,11 @@
                 "type": "MachinesCreated"
               },
               {
-                "lastTransitionTime": "2026-09-10T18:54:28Z",
-                "status": "True",
+                "lastTransitionTime": "2026-09-10T18:54:02Z",
+                "message": "0 of 2 completed",
+                "reason": "WaitingForControlPlaneAvailable @ Machine/dev-4-default-2hxx9-xbstm-n827c",
+                "severity": "Info",
+                "status": "False",
                 "type": "MachinesReady"
               },
               {

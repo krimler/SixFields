@@ -136,3 +136,35 @@ func newClient(t *testing.T, config *rest.Config) dynamic.Interface {
 	require.NoError(t, err)
 	return client
 }
+
+// A cluster that has settled produces no more events. Without a heartbeat the
+// watcher goes silent and anything waiting on it waits for ever, which is how
+// `cluster fixture record` hung on a cluster that was already ready.
+func TestWatch_HeartbeatsWhenNothingChanges(t *testing.T) {
+	config := envtest.Start(t)
+	client := newClient(t, config)
+
+	create(t, client, gvr("cluster.x-k8s.io", "clusters"), map[string]any{
+		"apiVersion": "cluster.x-k8s.io/v1beta2", "kind": "Cluster",
+		"metadata": map[string]any{"name": "quiet", "namespace": "default"},
+	})
+
+	watcher, err := watch.New(kubeconfigFor(t, config), "default")
+	require.NoError(t, err)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	snapshots, err := watcher.Watch(ctx, "quiet", 100*time.Millisecond)
+	require.NoError(t, err)
+
+	// Drain the initial burst, then wait for a beat with nothing changing.
+	<-snapshots
+	deadline := time.After(watch.Heartbeat * 3)
+	select {
+	case env := <-snapshots:
+		_, ok := env.Cluster()
+		require.True(t, ok, "a heartbeat envelope still describes the cluster")
+	case <-deadline:
+		t.Fatalf("no envelope within %s of silence", watch.Heartbeat*3)
+	}
+}

@@ -1,7 +1,7 @@
-Cluster/dev-1  class std · v1.34.11 · self
-infrastructure  ████████████ done     ready                                                                        1m30s
-control plane   ████████████ done     1/1 nodes                                                                    1m15s
-workers         ████████████ done     2/2 nodes                                                                    1m25s
-addons          ████████████ done     none
+Cluster/dev-4  class std · v1.34.11 · self
+infrastructure  ████████████ done     ready                                                                           4s
+control plane   ████████████ done     1/1 nodes                                                                      46s
+workers         ████████████ done     2/2 nodes                                                                      34s
+addons          ████████████ done     1/1 applied                                                                    15s
 
-ready in 4m20s
+ready in 1m39s

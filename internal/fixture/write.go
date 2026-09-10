@@ -17,6 +17,17 @@ func Filename(e snapshot.Envelope) string {
 	return fmt.Sprintf("t+%04ds.json", e.Meta.TPlusS)
 }
 
+// IsRecorded reports whether a scenario directory holds envelopes taken from a
+// real run. A recording is the source of truth and must not be overwritten by the
+// synthetic generator that stood in for it.
+func IsRecorded(dir string) bool {
+	envelopes, err := Load(dir)
+	if err != nil || len(envelopes) == 0 {
+		return false
+	}
+	return !envelopes[0].Meta.Synthetic
+}
+
 // Write writes one timeline into dir/<scenario>/. It removes envelopes that are no
 // longer produced, so a regenerated scenario never leaves a stale file behind.
 func Write(dir string, tl Timeline) error {

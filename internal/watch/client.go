@@ -148,6 +148,10 @@ func (c *Client) Snapshot(ctx context.Context, name string) (snapshot.Envelope, 
 	return c.envelope(name), nil
 }
 
+// Heartbeat is how long the watcher will stay silent when nothing is changing.
+// It is under the renderer's own five-second silence budget.
+const Heartbeat = 3 * time.Second
+
 // Watch keeps the cache current and emits an envelope whenever something changes,
 // debounced so the renderer is never asked to draw faster than its budget.
 func (c *Client) Watch(ctx context.Context, name string, debounce time.Duration) (<-chan snapshot.Envelope, error) {
@@ -187,17 +191,24 @@ func (c *Client) Watch(ctx context.Context, name string, debounce time.Duration)
 		ticker := time.NewTicker(debounce)
 		defer ticker.Stop()
 		dirty := true
+		last := time.Now()
 		for {
 			select {
 			case <-ctx.Done():
 				return
 			case <-events:
 				dirty = true
-			case <-ticker.C:
-				if !dirty {
+			case now := <-ticker.C:
+				// A cluster that has settled stops producing events, so a consumer
+				// waiting for one waits for ever: `cluster up` on an already-ready
+				// cluster and `cluster fixture record` both hung on this. The
+				// heartbeat also keeps the renderer's "no silent gaps" promise
+				// honest against a live cluster, not only against a replay.
+				if !dirty && now.Sub(last) < Heartbeat {
 					continue
 				}
 				dirty = false
+				last = now
 				select {
 				case out <- c.envelope(name):
 				case <-ctx.Done():

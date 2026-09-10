@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"path/filepath"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -125,6 +126,13 @@ func newFixtureSynthCmd() *cobra.Command {
 		Example: "  cluster fixture synth --out testdata/fixtures",
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			for _, tl := range fixture.All() {
+				// A recording outranks the stand-in that was written for it. This
+				// is the whole relationship between the two: synth fills a gap and
+				// steps aside as soon as a real run fills it.
+				if fixture.IsRecorded(filepath.Join(out, tl.Name)) {
+					outf(cmd, "%-22s skipped, already recorded\n", tl.Name)
+					continue
+				}
 				if err := fixture.Write(out, tl); err != nil {
 					return err
 				}

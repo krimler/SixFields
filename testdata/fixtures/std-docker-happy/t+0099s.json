@@ -1,10 +1,10 @@
 {
   "_meta": {
     "scenario": "std-docker-happy",
-    "t_plus_s": 60,
+    "t_plus_s": 99,
     "capi": "cluster.x-k8s.io/v1beta2",
     "note": "recorded from cluster dev-4 on 2026-09-10T18:53:53Z",
-    "recorded_at": "2026-09-10T18:54:49Z"
+    "recorded_at": "2026-09-10T18:55:27Z"
   },
   "objects": [
     {
@@ -300,12 +300,12 @@
             "manager": "manager",
             "operation": "Update",
             "subresource": "status",
-            "time": "2026-09-10T18:54:48Z"
+            "time": "2026-09-10T18:55:13Z"
           }
         ],
         "name": "dev-4",
         "namespace": "default",
-        "resourceVersion": "16031",
+        "resourceVersion": "16125",
         "uid": "0faa55ee-e3f0-4dca-a835-6829c01803cf"
       },
       "spec": {
@@ -352,11 +352,11 @@
       "status": {
         "conditions": [
           {
-            "lastTransitionTime": "2026-09-10T18:53:51Z",
-            "message": "* WorkersAvailable:\n  * MachineDeployment dev-4-default-2hxx9: 0 available replicas, at least 2 required (spec.strategy.rollout.maxUnavailable is 0, spec.replicas is 2)",
+            "lastTransitionTime": "2026-09-10T18:55:13Z",
+            "message": "",
             "observedGeneration": 3,
-            "reason": "NotAvailable",
-            "status": "False",
+            "reason": "Available",
+            "status": "True",
             "type": "Available"
           },
           {
@@ -392,11 +392,11 @@
             "type": "ControlPlaneAvailable"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:53:56Z",
-            "message": "* MachineDeployment dev-4-default-2hxx9: 0 available replicas, at least 2 required (spec.strategy.rollout.maxUnavailable is 0, spec.replicas is 2)",
+            "lastTransitionTime": "2026-09-10T18:55:13Z",
+            "message": "",
             "observedGeneration": 3,
-            "reason": "NotAvailable",
-            "status": "False",
+            "reason": "Available",
+            "status": "True",
             "type": "WorkersAvailable"
           },
           {
@@ -448,11 +448,11 @@
             "type": "ControlPlaneMachinesReady"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:53:58Z",
-            "message": "* Machines dev-4-default-2hxx9-xbstm-n827c, dev-4-default-2hxx9-xbstm-pxmd5:\n  * NodeHealthy:\n    * Node.Ready: [container runtime network not ready: NetworkReady=false reason:NetworkPluginNotReady message:Network plugin returns error: cni plugin not initialized, CSINode is not yet initialized]",
+            "lastTransitionTime": "2026-09-10T18:55:11Z",
+            "message": "",
             "observedGeneration": 3,
-            "reason": "NotReady",
-            "status": "False",
+            "reason": "Ready",
+            "status": "True",
             "type": "WorkerMachinesReady"
           },
           {
@@ -539,9 +539,9 @@
         "observedGeneration": 3,
         "phase": "Provisioned",
         "workers": {
-          "availableReplicas": 0,
+          "availableReplicas": 2,
           "desiredReplicas": 2,
-          "readyReplicas": 0,
+          "readyReplicas": 2,
           "replicas": 2,
           "upToDateReplicas": 2,
           "versions": [
@@ -3921,7 +3921,7 @@
             "manager": "manager",
             "operation": "Update",
             "subresource": "status",
-            "time": "2026-09-10T18:54:46Z"
+            "time": "2026-09-10T18:55:05Z"
           }
         ],
         "name": "dev-4-default-2hxx9-xbstm-n827c",
@@ -3936,7 +3936,7 @@
             "uid": "3863c706-10d5-4314-8c6c-43dfb04008c5"
           }
         ],
-        "resourceVersion": "16013",
+        "resourceVersion": "16087",
         "uid": "e652db72-490a-4e1e-86a3-81335d04719d"
       },
       "spec": {
@@ -3977,19 +3977,19 @@
         ],
         "conditions": [
           {
-            "lastTransitionTime": "2026-09-10T18:53:57Z",
+            "lastTransitionTime": "2026-09-10T18:55:05Z",
             "message": "",
             "observedGeneration": 3,
-            "reason": "NotReady",
-            "status": "False",
+            "reason": "Available",
+            "status": "True",
             "type": "Available"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:53:57Z",
-            "message": "* NodeHealthy:\n  * Node.Ready: [container runtime network not ready: NetworkReady=false reason:NetworkPluginNotReady message:Network plugin returns error: cni plugin not initialized, CSINode is not yet initialized]",
+            "lastTransitionTime": "2026-09-10T18:55:05Z",
+            "message": "",
             "observedGeneration": 3,
-            "reason": "NotReady",
-            "status": "False",
+            "reason": "Ready",
+            "status": "True",
             "type": "Ready"
           },
           {
@@ -4017,19 +4017,19 @@
             "type": "InfrastructureReady"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:46Z",
-            "message": "* Node.Ready: [container runtime network not ready: NetworkReady=false reason:NetworkPluginNotReady message:Network plugin returns error: cni plugin not initialized, CSINode is not yet initialized]",
+            "lastTransitionTime": "2026-09-10T18:55:05Z",
+            "message": "",
             "observedGeneration": 3,
-            "reason": "NodeNotHealthy",
-            "status": "False",
+            "reason": "NodeHealthy",
+            "status": "True",
             "type": "NodeHealthy"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:44Z",
-            "message": "* Node.Ready: [container runtime network not ready: NetworkReady=false reason:NetworkPluginNotReady message:Network plugin returns error: cni plugin not initialized, CSINode is not yet initialized]",
+            "lastTransitionTime": "2026-09-10T18:55:05Z",
+            "message": "",
             "observedGeneration": 3,
-            "reason": "NodeNotReady",
-            "status": "False",
+            "reason": "NodeReady",
+            "status": "True",
             "type": "NodeReady"
           },
           {
@@ -4077,11 +4077,8 @@
                 "type": "InfrastructureReady"
               },
               {
-                "lastTransitionTime": "2026-09-10T18:54:46Z",
-                "message": "Node condition Ready is False",
-                "reason": "NodeConditionsFailed",
-                "severity": "Warning",
-                "status": "False",
+                "lastTransitionTime": "2026-09-10T18:55:05Z",
+                "status": "True",
                 "type": "NodeHealthy"
               }
             ]
@@ -4329,7 +4326,7 @@
             "manager": "manager",
             "operation": "Update",
             "subresource": "status",
-            "time": "2026-09-10T18:54:47Z"
+            "time": "2026-09-10T18:55:11Z"
           }
         ],
         "name": "dev-4-default-2hxx9-xbstm-pxmd5",
@@ -4344,7 +4341,7 @@
             "uid": "3863c706-10d5-4314-8c6c-43dfb04008c5"
           }
         ],
-        "resourceVersion": "16021",
+        "resourceVersion": "16112",
         "uid": "cb72c826-10db-4c98-9db2-54fc9be021d0"
       },
       "spec": {
@@ -4385,19 +4382,19 @@
         ],
         "conditions": [
           {
-            "lastTransitionTime": "2026-09-10T18:53:57Z",
+            "lastTransitionTime": "2026-09-10T18:55:11Z",
             "message": "",
             "observedGeneration": 3,
-            "reason": "NotReady",
-            "status": "False",
+            "reason": "Available",
+            "status": "True",
             "type": "Available"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:47Z",
-            "message": "* NodeHealthy:\n  * Node.Ready: [container runtime network not ready: NetworkReady=false reason:NetworkPluginNotReady message:Network plugin returns error: cni plugin not initialized, CSINode is not yet initialized]",
+            "lastTransitionTime": "2026-09-10T18:55:11Z",
+            "message": "",
             "observedGeneration": 3,
-            "reason": "NotReady",
-            "status": "False",
+            "reason": "Ready",
+            "status": "True",
             "type": "Ready"
           },
           {
@@ -4425,19 +4422,19 @@
             "type": "InfrastructureReady"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:47Z",
-            "message": "* Node.Ready: [container runtime network not ready: NetworkReady=false reason:NetworkPluginNotReady message:Network plugin returns error: cni plugin not initialized, CSINode is not yet initialized]",
+            "lastTransitionTime": "2026-09-10T18:55:11Z",
+            "message": "",
             "observedGeneration": 3,
-            "reason": "NodeNotHealthy",
-            "status": "False",
+            "reason": "NodeHealthy",
+            "status": "True",
             "type": "NodeHealthy"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:54:45Z",
-            "message": "* Node.Ready: [container runtime network not ready: NetworkReady=false reason:NetworkPluginNotReady message:Network plugin returns error: cni plugin not initialized, CSINode is not yet initialized]",
+            "lastTransitionTime": "2026-09-10T18:55:10Z",
+            "message": "",
             "observedGeneration": 3,
-            "reason": "NodeNotReady",
-            "status": "False",
+            "reason": "NodeReady",
+            "status": "True",
             "type": "NodeReady"
           },
           {
@@ -4485,11 +4482,8 @@
                 "type": "InfrastructureReady"
               },
               {
-                "lastTransitionTime": "2026-09-10T18:54:47Z",
-                "message": "Node condition Ready is False",
-                "reason": "NodeConditionsFailed",
-                "severity": "Warning",
-                "status": "False",
+                "lastTransitionTime": "2026-09-10T18:55:11Z",
+                "status": "True",
                 "type": "NodeHealthy"
               }
             ]
@@ -4732,7 +4726,7 @@
             "manager": "manager",
             "operation": "Update",
             "subresource": "status",
-            "time": "2026-09-10T18:54:48Z"
+            "time": "2026-09-10T18:55:13Z"
           }
         ],
         "name": "dev-4-default-2hxx9",
@@ -4745,7 +4739,7 @@
             "uid": "0faa55ee-e3f0-4dca-a835-6829c01803cf"
           }
         ],
-        "resourceVersion": "16030",
+        "resourceVersion": "16123",
         "uid": "d5af661f-ec1a-4f14-802f-e886d74d675d"
       },
       "spec": {
@@ -4794,14 +4788,14 @@
         }
       },
       "status": {
-        "availableReplicas": 0,
+        "availableReplicas": 2,
         "conditions": [
           {
-            "lastTransitionTime": "2026-09-10T18:53:55Z",
-            "message": "0 available replicas, at least 2 required (spec.strategy.rollout.maxUnavailable is 0, spec.replicas is 2)",
+            "lastTransitionTime": "2026-09-10T18:55:12Z",
+            "message": "",
             "observedGeneration": 1,
-            "reason": "NotAvailable",
-            "status": "False",
+            "reason": "Available",
+            "status": "True",
             "type": "Available"
           },
           {
@@ -4837,11 +4831,11 @@
             "type": "ScalingUp"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:53:58Z",
-            "message": "* Machines dev-4-default-2hxx9-xbstm-n827c, dev-4-default-2hxx9-xbstm-pxmd5:\n  * NodeHealthy:\n    * Node.Ready: [container runtime network not ready: NetworkReady=false reason:NetworkPluginNotReady message:Network plugin returns error: cni plugin not initialized, CSINode is not yet initialized]",
+            "lastTransitionTime": "2026-09-10T18:55:11Z",
+            "message": "",
             "observedGeneration": 1,
-            "reason": "NotReady",
-            "status": "False",
+            "reason": "Ready",
+            "status": "True",
             "type": "MachinesReady"
           },
           {
@@ -4871,41 +4865,32 @@
         ],
         "deprecated": {
           "v1beta1": {
-            "availableReplicas": 0,
+            "availableReplicas": 2,
             "conditions": [
               {
-                "lastTransitionTime": "2026-09-10T18:53:52Z",
-                "message": "Minimum availability requires 2 replicas, current 0 available",
-                "reason": "WaitingForAvailableMachines",
-                "severity": "Warning",
-                "status": "False",
+                "lastTransitionTime": "2026-09-10T18:55:12Z",
+                "status": "True",
                 "type": "Ready"
               },
               {
-                "lastTransitionTime": "2026-09-10T18:53:52Z",
-                "message": "Minimum availability requires 2 replicas, current 0 available",
-                "reason": "WaitingForAvailableMachines",
-                "severity": "Warning",
-                "status": "False",
+                "lastTransitionTime": "2026-09-10T18:55:12Z",
+                "status": "True",
                 "type": "Available"
               },
               {
-                "lastTransitionTime": "2026-09-10T18:53:58Z",
-                "message": "Scaling up MachineSet to 2 replicas (actual 0)",
-                "reason": "ScalingUp",
-                "severity": "Warning",
-                "status": "False",
+                "lastTransitionTime": "2026-09-10T18:55:11Z",
+                "status": "True",
                 "type": "MachineSetReady"
               }
             ],
-            "readyReplicas": 0,
-            "unavailableReplicas": 2,
+            "readyReplicas": 2,
+            "unavailableReplicas": 0,
             "updatedReplicas": 2
           }
         },
         "observedGeneration": 1,
         "phase": "Running",
-        "readyReplicas": 0,
+        "readyReplicas": 2,
         "replicas": 2,
         "selector": "cluster.x-k8s.io/cluster-name=dev-4,topology.cluster.x-k8s.io/deployment-name=default,topology.cluster.x-k8s.io/owned=",
         "upToDateReplicas": 2,
@@ -5120,7 +5105,7 @@
             "manager": "manager",
             "operation": "Update",
             "subresource": "status",
-            "time": "2026-09-10T18:54:48Z"
+            "time": "2026-09-10T18:55:11Z"
           }
         ],
         "name": "dev-4-default-2hxx9-xbstm",
@@ -5135,7 +5120,7 @@
             "uid": "d5af661f-ec1a-4f14-802f-e886d74d675d"
           }
         ],
-        "resourceVersion": "16027",
+        "resourceVersion": "16114",
         "uid": "3863c706-10d5-4314-8c6c-43dfb04008c5"
       },
       "spec": {
@@ -5177,7 +5162,7 @@
         }
       },
       "status": {
-        "availableReplicas": 0,
+        "availableReplicas": 2,
         "conditions": [
           {
             "lastTransitionTime": "2026-09-10T18:53:54Z",
@@ -5204,11 +5189,11 @@
             "type": "ScalingUp"
           },
           {
-            "lastTransitionTime": "2026-09-10T18:53:58Z",
-            "message": "* Machines dev-4-default-2hxx9-xbstm-n827c, dev-4-default-2hxx9-xbstm-pxmd5:\n  * NodeHealthy:\n    * Node.Ready: [container runtime network not ready: NetworkReady=false reason:NetworkPluginNotReady message:Network plugin returns error: cni plugin not initialized, CSINode is not yet initialized]",
+            "lastTransitionTime": "2026-09-10T18:55:11Z",
+            "message": "",
             "observedGeneration": 1,
-            "reason": "NotReady",
-            "status": "False",
+            "reason": "Ready",
+            "status": "True",
             "type": "MachinesReady"
           },
           {
@@ -5238,14 +5223,11 @@
         ],
         "deprecated": {
           "v1beta1": {
-            "availableReplicas": 0,
+            "availableReplicas": 2,
             "conditions": [
               {
-                "lastTransitionTime": "2026-09-10T18:53:57Z",
-                "message": "Scaling up MachineSet to 2 replicas (actual 0)",
-                "reason": "ScalingUp",
-                "severity": "Warning",
-                "status": "False",
+                "lastTransitionTime": "2026-09-10T18:55:11Z",
+                "status": "True",
                 "type": "Ready"
               },
               {
@@ -5259,20 +5241,17 @@
                 "type": "MachinesReady"
               },
               {
-                "lastTransitionTime": "2026-09-10T18:53:54Z",
-                "message": "Scaling up MachineSet to 2 replicas (actual 0)",
-                "reason": "ScalingUp",
-                "severity": "Warning",
-                "status": "False",
+                "lastTransitionTime": "2026-09-10T18:55:11Z",
+                "status": "True",
                 "type": "Resized"
               }
             ],
             "fullyLabeledReplicas": 2,
-            "readyReplicas": 0
+            "readyReplicas": 2
           }
         },
         "observedGeneration": 1,
-        "readyReplicas": 0,
+        "readyReplicas": 2,
         "replicas": 2,
         "selector": "cluster.x-k8s.io/cluster-name=dev-4,machine-template-hash=2658711711-xbstm,topology.cluster.x-k8s.io/deployment-name=default,topology.cluster.x-k8s.io/owned=",
         "upToDateReplicas": 2,
