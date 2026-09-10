@@ -1,0 +1,20 @@
+---
+# spec.topology.class became spec.topology.classRef.{name,namespace} in the
+# v1beta2 contract (api@v1.14.2 core/v1beta2/cluster_types.go Topology.ClassRef);
+# PLAN.md still shows the v1beta1 spelling.
+# ${WORKLOAD_K8S_VERSION} is substituted from versions.env by hack/render.sh.
+apiVersion: cluster.x-k8s.io/v1beta2
+kind: Cluster
+metadata:
+  name: dev-1
+  namespace: default
+spec:
+  topology:
+    classRef:
+      name: std
+    version: ${WORKLOAD_K8S_VERSION}
+    workers:
+      machineDeployments:
+      - name: default
+        class: default
+        replicas: 2

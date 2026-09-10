@@ -1,0 +1,24 @@
+---
+# size and placement are the only variables a user may set; both are validated by
+# the class (assembly/clusterclass/base/clusterclass.yaml). placement: hosted is
+# wired in PLAN.md Phase 4 and resolves to a second class there.
+apiVersion: cluster.x-k8s.io/v1beta2
+kind: Cluster
+metadata:
+  name: ha-1
+  namespace: default
+spec:
+  topology:
+    classRef:
+      name: std
+    version: ${WORKLOAD_K8S_VERSION}
+    workers:
+      machineDeployments:
+      - name: default
+        class: default
+        replicas: 3
+    variables:
+    - name: size
+      value: ha
+    - name: placement
+      value: hosted

@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://capi-distro.io/schema/explain.v1.json",
+  "title": "cluster why --explain model output, v1",
+  "description": "The only shape a model may return for `cluster why --explain`. Output that does not validate is discarded and the runbook for the code stands alone. Every name, number and reason in `lines` must appear in the envelope the model was given; the grounding test asserts that separately.",
+  "type": "object",
+  "required": ["code", "lines", "next_command"],
+  "additionalProperties": false,
+  "properties": {
+    "code": {
+      "description": "The stall code being explained. Must equal the code the analyzer emitted.",
+      "enum": [
+        "CAPI-INFRA-001",
+        "CAPI-CP-001",
+        "CAPI-CP-002",
+        "CAPI-CP-003",
+        "CAPI-WRK-001",
+        "CAPI-WRK-002",
+        "CAPI-TOPO-001",
+        "CAPI-ADDON-001",
+        "CAPI-VERSION-001"
+      ]
+    },
+    "lines": {
+      "description": "Exactly three plain-language lines: what is blocked, why, and what changes when it is fixed. No condition type names, no markdown, no newlines.",
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 160,
+        "pattern": "^[^\\n]*$"
+      }
+    },
+    "next_command": {
+      "description": "One command the user can paste, on one line. A kubectl, cluster, docker or clusterctl invocation.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 300,
+      "pattern": "^(kubectl|cluster|clusterctl|docker|make) [^\\n]*$"
+    }
+  }
+}

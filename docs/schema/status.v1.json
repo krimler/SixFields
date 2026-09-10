@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://capi-distro.io/schema/status.v1.json",
+  "title": "cluster status --json, v1",
+  "description": "The output of `cluster status --json` and `cluster up --json`. This is a stability contract: any change to a field's name, type or presence requires a new file, status.v2.json, and a new value of the top-level `version`. Field names and optionality are taken from the json tags on fold.Result, fold.Phase and snapshot.Ref.",
+  "type": "object",
+  "required": ["version", "status"],
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "description": "Schema version. The cluster's Kubernetes version is status.version, which keeps that name because it is fold.Result's json tag.",
+      "const": "v1"
+    },
+    "status": { "$ref": "#/$defs/result" },
+    "envelope": {
+      "description": "The snapshot the status was folded from, emitted with --verbose. Objects are raw Kubernetes JSON of a dozen kinds from three providers; this tool owns none of their schemas and does not constrain them.",
+      "type": "object",
+      "required": ["_meta", "objects"],
+      "additionalProperties": false,
+      "properties": {
+        "_meta": {
+          "type": "object",
+          "required": ["scenario", "t_plus_s", "capi", "note"],
+          "additionalProperties": false,
+          "properties": {
+            "scenario": { "type": "string" },
+            "t_plus_s": { "type": "integer" },
+            "capi": { "type": "string" },
+            "note": { "type": "string" },
+            "synthetic": { "type": "boolean" },
+            "recorded_at": { "type": "string" }
+          }
+        },
+        "objects": {
+          "type": ["array", "null"],
+          "items": { "type": "object" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "result": {
+      "description": "fold.Result: one cluster folded into four phases at one instant.",
+      "type": "object",
+      "required": ["cluster", "phases", "ready", "at", "elapsed_ns"],
+      "additionalProperties": false,
+      "properties": {
+        "cluster": { "$ref": "#/$defs/ref" },
+        "class": {
+          "description": "spec.topology.class. Absent when the Cluster has no topology.",
+          "type": "string"
+        },
+        "version": {
+          "description": "spec.topology.version, the cluster's Kubernetes version. Not the schema version.",
+          "type": "string"
+        },
+        "placement": {
+          "description": "The value of the class's `placement` variable: self or hosted. Absent when the class does not expose it.",
+          "type": "string"
+        },
+        "phases": {
+          "description": "Always four phases in fold.Order, or null when the envelope held no Cluster.",
+          "type": ["array", "null"],
+          "items": { "$ref": "#/$defs/phase" },
+          "maxItems": 4
+        },
+        "ready": {
+          "description": "True when every phase is done.",
+          "type": "boolean"
+        },
+        "at": {
+          "description": "The instant the snapshot was read at, RFC 3339. On a replay this comes from _meta.t_plus_s, not from the wall clock.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "elapsed_ns": {
+          "description": "Now minus the Cluster's creationTimestamp, in nanoseconds. Zero when either is unknown.",
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "phase": {
+      "description": "fold.Phase: one of the four user-facing phases.",
+      "type": "object",
+      "required": ["name", "state", "detail", "elapsed_ns", "contributors"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "enum": ["infrastructure", "control plane", "workers", "addons"]
+        },
+        "state": {
+          "description": "stalled is running with no condition transition on any contributing object for longer than the stall threshold.",
+          "enum": ["pending", "running", "done", "stalled"]
+        },
+        "detail": {
+          "description": "The one thing worth showing next to the phase: \"2/3 nodes\", \"hosted\", \"no workers\".",
+          "type": "string"
+        },
+        "elapsed_ns": {
+          "description": "How long the phase has been running, or how long it took, in nanoseconds.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "last_transition": {
+          "description": "The most recent condition change on any contributing object, RFC 3339. Absent when no contributing object has ever transitioned; stall detection is entirely about this field.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "started_at": {
+          "description": "When the previous phase finished, RFC 3339. Absent when that is unknown.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "contributors": {
+          "description": "Every object whose conditions were read for this phase. Null when the phase has none, which is how \"no workers\" and \"addons: none\" appear.",
+          "type": ["array", "null"],
+          "items": { "$ref": "#/$defs/ref" }
+        }
+      }
+    },
+    "ref": {
+      "description": "snapshot.Ref: one object, named the way a user sees it in a stall line.",
+      "type": "object",
+      "required": ["kind", "name"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "description": "Kubernetes kind, e.g. KubeadmControlPlane.",
+          "type": "string"
+        },
+        "name": {
+          "description": "metadata.name.",
+          "type": "string"
+        },
+        "namespace": {
+          "description": "metadata.namespace. Absent for cluster-scoped objects.",
+          "type": "string"
+        },
+        "group": {
+          "description": "API group without the version, e.g. controlplane.cluster.x-k8s.io. Absent for core objects.",
+          "type": "string"
+        }
+      }
+    }
+  }
+}

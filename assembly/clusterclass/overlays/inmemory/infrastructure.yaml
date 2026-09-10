@@ -1,0 +1,63 @@
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta2
+kind: DevClusterTemplate
+metadata:
+  name: std-cluster
+spec:
+  template:
+    spec:
+      backend:
+        # InMemoryClusterBackendSpec has no fields
+        # (test@v1.14.2 infrastructure/docker/api/v1beta2/devcluster_types.go:83).
+        inMemory: {}
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta2
+kind: DevMachineTemplate
+metadata:
+  name: std-control-plane-machine
+spec:
+  template:
+    spec:
+      backend:
+        # Provisioning is sequential vm -> node -> etcd -> apiServer, each waiting
+        # its own startupDuration after the previous condition flipped
+        # (test@v1.14.2 infrastructure/docker/internal/controllers/backends/inmemory/inmemorymachine_backend.go:401),
+        # so a control-plane machine here is ready in ~5s plus jitter. Raising one
+        # of these past --stall-after is how PLAN.md Phase 3 induces a stall.
+        inMemory:
+          vm:
+            provisioning:
+              startupDuration: "2s"
+              startupJitter: "0.2"
+          node:
+            provisioning:
+              startupDuration: "1s"
+              startupJitter: "0.2"
+          etcd:
+            provisioning:
+              startupDuration: "1s"
+              startupJitter: "0.2"
+          apiServer:
+            provisioning:
+              startupDuration: "1s"
+              startupJitter: "0.2"
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta2
+kind: DevMachineTemplate
+metadata:
+  name: std-default-machine
+spec:
+  template:
+    spec:
+      backend:
+        # etcd and apiServer are omitted: both reconcilers no-op on a machine that
+        # is not a control-plane machine (inmemorymachine_backend.go:402, :643).
+        inMemory:
+          vm:
+            provisioning:
+              startupDuration: "2s"
+              startupJitter: "0.2"
+          node:
+            provisioning:
+              startupDuration: "1s"
+              startupJitter: "0.2"

@@ -1,0 +1,13 @@
+---
+# yamllint reads this file from the working directory only, so it lives at the
+# repo root even though `make lint-yaml` names subdirectories.
+extends: default
+
+rules:
+  # Pinned image references carry a sha256 digest and do not wrap.
+  line-length:
+    max: 120
+  # CAPI's own manifests put sequences at the parent's indentation; this repo
+  # follows them, so require consistency rather than one style.
+  indentation:
+    indent-sequences: consistent
