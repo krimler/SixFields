@@ -1,0 +1,56 @@
+# The linters CLAUDE.md names. This config is part of the repo and is not loosened
+# to make a build pass: if a rule is wrong for this code, the fix is a nolint with
+# a reason on the line, not a weaker config.
+version: "2"
+
+linters:
+  default: none
+  enable:
+    - errcheck
+    - errorlint
+    - gocritic
+    - govet
+    - ineffassign
+    - misspell
+    - revive
+    - staticcheck
+    - unparam
+    - unused
+
+  settings:
+    revive:
+      # `exported` is deliberately not enabled. Its failure mode is a comment that
+      # restates the declaration, which CLAUDE.md's no-slop rule forbids; the
+      # exported things here that need explaining have real comments already.
+      rules:
+        - name: package-comments
+        - name: indent-error-flow
+        - name: errorf
+        - name: increment-decrement
+        - name: var-naming
+        - name: range
+        - name: superfluous-else
+        - name: unreachable-code
+        - name: redefines-builtin-id
+    gocritic:
+      enabled-tags: [diagnostic, style, performance]
+      disabled-checks:
+        # The codebase reads better with if/else than with a switch in several
+        # two-branch cases; the rest of gocritic's style checks stay on.
+        - ifElseChain
+        # The pure core takes values and returns values on purpose: a caller can
+        # never be surprised by a mutation. These two checks trade that for a
+        # copying win this workload — tens of objects per snapshot — does not need.
+        - hugeParam
+        - rangeValCopy
+
+  exclusions:
+    rules:
+      # Test helpers name behaviour, not exported API, and a golden comparison
+      # that fails is already reported by the test framework.
+      - path: _test\.go
+        linters: [errcheck, revive, unparam]
+
+formatters:
+  enable:
+    - gofmt

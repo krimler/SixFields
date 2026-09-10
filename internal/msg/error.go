@@ -1,5 +1,7 @@
 package msg
 
+import "errors"
+
 // Exit codes. The contract is documented in docs/user-guide.md and asserted per
 // scenario by the golden tests.
 const (
@@ -73,17 +75,4 @@ func ExitCodeOf(err error) int {
 }
 
 // As is errors.As, kept here so callers of this package need only one import.
-func As(err error, target **Error) bool {
-	for err != nil {
-		if e, ok := err.(*Error); ok {
-			*target = e
-			return true
-		}
-		u, ok := err.(interface{ Unwrap() error })
-		if !ok {
-			return false
-		}
-		err = u.Unwrap()
-	}
-	return false
-}
+func As(err error, target **Error) bool { return errors.As(err, target) }

@@ -167,8 +167,8 @@ func stallBlock(v View, theme Theme) []string {
 	}
 	lines = append(lines, "next: "+nextAction(s))
 	if v.Verbose {
-		lines = append(lines, "", "why "+s.Object.String()+" was chosen:")
-		lines = append(lines, fmt.Sprintf("  %s=%s reason=%s", s.ConditionType, "False", s.Reason))
+		lines = append(lines, "", "why "+s.Object.String()+" was chosen:",
+			fmt.Sprintf("  %s=False reason=%s", s.ConditionType, s.Reason))
 		if s.FullMessage != "" {
 			lines = append(lines, "  "+s.FullMessage)
 		} else if s.Message != "" {

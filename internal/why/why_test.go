@@ -1,7 +1,13 @@
 package why_test
 
 import (
+	"encoding/json"
+	"go/ast"
+	"go/parser"
+	"go/token"
+	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -155,7 +161,75 @@ func TestUX_EveryStallCodeHasARunbook(t *testing.T) {
 		stall := rank(t, scenario)
 		_, ok := msg.Longform(stall.Code)
 		require.True(t, ok, "%s emits %s which has no long form", scenario, stall.Code)
-		require.FileExists(t, filepath.Join("../../docs/runbooks", string(stall.Code)+".md"),
+		require.FileExists(t, filepath.Join("..", "..", "docs", "runbooks", string(stall.Code)+".md"),
 			"%s emits %s which has no runbook", scenario, stall.Code)
 	}
+}
+
+// CLAUDE.md rule 2, for the ranker: every condition type the classifier keys off
+// must exist in the pinned release. The names live in two packages, so both are
+// checked the same way.
+func TestWhy_OnlyUsesSnapshotConditions(t *testing.T) {
+	known := conditionValues(t)
+	require.NotEmpty(t, known)
+
+	fset := token.NewFileSet()
+	f, err := parser.ParseFile(fset, "../why/why.go", nil, 0)
+	require.NoError(t, err)
+
+	checked := 0
+	ast.Inspect(f, func(n ast.Node) bool {
+		entry, ok := n.(*ast.KeyValueExpr)
+		if !ok {
+			return true
+		}
+		lit, ok := entry.Key.(*ast.BasicLit)
+		if !ok || lit.Kind != token.STRING {
+			return true
+		}
+		value, err := strconv.Unquote(lit.Value)
+		require.NoError(t, err)
+		// Only the condition maps hold condition names; everything else in this
+		// file keyed by a string is a kind, which the snapshot also knows.
+		if !known[value] && !isKind(value) {
+			t.Errorf("%q is neither a condition type nor a kind in docs/api-snapshot.json", value)
+		}
+		checked++
+		return true
+	})
+	require.NotZero(t, checked)
+}
+
+func isKind(value string) bool {
+	for _, kind := range []string{
+		"Machine", "DevMachine", "DockerMachine", "KubeadmConfig", "K0sWorkerConfig",
+		"MachineSet", "MachineDeployment", "MachinePool", "DevMachinePool",
+		"KubeadmControlPlane", "K0sControlPlane", "K0smotronControlPlane",
+		"DevCluster", "DockerCluster", "ClusterResourceSetBinding", "Cluster",
+	} {
+		if value == kind {
+			return true
+		}
+	}
+	return false
+}
+
+func conditionValues(t *testing.T) map[string]bool {
+	t.Helper()
+	b, err := os.ReadFile("../../docs/api-snapshot.json")
+	require.NoError(t, err)
+	var snap struct {
+		Entries []struct {
+			Class string `json:"class"`
+			Value string `json:"value"`
+		} `json:"entries"`
+	}
+	require.NoError(t, json.Unmarshal(b, &snap))
+	out := map[string]bool{}
+	for _, e := range snap.Entries {
+		if e.Class == "condition" {
+			out[e.Value] = true
+		}
+	}
+	return out
 }

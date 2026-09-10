@@ -105,7 +105,7 @@ func Fold(env snapshot.Envelope, opt Options) Result {
 		return Result{At: opt.Now}
 	}
 	res := Result{
-		Cluster:   cluster.Ref(),
+		Cluster: cluster.Ref(),
 		// v1beta2 spells this spec.topology.classRef.{name,namespace}; the
 		// v1beta1 spelling (spec.topology.class) is gone
 		// (api@v1.14.2 core/v1beta2/cluster_types.go, Topology.ClassRef).
@@ -568,7 +568,7 @@ func humanise(reason string) string {
 	start := 0
 	runes := []rune(reason)
 	for i := 1; i < len(runes); i++ {
-		if runes[i] >= 'A' && runes[i] <= 'Z' && !(runes[i-1] >= 'A' && runes[i-1] <= 'Z') {
+		if runes[i] >= 'A' && runes[i] <= 'Z' && (runes[i-1] < 'A' || runes[i-1] > 'Z') {
 			words = append(words, string(runes[start:i]))
 			start = i
 		}

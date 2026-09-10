@@ -10,27 +10,6 @@ const (
 	clusterControlPlaneInit      = "ControlPlaneInitialized"
 	clusterWorkersAvailable      = "WorkersAvailable"
 	clusterTopologyReconciled    = "TopologyReconciled"
-
-	// Shared, set by most kinds (core/v1beta2/condition_consts.go).
-	available          = "Available"
-	ready              = "Ready"
-	machinesReady      = "MachinesReady"
-	resourcesApplied   = "ResourcesApplied"
-	nodeHealthy        = "NodeHealthy"
-	bootstrapConfigOK  = "BootstrapConfigReady"
-	infrastructureOK   = "InfrastructureReady"
-	etcdClusterHealthy = "EtcdClusterHealthy"
-	etcdMemberHealthy  = "EtcdMemberHealthy"
-
-	// CAPD Dev* kinds, in-memory backend
-	// (test/infrastructure/docker/api/v1beta2/devmachine_types.go).
-	etcdProvisioned      = "EtcdProvisioned"
-	apiServerProvisioned = "APIServerProvisioned"
-	nodeProvisioned      = "NodeProvisioned"
-	vmProvisioned        = "VMProvisioned"
-	// CAPD Dev* kinds, docker backend.
-	containerProvisioned = "ContainerProvisioned"
-	bootstrapCompleted   = "BootstrapCompleted"
 )
 
 // hostedControlPlaneKinds report pod readiness rather than node counts: there are

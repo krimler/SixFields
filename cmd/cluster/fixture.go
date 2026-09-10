@@ -32,7 +32,7 @@ func newFixtureRecordCmd(g *globals) *cobra.Command {
 			if err != nil {
 				return err
 			}
-			defer src.Close()
+			defer func() { _ = src.Close() }()
 			snapshots, err := src.Snapshots(cmd.Context())
 			if err != nil {
 				return err

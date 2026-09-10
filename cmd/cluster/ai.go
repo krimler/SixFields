@@ -87,14 +87,16 @@ func explainStall(ctx context.Context, cmd *cobra.Command, stall why.Stall, view
 	}
 
 	hide := anonymizeByDefault(name)
-	if opt.anonymize == "on" {
+	switch opt.anonymize {
+	case "on":
 		hide = true
-	} else if opt.anonymize == "off" {
+	case "off":
 		hide = false
 	}
 	anon := explain.NewAnonymizer()
+	anon.RedactIPs = opt.redactIPs
 	sent := req
-	if hide {
+	if hide || opt.redactIPs {
 		anon.Learn(req.Names...)
 		sent = anon.HideRequest(req)
 	}

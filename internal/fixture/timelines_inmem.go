@@ -24,7 +24,7 @@ func inmemHappy() Timeline {
 
 	snap(s, &tl, 0)
 
-	cpM := s.controlPlaneMachine("inmem-1", "KubeadmControlPlane", "inmem-1-cp", "inmem-1-cp-abcde", at(2))
+	cpM := s.controlPlaneMachine("inmem-1", "inmem-1-cp", "inmem-1-cp-abcde", at(2))
 	inmemDevMachineConditions(cpM, 2)
 	infraReady(objs, at(3))
 	snap(s, &tl, 4)
@@ -35,7 +35,7 @@ func inmemHappy() Timeline {
 	dm.condition("APIServerProvisioned", "True", "Provisioned", "", at(10))
 	dm.condition("NodeProvisioned", "True", "Provisioned", "", at(12))
 	machineReady(cpM, at(12))
-	controlPlaneUp(objs, 1, at(13))
+	controlPlaneUp(objs, at(13))
 	snap(s, &tl, 14)
 
 	w0 := s.workerMachine("inmem-1", "inmem-1-md-0", fmtName("inmem-1", 0), at(15))
@@ -72,7 +72,7 @@ func inmemStallEtcd() Timeline {
 		"apiServer": map[string]any{"provisioning": map[string]any{"startupDuration": "2s"}},
 		"node":      map[string]any{"provisioning": map[string]any{"startupDuration": "2s"}},
 	}})
-	cpM := s.controlPlaneMachine("inmem-1", "KubeadmControlPlane", "inmem-1-cp", "inmem-1-cp-abcde", at(2))
+	cpM := s.controlPlaneMachine("inmem-1", "inmem-1-cp", "inmem-1-cp-abcde", at(2))
 	inmemDevMachineConditions(cpM, 2)
 	infraReady(objs, at(3))
 	cpM["devmachine"].condition("VMProvisioned", "True", "Provisioned", "", at(6))
@@ -102,7 +102,7 @@ func inmemStallNode() Timeline {
 		"apiServer": map[string]any{"provisioning": map[string]any{"startupDuration": "2s"}},
 		"node":      map[string]any{"provisioning": map[string]any{"startupDuration": "30m"}},
 	}})
-	cpM := s.controlPlaneMachine("inmem-1", "KubeadmControlPlane", "inmem-1-cp", "inmem-1-cp-abcde", at(2))
+	cpM := s.controlPlaneMachine("inmem-1", "inmem-1-cp", "inmem-1-cp-abcde", at(2))
 	inmemDevMachineConditions(cpM, 2)
 	infraReady(objs, at(3))
 	dm := cpM["devmachine"]
@@ -181,7 +181,7 @@ func twoStalls() Timeline {
 	infraReady(objs, at(30))
 	objs["cluster"].condition("TopologyReconciled", "False", "ReconcileFailed",
 		"the class could not compute the control plane", at(40))
-	cpM := s.controlPlaneMachine("dev-1", "KubeadmControlPlane", "dev-1-cp", "dev-1-cp-abcde", at(50))
+	cpM := s.controlPlaneMachine("dev-1", "dev-1-cp", "dev-1-cp-abcde", at(50))
 	cpM["machine"].condition("InfrastructureReady", "False", "ImagePullFailure",
 		"failed to pull the node image", at(80))
 	cpM["devmachine"].condition("ContainerProvisioned", "False", "ImagePullFailure",

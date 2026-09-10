@@ -172,7 +172,7 @@ func (o Object) String(path ...string) string {
 
 // Int reads a number that may have arrived as a JSON float, an int64 from a
 // decoder configured for numbers, or a string.
-func (o Object) Int(path ...string) (int64, bool) {
+func (o Object) Int(path ...string) (value int64, ok bool) {
 	v, ok := o.get(path...)
 	if !ok {
 		return 0, false
@@ -191,13 +191,13 @@ func (o Object) Int(path ...string) (int64, bool) {
 	return 0, false
 }
 
-func (o Object) Bool(path ...string) (bool, bool) {
-	v, ok := o.get(path...)
-	if !ok {
+func (o Object) Bool(path ...string) (value, ok bool) {
+	raw, found := o.get(path...)
+	if !found {
 		return false, false
 	}
-	b, ok := v.(bool)
-	return b, ok
+	value, ok = raw.(bool)
+	return value, ok
 }
 
 func (o Object) Time(path ...string) time.Time {

@@ -87,19 +87,17 @@ func ownerAPIVersion(kind string) string {
 	}
 }
 
-func (b *object) spec(path string, value any) *object {
+func (b *object) spec(path string, value any) {
 	b.o["spec"].(map[string]any)[path] = value
-	return b
 }
 
-func (b *object) status(path string, value any) *object {
+func (b *object) status(path string, value any) {
 	b.o["status"].(map[string]any)[path] = value
-	return b
 }
 
 // condition adds or replaces a condition. at is when it last changed, which is the
 // only input stall detection has.
-func (b *object) condition(condType, status, reason, message string, at time.Time) *object {
+func (b *object) condition(condType, status, reason, message string, at time.Time) {
 	st := b.o["status"].(map[string]any)
 	conds, _ := st["conditions"].([]any)
 	entry := map[string]any{
@@ -115,15 +113,14 @@ func (b *object) condition(condType, status, reason, message string, at time.Tim
 		if snapshot.Object(c.(map[string]any)).String("type") == condType {
 			conds[i] = entry
 			st["conditions"] = conds
-			return b
+			return
 		}
 	}
 	st["conditions"] = append(conds, entry)
-	return b
 }
 
-func (b *object) ref(field, kind, name, group string) *object {
-	return b.spec(field, map[string]any{"kind": kind, "name": name, "apiGroup": group})
+func (b *object) ref(field, kind, name, group string) {
+	b.spec(field, map[string]any{"kind": kind, "name": name, "apiGroup": group})
 }
 
 // scenario collects the objects of one cluster and stamps a timeline out of them.

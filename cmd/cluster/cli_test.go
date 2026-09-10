@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"errors"
 	"os"
 	"path/filepath"
 	"strings"
@@ -17,7 +18,7 @@ import (
 
 // runCLI executes the command tree in-process and returns stdout, stderr and the
 // exit code the binary would have used.
-func runCLI(t *testing.T, args ...string) (string, string, int) {
+func runCLI(t *testing.T, args ...string) (stdout, stderr string, exitCode int) {
 	t.Helper()
 	root := newRootCmd()
 	var out, errOut bytes.Buffer
@@ -27,12 +28,13 @@ func runCLI(t *testing.T, args ...string) (string, string, int) {
 
 	err := root.Execute()
 	code := 0
-	if err != nil {
-		if q, ok := err.(quiet); ok {
-			code = q.code
-		} else {
-			code = msg.ExitCodeOf(err)
-		}
+	var q quiet
+	switch {
+	case err == nil:
+	case errors.As(err, &q):
+		code = q.code
+	default:
+		code = msg.ExitCodeOf(err)
 	}
 	return out.String(), errOut.String(), code
 }
@@ -121,7 +123,7 @@ func TestUX_ReplayTranscriptGoldens(t *testing.T) {
 		t.Run(scenario, func(t *testing.T) {
 			out, _, _ := runCLI(t, "status", "--replay", "../../testdata/fixtures/"+scenario,
 				"--speed", "0", "--no-tty", "--stall-after", "1m")
-			golden.Text(t, filepath.Join("../../testdata/golden/cli", scenario+".txt"), out)
+			golden.Text(t, filepath.Join("..", "..", "testdata", "golden", "cli", scenario+".txt"), out)
 		})
 	}
 }

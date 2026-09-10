@@ -26,7 +26,7 @@ func newRenderCmd(g *globals) *cobra.Command {
 		if err != nil {
 			return err
 		}
-		defer src.Close()
+		defer func() { _ = src.Close() }()
 		env, err := lastSnapshot(cmd.Context(), src)
 		if err != nil {
 			return err

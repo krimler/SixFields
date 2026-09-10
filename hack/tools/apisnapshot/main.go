@@ -142,14 +142,14 @@ var extraNames = map[string]bool{
 }
 
 type entry struct {
-	Kind    string `json:"kind"`
-	Group   string `json:"group"`
-	Class   string `json:"class"` // condition | reason | phase | label
-	Const   string `json:"const"`
-	Value   string `json:"value"`
-	Doc     string `json:"doc,omitempty"`
-	Source  string `json:"source"` // module path + version
-	File    string `json:"file"`   // path relative to module root
+	Kind       string `json:"kind"`
+	Group      string `json:"group"`
+	Class      string `json:"class"` // condition | reason | phase | label
+	Const      string `json:"const"`
+	Value      string `json:"value"`
+	Doc        string `json:"doc,omitempty"`
+	Source     string `json:"source"` // module path + version
+	File       string `json:"file"`   // path relative to module root
 	Line       int    `json:"line"`
 	Package    string `json:"package"`
 	Deprecated bool   `json:"deprecated,omitempty"`

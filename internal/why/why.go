@@ -15,6 +15,25 @@ import (
 	"capi-distro/internal/snapshot"
 )
 
+// Condition types the ranker classifies by. Every name appears in
+// docs/api-snapshot.json; TestWhy_OnlyUsesSnapshotConditions fails if one does not.
+var (
+	// etcd is its own stall class because it is the one component whose failure
+	// looks like "nothing is happening" from every other object.
+	etcdConditions = map[string]bool{
+		"EtcdClusterHealthy": true, // KubeadmControlPlane
+		"EtcdMemberHealthy":  true, // KubeadmControlPlane, per machine
+		"EtcdProvisioned":    true, // DevMachine, in-memory backend
+	}
+	// A node that never registers is a different problem from a machine that
+	// never provisioned, and it has a different runbook.
+	nodeConditions = map[string]bool{
+		"NodeHealthy":     true, // Machine
+		"NodeReady":       true, // Machine
+		"NodeProvisioned": true, // DevMachine, in-memory backend
+	}
+)
+
 // MessageBudget is how much of an upstream condition message fits on one line.
 // The rest is available under --verbose.
 const MessageBudget = 72
@@ -243,7 +262,7 @@ func classify(env snapshot.Envelope, res fold.Result, phase fold.Phase, win Cand
 		return msg.InfraNotReady
 	case fold.ControlPlane:
 		switch {
-		case strings.Contains(cond.Type, "Etcd"):
+		case etcdConditions[cond.Type]:
 			return msg.EtcdNotHealthy
 		case isMachineKind(win.Object.Kind):
 			return msg.ControlPlaneMachine
@@ -251,7 +270,7 @@ func classify(env snapshot.Envelope, res fold.Result, phase fold.Phase, win Cand
 			return msg.ControlPlaneNotInit
 		}
 	case fold.Workers:
-		if strings.Contains(cond.Type, "Node") {
+		if nodeConditions[cond.Type] {
 			return msg.NodeNotJoining
 		}
 		return msg.WorkersNotReady

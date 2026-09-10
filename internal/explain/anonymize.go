@@ -2,6 +2,7 @@ package explain
 
 import (
 	"fmt"
+	"regexp"
 	"sort"
 	"strings"
 )
@@ -16,6 +17,10 @@ type Anonymizer struct {
 	forward map[string]string
 	reverse map[string]string
 	next    int
+	// RedactIPs replaces addresses as well as names. Off by default because an
+	// address is often the whole answer ("the endpoint is 0.0.0.0"), and on when a
+	// user asks, because an address can identify a network.
+	RedactIPs bool
 }
 
 func NewAnonymizer() *Anonymizer {
@@ -36,7 +41,19 @@ func (a *Anonymizer) Learn(names ...string) {
 	}
 }
 
-func (a *Anonymizer) Hide(text string) string   { return replaceAll(text, a.forward) }
+func (a *Anonymizer) Hide(text string) string {
+	text = replaceAll(text, a.forward)
+	if a.RedactIPs {
+		text = ipPattern.ReplaceAllString(text, "<ip>")
+	}
+	return text
+}
+
+// ipPattern matches IPv4 addresses with an optional port. Redaction is one-way on
+// purpose: an address that has been replaced by <ip> cannot be revealed, so a
+// model can never repeat one back.
+var ipPattern = regexp.MustCompile(`\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(:\d{1,5})?\b`)
+
 func (a *Anonymizer) Reveal(text string) string { return replaceAll(text, a.reverse) }
 
 // HideRequest returns a copy of the request with every learned name replaced.

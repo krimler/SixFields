@@ -53,7 +53,7 @@ func (l Local) Explain(ctx context.Context, req Request) (Explanation, error) {
 	if err != nil {
 		return Explanation{}, fmt.Errorf("local model at %s: %w", l.URL, err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
 		return Explanation{}, fmt.Errorf("local model at %s returned %s", l.URL, resp.Status)
 	}

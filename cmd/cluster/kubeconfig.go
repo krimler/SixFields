@@ -45,7 +45,7 @@ func newKubeconfigCmd(g *globals) *cobra.Command {
 // serverLine matches the one field that has to change. Rewriting text rather than
 // parsing the whole kubeconfig keeps every other field, including ones this tool
 // has never heard of.
-var serverLine = regexp.MustCompile(`(?m)^(\s*server:\s*)https://[^\s]+$`)
+var serverLine = regexp.MustCompile(`(?m)^(\s*server:\s*)https://\S+$`)
 
 // RewriteServer points the kubeconfig at the host's published port. Exported so
 // TestKubeconfig_RewritesForDockerDesktop can cover it without a cluster.

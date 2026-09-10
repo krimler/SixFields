@@ -3,6 +3,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 
@@ -14,7 +15,8 @@ var version = "dev"
 
 func main() {
 	if err := newRootCmd().Execute(); err != nil {
-		if q, ok := err.(quiet); ok {
+		var q quiet
+		if errors.As(err, &q) {
 			os.Exit(q.code)
 		}
 		var e *msg.Error

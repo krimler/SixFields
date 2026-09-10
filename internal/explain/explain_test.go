@@ -221,3 +221,28 @@ func TestExplain_ModeParsing(t *testing.T) {
 	require.Error(t, err)
 	require.Contains(t, err.Error(), "off, explain or all")
 }
+
+// --redact-ips is one-way on purpose: an address replaced by a placeholder cannot
+// be revealed, so a model can never repeat one back.
+func TestExplain_RedactIPsIsOneWay(t *testing.T) {
+	anon := explain.NewAnonymizer()
+	anon.RedactIPs = true
+	anon.Learn("dev-1")
+
+	const text = "dev-1 endpoint 10.96.0.1:6443 is unreachable"
+	hidden := anon.Hide(text)
+	require.NotContains(t, hidden, "10.96.0.1")
+	require.NotContains(t, hidden, "dev-1")
+	require.Contains(t, hidden, "<ip>")
+
+	revealed := anon.Reveal(hidden)
+	require.Contains(t, revealed, "dev-1", "names come back")
+	require.NotContains(t, revealed, "10.96.0.1", "addresses do not")
+}
+
+// With redaction off — the default for the local backend — an address survives,
+// because it is often the whole answer.
+func TestExplain_AddressesSurviveWhenRedactionIsOff(t *testing.T) {
+	anon := explain.NewAnonymizer()
+	require.Contains(t, anon.Hide("endpoint 10.96.0.1:6443"), "10.96.0.1")
+}

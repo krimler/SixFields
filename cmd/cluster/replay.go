@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"path/filepath"
 	"time"
 
 	"capi-distro/internal/fixture"
@@ -61,7 +60,3 @@ func (r *replaySource) Snapshots(ctx context.Context) (<-chan snapshot.Envelope,
 }
 
 func (r *replaySource) Close() error { return nil }
-
-// replayName is the scenario a replay directory holds, used where a cluster name
-// would otherwise come from the command line.
-func replayName(dir string) string { return filepath.Base(dir) }

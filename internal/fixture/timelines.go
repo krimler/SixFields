@@ -13,7 +13,7 @@ func stdDockerHappy() Timeline {
 
 	snap(s, &tl, 0)
 
-	cpM := s.controlPlaneMachine("dev-1", "KubeadmControlPlane", "dev-1-cp", "dev-1-cp-abcde", at(45))
+	cpM := s.controlPlaneMachine("dev-1", "dev-1-cp", "dev-1-cp-abcde", at(45))
 	objs["cluster"].status("controlPlane", map[string]any{"desiredReplicas": int64(1), "replicas": int64(1), "readyReplicas": int64(0)})
 	snap(s, &tl, 60)
 
@@ -21,7 +21,7 @@ func stdDockerHappy() Timeline {
 	snap(s, &tl, 120)
 
 	machineReady(cpM, at(150))
-	controlPlaneUp(objs, 1, at(165))
+	controlPlaneUp(objs, at(165))
 	w0 := s.workerMachine("dev-1", "dev-1-md-0", fmtName("dev-1", 0), at(170))
 	w1 := s.workerMachine("dev-1", "dev-1-md-0", fmtName("dev-1", 1), at(170))
 	objs["md"].status("replicas", int64(2))
@@ -54,7 +54,7 @@ func stallBadVersion() Timeline {
 	snap(s, &tl, 0)
 
 	infraReady(objs, at(60))
-	cpM := s.controlPlaneMachine("dev-1", "KubeadmControlPlane", "dev-1-cp", "dev-1-cp-abcde", at(70))
+	cpM := s.controlPlaneMachine("dev-1", "dev-1-cp", "dev-1-cp-abcde", at(70))
 	cpM["devmachine"].condition("ContainerProvisioned", "False", "ImagePullFailure",
 		"failed to pull kindest/node:v1.99.0: manifest unknown", at(90))
 	cpM["machine"].condition("InfrastructureReady", "False", "ImagePullFailure",
@@ -77,10 +77,10 @@ func stallCPKilled() Timeline {
 		placement: "self", backend: "docker", cpReplicas: 1, workerCount: 2})
 	tl := Timeline{Name: s.name, Note: note}
 
-	cpM := s.controlPlaneMachine("dev-1", "KubeadmControlPlane", "dev-1-cp", "dev-1-cp-abcde", at(45))
+	cpM := s.controlPlaneMachine("dev-1", "dev-1-cp", "dev-1-cp-abcde", at(45))
 	infraReady(objs, at(60))
 	machineReady(cpM, at(120))
-	controlPlaneUp(objs, 1, at(130))
+	controlPlaneUp(objs, at(130))
 	w0 := s.workerMachine("dev-1", "dev-1-md-0", fmtName("dev-1", 0), at(140))
 	w1 := s.workerMachine("dev-1", "dev-1-md-0", fmtName("dev-1", 1), at(140))
 	machineReady(w0, at(200))
@@ -132,10 +132,10 @@ func scaleUp() Timeline {
 		placement: "self", backend: "docker", cpReplicas: 1, workerCount: 2})
 	tl := Timeline{Name: s.name, Note: note}
 
-	cpM := s.controlPlaneMachine("dev-1", "KubeadmControlPlane", "dev-1-cp", "dev-1-cp-abcde", at(45))
+	cpM := s.controlPlaneMachine("dev-1", "dev-1-cp", "dev-1-cp-abcde", at(45))
 	infraReady(objs, at(60))
 	machineReady(cpM, at(120))
-	controlPlaneUp(objs, 1, at(130))
+	controlPlaneUp(objs, at(130))
 	w := make([]map[string]*object, 0, 4)
 	for i := 0; i < 2; i++ {
 		m := s.workerMachine("dev-1", "dev-1-md-0", fmtName("dev-1", i), at(140))

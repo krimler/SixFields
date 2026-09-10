@@ -42,7 +42,7 @@ type streamOptions struct {
 // run reads snapshots until the cluster is ready, the context ends, or the
 // timeout is hit, and returns the documented exit code as an error.
 func run(ctx context.Context, src source, opt streamOptions) error {
-	defer src.Close()
+	defer func() { _ = src.Close() }()
 
 	snapshots, err := src.Snapshots(ctx)
 	if err != nil {

@@ -3,6 +3,7 @@
 package golden
 
 import (
+	"bytes"
 	"encoding/json"
 	"flag"
 	"os"
@@ -30,7 +31,7 @@ func JSON(t *testing.T, path string, v any) {
 }
 
 // Text compares a rendered transcript against the golden file at path.
-func Text(t *testing.T, path string, got string) {
+func Text(t *testing.T, path, got string) {
 	t.Helper()
 	compare(t, path, []byte(got))
 }
@@ -50,7 +51,7 @@ func compare(t *testing.T, path string, got []byte) {
 	if err != nil {
 		t.Fatalf("%s: %v\nrun: make golden", path, err)
 	}
-	if string(want) != string(got) {
+	if !bytes.Equal(want, got) {
 		t.Errorf("%s does not match.\n--- want ---\n%s\n--- got ---\n%s\nrun: make golden", path, want, got)
 	}
 }

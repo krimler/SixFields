@@ -60,9 +60,9 @@ type opts struct {
 
 // build assembles the object graph a topology controller would have created, in
 // its t+0 state. Every later step mutates it in place and snapshots.
-func build(o opts) (*scenario, map[string]*object) {
-	s := &scenario{name: o.name, note: o.note, cluster: o.cluster}
-	objs := map[string]*object{}
+func build(o opts) (s *scenario, objs map[string]*object) {
+	s = &scenario{name: o.name, note: o.note, cluster: o.cluster}
+	objs = map[string]*object{}
 
 	cpKind, cpGroup := "KubeadmControlPlane", "controlplane.cluster.x-k8s.io"
 	if o.placement == "hosted" {
@@ -149,7 +149,8 @@ func backendSpec(backend string) map[string]any {
 
 // controlPlaneMachine adds a control-plane Machine with its infra and bootstrap
 // objects, in the shape CAPI creates them.
-func (s *scenario) controlPlaneMachine(cluster, cpKind, cpName, name string, at time.Time) map[string]*object {
+func (s *scenario) controlPlaneMachine(cluster, cpName, name string, at time.Time) map[string]*object {
+	const cpKind = "KubeadmControlPlane"
 	m := s.add(newObject(coreAPI, "Machine", name)).owned(cluster).ownedBy(cpKind, cpName)
 	m.ref("infrastructureRef", "DevMachine", name, "infrastructure.cluster.x-k8s.io")
 	m.ref("bootstrapRef", "KubeadmConfig", name, "bootstrap.cluster.x-k8s.io")
@@ -205,7 +206,10 @@ func machineReady(m map[string]*object, at time.Time) {
 	m["machine"].status("phase", "Running")
 }
 
-func controlPlaneUp(objs map[string]*object, replicas int64, at time.Time) {
+func controlPlaneUp(objs map[string]*object, at time.Time) {
+	// Every scenario that reaches this point has a single control-plane node; a
+	// three-node one would set size: ha and take a different path.
+	const replicas = int64(1)
 	objs["cp"].condition("Initialized", "True", "Initialized", "", at)
 	objs["cp"].condition("Available", "True", "Available", "", at)
 	objs["cp"].condition("EtcdClusterHealthy", "True", "Healthy", "", at)
