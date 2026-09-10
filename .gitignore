@@ -1,0 +1,7 @@
+# Build output and rendered artifacts. The rendered class is reviewed as a golden
+# under testdata/golden/, not as a checked-in build product.
+/bin/
+
+# Local model cassettes are recorded per machine until one is reviewed and
+# committed deliberately; see docs/ai.md.
+/testdata/cassettes/*.local.json
