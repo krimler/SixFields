@@ -53,18 +53,18 @@ Every break-glass write is recorded. The policy adds an audit annotation to the 
 audit event, so both uses and half-uses are greppable:
 
 ```sh
-grep -o 'capi-distro-[a-z-]*/break-glass":"[^"]*"' /var/log/kubernetes/audit.log
+grep -o '"capi-distro-[a-z-]*/break-glass":"[^"]*"' /var/log/kubernetes/audit.log
 ```
 
 ```
-capi-distro-cluster-fields/break-glass":"granted user=carol field=spec.clusterNetwork"
-capi-distro-managed-kinds/break-glass":"incomplete user=dave kind=KubeadmControlPlane"
+"capi-distro-cluster-fields/break-glass":"granted user=carol field=spec.clusterNetwork"
+"capi-distro-managed-kinds/break-glass":"incomplete user=dave kind=KubeadmControlPlane"
 ```
 
 `granted` is a write that went through. `incomplete` is a denied attempt that had one half.
 
-Take the label off when you are done. It stays on the object otherwise, and it is what makes
-the next write to that object skip the check:
+Take the label off when you are done. While it is there, anyone in the break-glass group can
+write any managed field on that object:
 
 ```sh
 kubectl label cluster my-cluster capi-distro.io/break-glass-
@@ -85,11 +85,11 @@ kubectl delete validatingadmissionpolicy \
   capi-distro-cluster-fields capi-distro-managed-kinds
 ```
 
-The binding is what enforces; the policy on its own is inert. Deleting the binding first
-means there is never a moment where a binding names a policy that is gone. A binding whose
-`policyName` does not resolve does not fail open — the API server treats it as a
-misconfiguration and, with `failurePolicy: Fail`, denies the requests it matches. Delete
-them in the other order and every `Cluster` write fails until the second command lands.
+The binding enforces; a policy with no binding does nothing. In this order enforcement stops
+in one step. The other order leaves a binding pointing at a policy that is gone: a v1.34 API
+server ignores that binding, so writes do go through, but it starts enforcing again the
+moment anything re-creates the policy — a GitOps reconcile, or a re-run of
+`kubectl apply -k policy/vap`.
 
 Nothing else has to change. Both objects are cluster-scoped and hold no state; no Cluster,
 MachineDeployment or provider object references them. Controllers keep reconciling
@@ -98,8 +98,7 @@ throughout, because they were exempt from the policy anyway.
 To check it is gone:
 
 ```sh
-kubectl get validatingadmissionpolicy,validatingadmissionpolicybinding \
-  -l '!kubernetes.io/bootstrapping' | grep capi-distro
+kubectl get validatingadmissionpolicy,validatingadmissionpolicybinding | grep capi-distro
 ```
 
 To put it back:

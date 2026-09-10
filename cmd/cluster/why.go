@@ -21,7 +21,10 @@ func newWhyCmd(g *globals) *cobra.Command {
 		Args: cobra.MaximumNArgs(1),
 	}
 	var explainRanking bool
+	ai := aiOptions{}
 	cmd.Flags().BoolVar(&explainRanking, "explain-ranking", false, "show why each candidate lost")
+	cmd.Flags().BoolVar(&ai.enabled, "explain", false, "print the runbook, then have a model explain the analyzer's finding")
+	cmd.Flags().StringVar(&ai.anonymize, "anonymize", "", "on or off; defaults to on for a remote model and off for a local one")
 	cmd.Flags().BoolVar(&g.jsonOut, "json", false, "emit the stall as JSON")
 	cmd.Flags().StringVar(&g.replay, "replay", "", "replay a recorded fixture directory instead of a cluster")
 	cmd.Flags().StringVar(&g.stallAfter, "stall-after", "3m", "how long without a change before a phase is called stalled")
@@ -53,6 +56,7 @@ func newWhyCmd(g *globals) *cobra.Command {
 			cmd.Print(out)
 		} else {
 			printStall(cmd, view)
+			explainStall(cmd.Context(), cmd, stall, view, env, ai)
 		}
 		if _, stalled := res.Stalled(); stalled {
 			return exitWith(msg.New(stall.Code, msg.Vars{Object: stall.Object.String(), Since: ""}))

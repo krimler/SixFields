@@ -118,6 +118,17 @@ spec:
       expression: request.userInfo.username
     - name: variableAllowList
       expression: "['size', 'placement']"
+    # Named once so the deny list and the unknown-key catch-all cannot drift apart.
+    - name: managedSpecKeys
+      expression: |-
+        ['clusterNetwork', 'controlPlaneEndpoint', 'controlPlaneRef', 'infrastructureRef',
+         'paused', 'availabilityGates']
+    - name: managedControlPlaneKeys
+      expression: |-
+        ['metadata', 'rollout', 'healthCheck', 'deletion', 'taints', 'readinessGates',
+         'variables']
+    - name: workerEntryKeys
+      expression: "['name', 'class', 'replicas']"
     # Every level is read through a variable so that a missing parent is an empty map or
     # list rather than a CEL error, and so oldObject == null (CREATE) needs saying once.
     - name: spec
@@ -166,20 +177,23 @@ spec:
     - name: oldClusterVariables
       expression: |-
         'variables' in variables.oldTopology ? variables.oldTopology.variables : []
-    # spec.*: the six managed siblings of spec.topology, in a fixed order so the message is
+    # spec.*: the managed siblings of spec.topology, in a fixed order so the message is
     # reproducible, then everything else this build of CAPI does not know about.
+    #
+    # A key that is set now and either absent from or different in oldObject is a change.
+    # Removing a managed key is not denied: dropping spec.infrastructureRef only makes the
+    # topology controller write it back, while dropping a worker entry is how a user removes
+    # a pool.
     - name: deniedSpec
       expression: |-
-        ['clusterNetwork', 'controlPlaneEndpoint', 'controlPlaneRef', 'infrastructureRef',
-         'paused', 'availabilityGates'].filter(k,
+        variables.managedSpecKeys.filter(k,
           k in variables.spec
           && (!(k in variables.oldSpec) || variables.spec[k] != variables.oldSpec[k])
         ).map(k, 'spec.' + k)
     - name: deniedSpecUnknown
       expression: |-
         variables.spec.filter(k,
-          !(k in ['topology', 'clusterNetwork', 'controlPlaneEndpoint', 'controlPlaneRef',
-                  'infrastructureRef', 'paused', 'availabilityGates'])
+          k != 'topology' && !(k in variables.managedSpecKeys)
           && (!(k in variables.oldSpec) || variables.spec[k] != variables.oldSpec[k])
         ).map(k, 'spec.' + string(k))
     # spec.topology.*: classRef/class, version, workers, variables and the one replicas field
@@ -192,8 +206,7 @@ spec:
         ).map(k, 'spec.topology.classRef.' + string(k))
     - name: deniedControlPlane
       expression: |-
-        ['metadata', 'rollout', 'healthCheck', 'deletion', 'taints', 'readinessGates',
-         'variables'].filter(k,
+        variables.managedControlPlaneKeys.filter(k,
           k in variables.controlPlane
           && (!(k in variables.oldControlPlane)
               || variables.controlPlane[k] != variables.oldControlPlane[k])
@@ -201,8 +214,7 @@ spec:
     - name: deniedControlPlaneUnknown
       expression: |-
         variables.controlPlane.filter(k,
-          !(k in ['replicas', 'metadata', 'rollout', 'healthCheck', 'deletion', 'taints',
-                  'readinessGates', 'variables'])
+          k != 'replicas' && !(k in variables.managedControlPlaneKeys)
           && (!(k in variables.oldControlPlane)
               || variables.controlPlane[k] != variables.oldControlPlane[k])
         ).map(k, 'spec.topology.controlPlane.' + string(k))
@@ -224,7 +236,7 @@ spec:
       expression: |-
         variables.machineDeployments.filter(m,
           !(m in variables.oldMachineDeployments)
-          && m.exists(k, !(k in ['name', 'class', 'replicas']))
+          && m.exists(k, !(k in variables.workerEntryKeys))
         ).map(m,
           'spec.topology.workers.machineDeployments[' + ('name' in m ? string(m.name) : '')
           + '].'
@@ -237,12 +249,12 @@ spec:
             : 'readinessGates' in m ? 'readinessGates'
             : 'rollout' in m ? 'rollout'
             : 'variables' in m ? 'variables'
-            : string(m.filter(k, !(k in ['name', 'class', 'replicas']))[0])))
+            : string(m.filter(k, !(k in variables.workerEntryKeys))[0])))
     - name: deniedMachinePools
       expression: |-
         variables.machinePools.filter(m,
           !(m in variables.oldMachinePools)
-          && m.exists(k, !(k in ['name', 'class', 'replicas']))
+          && m.exists(k, !(k in variables.workerEntryKeys))
         ).map(m,
           'spec.topology.workers.machinePools[' + ('name' in m ? string(m.name) : '') + '].'
           + ('metadata' in m ? 'metadata'
@@ -254,7 +266,7 @@ spec:
             : 'nodeDrainTimeoutSeconds' in m ? 'nodeDrainTimeoutSeconds'
             : 'nodeVolumeDetachTimeoutSeconds' in m ? 'nodeVolumeDetachTimeoutSeconds'
             : 'nodeDeletionTimeoutSeconds' in m ? 'nodeDeletionTimeoutSeconds'
-            : string(m.filter(k, !(k in ['name', 'class', 'replicas']))[0])))
+            : string(m.filter(k, !(k in variables.workerEntryKeys))[0])))
     # The allow-list has to match the variable set the ClusterClass exposes: CAPI's Cluster
     # mutating webhook injects a default for every class variable that has one, and VAP runs
     # after mutating admission, so a class variable outside this list would be denied on a
