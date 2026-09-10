@@ -152,3 +152,36 @@ func isCompoundCamel(s string) bool {
 	}
 	return upper >= 2
 }
+
+// The runbooks are written in docs/runbooks and embedded in the binary so
+// `cluster docs` works offline. Two copies, one source: this fails if they drift.
+func TestUX_EmbeddedRunbooksMatchDocs(t *testing.T) {
+	docs, err := os.ReadDir("../../docs/runbooks")
+	require.NoError(t, err)
+	require.NotEmpty(t, docs)
+
+	for _, entry := range docs {
+		if !strings.HasSuffix(entry.Name(), ".md") {
+			continue
+		}
+		want, err := os.ReadFile("../../docs/runbooks/" + entry.Name())
+		require.NoError(t, err)
+		got, ok := Runbook(Code(strings.TrimSuffix(entry.Name(), ".md")))
+		require.True(t, ok, "%s is not embedded; run: make sync-embeds", entry.Name())
+		require.Equal(t, string(want), got, "%s has drifted; run: make sync-embeds", entry.Name())
+	}
+}
+
+// Every stall class has a runbook, and no runbook exists for a code that cannot
+// be emitted.
+func TestUX_RunbookPerStallClass(t *testing.T) {
+	for _, code := range Codes() {
+		entry, _ := Get(code)
+		_, ok := Runbook(code)
+		if entry.Class == Stall {
+			require.True(t, ok, "%s is a stall class with no runbook", code)
+			continue
+		}
+		require.False(t, ok, "%s is not a stall class but has a runbook", code)
+	}
+}

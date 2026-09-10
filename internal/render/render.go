@@ -184,3 +184,7 @@ func stallBlock(v View, theme Theme) []string {
 func nextAction(s why.Stall) string {
 	return "cluster docs " + string(s.Code)
 }
+
+// StallLines exposes the stall block for `cluster why`, which prints that and
+// nothing else. One function, so the block is identical in both commands.
+func StallLines(v View, theme Theme) []string { return stallBlock(v, theme) }

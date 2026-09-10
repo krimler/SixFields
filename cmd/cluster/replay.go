@@ -20,10 +20,9 @@ type replaySource struct {
 	clock *time.Time
 }
 
+// A speed of zero means "as fast as possible": the one-shot commands want the
+// last envelope, not the timeline.
 func newReplaySource(dir string, speed float64, clock *time.Time) *replaySource {
-	if speed <= 0 {
-		speed = 1
-	}
 	return &replaySource{dir: dir, speed: speed, clock: clock}
 }
 
@@ -39,7 +38,11 @@ func (r *replaySource) Snapshots(ctx context.Context) (<-chan snapshot.Envelope,
 		for _, env := range envelopes {
 			gap := time.Duration(env.Meta.TPlusS-previous) * time.Second
 			previous = env.Meta.TPlusS
-			if wait := time.Duration(float64(gap) / r.speed); wait > 0 {
+			wait := time.Duration(0)
+			if r.speed > 0 {
+				wait = time.Duration(float64(gap) / r.speed)
+			}
+			if wait > 0 {
 				select {
 				case <-ctx.Done():
 					return

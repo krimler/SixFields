@@ -19,7 +19,7 @@ help: ## List targets
 ## --- build ---
 
 .PHONY: build
-build: ## Build the cluster CLI into bin/
+build: sync-embeds ## Build the cluster CLI into bin/
 	@mkdir -p $(BIN)
 	go build -trimpath -ldflags "-X main.version=$$(git describe --tags --always --dirty 2>/dev/null || echo dev)" -o $(CLUSTER) ./cmd/cluster
 
@@ -103,6 +103,11 @@ render: ## Render the ClusterClass overlays to one file per overlay
 .PHONY: class-plan
 class-plan: ## clusterctl alpha topology plan against the rendered class
 	hack/class-plan.sh
+
+.PHONY: sync-embeds
+sync-embeds: ## Copy the runbooks and skills into the packages that embed them
+	rsync -a --delete docs/runbooks/ internal/msg/runbooks/
+	rsync -a --delete skills/ cmd/cluster/skills/
 
 .PHONY: api-snapshot
 api-snapshot: ## Regenerate docs/api-snapshot.{md,json} from the pinned API modules

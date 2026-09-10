@@ -11,7 +11,13 @@ spec:
   topology:
     classRef:
       name: std
-    version: ${WORKLOAD_K8S_VERSION}
+    version: v1.34.11
+    # size: ha means three control-plane nodes. It has to be written here as well
+    # as in the variable: a ClusterClass patch cannot set control-plane replicas at
+    # v1.14.2 (the patch engine preserves spec.replicas on the control plane), so
+    # `cluster new --size ha` writes both. See DECISIONS.md.
+    controlPlane:
+      replicas: 3
     workers:
       machineDeployments:
       - name: default

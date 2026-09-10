@@ -1,0 +1,18 @@
+# Every field here is one the class owns. Used by the exit-code and message tests.
+apiVersion: cluster.x-k8s.io/v1beta2
+kind: Cluster
+metadata:
+  name: dev-1
+spec:
+  clusterNetwork:
+    pods:
+      cidrBlocks: [10.0.0.0/16]
+  topology:
+    classRef:
+      name: std
+    version: v1.34.11
+    controlPlane:
+      replicas: 5
+    variables:
+    - name: gpuPool
+      value: "2"

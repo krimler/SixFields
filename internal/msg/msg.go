@@ -40,6 +40,7 @@ const (
 	KindManaged       Code = "CAPI-ADM-002"
 	VariableUnknown   Code = "CAPI-ADM-003"
 	BreakGlassPartial Code = "CAPI-ADM-004"
+	VersionMalformed  Code = "CAPI-ADM-005"
 )
 
 // Environment problems, the ones `cluster doctor` reports.
@@ -162,6 +163,13 @@ var registry = map[Code]Entry{
 		NextAction: "docs/eject.md",
 	},
 
+	VersionMalformed: {
+		Code: VersionMalformed, Class: Denial,
+		Title:      "the version is not a Kubernetes version",
+		Summary:    "spec.topology.version is '{{.Version}}', which is not a Kubernetes version. Set it to something like v1.34.11, or use break-glass (docs/eject.md).",
+		NextAction: "set spec.topology.version to a version the provider publishes, e.g. v1.34.11",
+	},
+
 	NoRuntime: {
 		Code: NoRuntime, Class: Environment,
 		Title:      "no container runtime is running",
@@ -269,4 +277,17 @@ func LongformCodes() []Code {
 		out = append(out, Code(strings.TrimSuffix(e.Name(), ".md")))
 	}
 	return out
+}
+
+//go:embed runbooks/*.md
+var runbooks embed.FS
+
+// Runbook is the operator's playbook for a stall class: what to check, in order.
+// It is embedded so `cluster docs` works with no network and no repo checkout.
+func Runbook(code Code) (string, bool) {
+	b, err := runbooks.ReadFile("runbooks/" + string(code) + ".md")
+	if err != nil {
+		return "", false
+	}
+	return string(b), true
 }

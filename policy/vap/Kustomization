@@ -1,0 +1,13 @@
+---
+# Named `Kustomization`, not `kustomization.yaml`, on purpose. kustomize recognizes all
+# three of kustomization.yaml, kustomization.yml and Kustomization; kubectl's directory
+# expansion only picks up .yaml, .yml and .json. Naming this file kustomization.yaml would
+# make `kubectl apply -f policy/vap/` try to apply it as a manifest and fail with
+# "no matches for kind Kustomization". Both of these now work:
+#   kubectl apply -k policy/vap
+#   kubectl apply -f policy/vap/
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - cluster-fields.yaml
+  - managed-kinds.yaml

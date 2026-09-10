@@ -159,8 +159,10 @@ func finish(v *render.View, opt streamOptions) error {
 		recordHistory(*v, opt)
 		return nil
 	}
+	// The renderer has already printed the stall block, so this only carries the
+	// exit code.
 	if v.Stall != nil {
-		return &msg.Error{Code: v.Stall.Code, Summary: v.Stall.Line(), Action: "cluster docs " + string(v.Stall.Code)}
+		return quiet{code: msg.ExitStalled}
 	}
 	if !opt.blocking {
 		return nil

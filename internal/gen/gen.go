@@ -10,8 +10,8 @@ package gen
 
 import (
 	"fmt"
+	"regexp"
 	"sort"
-	"strings"
 
 	"sigs.k8s.io/yaml"
 
@@ -74,6 +74,11 @@ func ControlPlaneReplicas(size string) int64 {
 // so the CLI and the policy cannot drift apart silently.
 var AllowedVariables = []string{"size", "placement"}
 
+// kubernetesVersion is deliberately loose: it rejects an empty value, an
+// unsubstituted ${PLACEHOLDER} and a version without its v, and leaves judging
+// whether the version exists to the provider, which is the only thing that knows.
+var kubernetesVersion = regexp.MustCompile(`^v\d+\.\d+\.\d+`)
+
 var (
 	allowedSizes      = []string{"dev", "ha"}
 	allowedPlacements = []string{"self", "hosted"}
@@ -117,10 +122,8 @@ func (s Spec) Validate() []*msg.Error {
 	if s.Name == "" {
 		add(msg.FieldManaged, msg.Vars{Field: "metadata.name"})
 	}
-	if s.Version == "" {
-		add(msg.FieldManaged, msg.Vars{Field: "spec.topology.version"})
-	} else if !strings.HasPrefix(s.Version, "v") {
-		add(msg.FieldManaged, msg.Vars{Field: "spec.topology.version"})
+	if !kubernetesVersion.MatchString(s.Version) {
+		add(msg.VersionMalformed, msg.Vars{Field: "spec.topology.version", Version: s.Version})
 	}
 	if !contains(allowedSizes, s.Size) {
 		add(msg.VariableUnknown, msg.Vars{Variable: "size"})

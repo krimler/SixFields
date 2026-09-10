@@ -14,6 +14,9 @@ var version = "dev"
 
 func main() {
 	if err := newRootCmd().Execute(); err != nil {
+		if q, ok := err.(quiet); ok {
+			os.Exit(q.code)
+		}
 		var e *msg.Error
 		if msg.As(err, &e) {
 			fmt.Fprintln(os.Stderr, e.Summary)
