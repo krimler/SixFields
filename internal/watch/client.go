@@ -44,6 +44,11 @@ func New(kubeconfig, namespace string) (*Client, error) {
 	if err != nil {
 		return nil, err
 	}
+	// Discovery lists every kind the providers serve, including deprecated ones
+	// the user never named, and the API server returns a warning for each. They
+	// are about this tool's listing, not about anything the user wrote, so they
+	// are dropped rather than printed over the four rows.
+	config.WarningHandler = rest.NoWarnings{}
 	dyn, err := dynamic.NewForConfig(config)
 	if err != nil {
 		return nil, err
@@ -67,7 +72,11 @@ func loadConfig(kubeconfig string) (*rest.Config, error) {
 // management cluster. Discovery, not a hardcoded list: a provider installed later
 // shows up without a code change.
 func (c *Client) Resources(ctx context.Context) ([]schema.GroupVersionResource, error) {
-	_, lists, err := c.discovery.ServerGroupsAndResources()
+	// Preferred versions only. CAPI serves v1beta1 and v1beta2 of every kind at
+	// this release, and listing both returns each object twice and prints a
+	// deprecation warning per resource — which is what a first real run looked
+	// like before this line said "Preferred".
+	lists, err := c.discovery.ServerPreferredResources()
 	if err != nil && len(lists) == 0 {
 		return nil, fmt.Errorf("discover API resources: %w", err)
 	}

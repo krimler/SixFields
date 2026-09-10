@@ -21,7 +21,10 @@ type liveSource struct {
 // has its own budget on top; this one keeps the API server work down.
 const snapshotDebounce = 500 * time.Millisecond
 
-func newLiveSource(g *globals, name string) (*liveSource, error) {
+// newLiveSource returns a source that either takes one snapshot and closes, or
+// watches until the context ends. The one-shot commands need the first: a watch
+// that never closes made `cluster why` hang instead of answering.
+func newLiveSource(g *globals, name string, once bool) (*liveSource, error) {
 	if name == "" {
 		return nil, msg.New(msg.ClusterNotFound, msg.Vars{Object: "(no name given)", Namespace: g.namespace})
 	}
@@ -29,7 +32,7 @@ func newLiveSource(g *globals, name string) (*liveSource, error) {
 	if err != nil {
 		return nil, msg.Wrap(msg.NoRuntime, msg.Vars{}, err)
 	}
-	return &liveSource{client: client, name: name}, nil
+	return &liveSource{client: client, name: name, once: once}, nil
 }
 
 func (l *liveSource) Snapshots(ctx context.Context) (<-chan snapshot.Envelope, error) {

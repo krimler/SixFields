@@ -15,6 +15,35 @@ import (
 	"capi-distro/internal/snapshot"
 )
 
+// negativePolarity conditions report an activity, not a fault: they are True while
+// the object is doing the thing and False the rest of the time
+// (api@v1.14.2 core/v1beta2/cluster_types.go:532, ConditionPolarity). Treating
+// their False as a failure is how a first live run ranked "Paused=False" — "this
+// object is not paused" — above the node that had genuinely not come up.
+//
+// They are excluded from the candidate set entirely: True means work in progress,
+// which the phase detail already shows, and False means nothing at all.
+var negativePolarity = map[string]bool{
+	"Paused":      true,
+	"Deleting":    true,
+	"Remediating": true,
+	"RollingOut":  true,
+	"ScalingUp":   true,
+	"ScalingDown": true,
+	"Updating":    true,
+}
+
+// summaryConditions aggregate other conditions on the same object. They are true
+// less often and say less: "Ready=False reason=NotReady" restates what a specific
+// condition already reported. They still rank, but below anything specific on the
+// same object, so the line a user reads names the actual fault.
+var summaryConditions = map[string]bool{
+	"Ready":            true,
+	"Available":        true,
+	"MachinesReady":    true,
+	"MachinesUpToDate": true,
+}
+
 // Condition types the ranker classifies by. Every name appears in
 // docs/api-snapshot.json; TestWhy_OnlyUsesSnapshotConditions fails if one does not.
 var (
@@ -125,6 +154,9 @@ func Rank(env snapshot.Envelope, res fold.Result, opt Options) (Stall, bool) {
 		if a.Specificity != b.Specificity {
 			return a.Specificity > b.Specificity
 		}
+		if summaryConditions[a.Condition.Type] != summaryConditions[b.Condition.Type] {
+			return !summaryConditions[a.Condition.Type]
+		}
 		if !a.Condition.LastTransitionTime.Equal(b.Condition.LastTransitionTime) {
 			return a.Condition.LastTransitionTime.After(b.Condition.LastTransitionTime)
 		}
@@ -178,7 +210,7 @@ func collect(env snapshot.Envelope, phase fold.Phase, now time.Time) []Candidate
 		}
 		seen[key] = true
 		for _, c := range o.Conditions() {
-			if !c.IsFalse() {
+			if !c.IsFalse() || negativePolarity[c.Type] {
 				continue
 			}
 			since := time.Duration(0)
@@ -224,6 +256,8 @@ func explainLosses(candidates []Candidate) {
 		switch {
 		case c.Specificity < win.Specificity:
 			c.LostTo = "less specific object"
+		case summaryConditions[c.Condition.Type] && !summaryConditions[win.Condition.Type]:
+			c.LostTo = "summary condition"
 		case c.Condition.LastTransitionTime.Before(win.Condition.LastTransitionTime):
 			c.LostTo = "older transition"
 		case severityRank(c.Condition.Severity) < severityRank(win.Condition.Severity):
@@ -257,6 +291,11 @@ func classify(env snapshot.Envelope, res fold.Result, phase fold.Phase, win Cand
 	if isVersionFailure(env, res, cond) {
 		return msg.VersionUnavailable
 	}
+	// A node that never became ready has one runbook whether it is a control-plane
+	// node or a worker, so this is decided before the phase.
+	if nodeConditions[cond.Type] {
+		return msg.NodeNotJoining
+	}
 	switch phase.Name {
 	case fold.Infrastructure:
 		return msg.InfraNotReady
@@ -270,9 +309,6 @@ func classify(env snapshot.Envelope, res fold.Result, phase fold.Phase, win Cand
 			return msg.ControlPlaneNotInit
 		}
 	case fold.Workers:
-		if nodeConditions[cond.Type] {
-			return msg.NodeNotJoining
-		}
 		return msg.WorkersNotReady
 	case fold.Addons:
 		return msg.AddonsNotApplied

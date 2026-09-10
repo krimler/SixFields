@@ -5,7 +5,7 @@
     "namespace": "default",
     "group": "infrastructure.cluster.x-k8s.io"
   },
-  "code": "CAPI-CP-002",
+  "code": "CAPI-WRK-002",
   "phase": "control plane",
   "reason": "Provisioning",
   "message": "the node has not registered after 30m0s",

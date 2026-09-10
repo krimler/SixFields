@@ -28,7 +28,7 @@ func newFixtureRecordCmd(g *globals) *cobra.Command {
 		Short:   "Record a real run into testdata/fixtures/<name>/",
 		Example: "  cluster fixture record --name std-docker-happy --cluster dev-1",
 		RunE: func(cmd *cobra.Command, _ []string) error {
-			src, err := newLiveSource(g, name)
+			src, err := newLiveSource(g, name, false)
 			if err != nil {
 				return err
 			}

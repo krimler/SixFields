@@ -69,7 +69,7 @@ func setup(cmd *cobra.Command, g *globals, args []string, blocking bool) (stream
 	if len(args) > 0 {
 		name = args[0]
 	}
-	src, err := newLiveSource(g, name)
+	src, err := newLiveSource(g, name, !blocking)
 	if err != nil {
 		return streamOptions{}, nil, err
 	}

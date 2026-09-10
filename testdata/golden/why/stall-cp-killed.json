@@ -91,10 +91,10 @@
         "group": "controlplane.cluster.x-k8s.io"
       },
       "condition": {
-        "type": "Available",
+        "type": "EtcdClusterHealthy",
         "status": "False",
-        "reason": "NotAvailable",
-        "message": "0 of 1 replicas are ready",
+        "reason": "EtcdMemberNotHealthy",
+        "message": "etcd has lost its only member",
         "lastTransitionTime": "2026-09-10T12:05:00Z"
       },
       "specificity": 20,
@@ -109,10 +109,10 @@
         "group": "controlplane.cluster.x-k8s.io"
       },
       "condition": {
-        "type": "EtcdClusterHealthy",
+        "type": "Available",
         "status": "False",
-        "reason": "EtcdMemberNotHealthy",
-        "message": "etcd has lost its only member",
+        "reason": "NotAvailable",
+        "message": "0 of 1 replicas are ready",
         "lastTransitionTime": "2026-09-10T12:05:00Z"
       },
       "specificity": 20,

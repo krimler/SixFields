@@ -68,7 +68,9 @@ func TestUX_StallLineNamesTheRightObject(t *testing.T) {
 		{"stall-cp-killed", "DevMachine/dev-1-cp-abcde", msg.ControlPlaneMachine},
 		{"stall-bad-variable", "Cluster/dev-1", msg.TopologyFailed},
 		{"inmem-stall-etcd", "DevMachine/inmem-1-cp-abcde", msg.EtcdNotHealthy},
-		{"inmem-stall-node", "DevMachine/inmem-1-cp-abcde", msg.ControlPlaneMachine},
+		// A node that never became ready is the same problem, and the same runbook,
+		// whether it is a control-plane node or a worker.
+		{"inmem-stall-node", "DevMachine/inmem-1-cp-abcde", msg.NodeNotJoining},
 		{"hosted-stall-pod", "K0smotronControlPlane/hosted-1-cp", msg.ControlPlaneNotInit},
 	} {
 		t.Run(tc.scenario, func(t *testing.T) {
@@ -232,4 +234,74 @@ func conditionValues(t *testing.T) map[string]bool {
 		}
 	}
 	return out
+}
+
+// A condition that reports an activity — Paused, Deleting, ScalingUp — is False
+// whenever nothing is happening, which is most of the time. Ranking that as a
+// failure is how the first live run named "Paused=False" as the blocking
+// condition on a machine whose node had genuinely not come up.
+func TestUX_ActivityConditionsAreNotFailures(t *testing.T) {
+	env := lastEnvelope(t, "inmem-stall-etcd")
+	for _, o := range env.Objects {
+		if o.Kind() != "DevMachine" {
+			continue
+		}
+		conditions, _ := o.Slice("status", "conditions")
+		for _, name := range []string{"Paused", "Deleting", "ScalingUp", "Updating"} {
+			conditions = append(conditions, map[string]any{
+				"type": name, "status": "False", "reason": "Not" + name,
+				// More recent than the real fault, so it would win on recency.
+				"lastTransitionTime": fixture.T0.Add(time.Hour).Format(time.RFC3339),
+			})
+		}
+		o["status"].(map[string]any)["conditions"] = conditions
+	}
+
+	now := fixture.T0.Add(time.Duration(env.Meta.TPlusS) * time.Second)
+	res := fold.Fold(env, fold.Options{Now: now})
+	stall, ok := why.Rank(env, res, why.Options{Now: now})
+	require.True(t, ok)
+	require.Equal(t, "EtcdProvisioned", stall.ConditionType,
+		"an activity condition outranked the real fault")
+	for _, c := range stall.Candidates {
+		require.NotContains(t, []string{"Paused", "Deleting", "ScalingUp", "Updating"}, c.Condition.Type,
+			"%s should not be a candidate at all", c.Condition.Type)
+	}
+}
+
+// Ready and Available aggregate other conditions: "Ready=False reason=NotReady"
+// restates what a specific condition already said. The line a user reads must
+// name the specific one.
+func TestUX_SummaryConditionsRankBelowSpecificOnes(t *testing.T) {
+	env := lastEnvelope(t, "inmem-stall-node")
+	for _, o := range env.Objects {
+		if o.Kind() != "DevMachine" {
+			continue
+		}
+		conditions, _ := o.Slice("status", "conditions")
+		conditions = append(conditions, map[string]any{
+			"type": "Ready", "status": "False", "reason": "NotReady",
+			"lastTransitionTime": fixture.T0.Add(time.Hour).Format(time.RFC3339),
+		})
+		o["status"].(map[string]any)["conditions"] = conditions
+	}
+
+	now := fixture.T0.Add(time.Duration(env.Meta.TPlusS) * time.Second)
+	res := fold.Fold(env, fold.Options{Now: now})
+	stall, ok := why.Rank(env, res, why.Options{Now: now})
+	require.True(t, ok)
+	require.NotEqual(t, "Ready", stall.ConditionType,
+		"a summary condition won despite a specific one being available")
+
+	// There is a Ready on more than one object; the one that matters is the one on
+	// the object that won, which lost on the condition rather than on the object.
+	var summary *why.Candidate
+	for i := range stall.Candidates {
+		c := &stall.Candidates[i]
+		if c.Condition.Type == "Ready" && c.Object == stall.Object {
+			summary = c
+		}
+	}
+	require.NotNil(t, summary)
+	require.Equal(t, "summary condition", summary.LostTo)
 }
