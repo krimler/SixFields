@@ -1,6 +1,7 @@
 # Management cluster. CAPD talks to the host container runtime, so its socket is
 # mounted in; hack/dev-up.sh substitutes DOCKER_SOCKET, which is resolved per
 # runtime (Docker Desktop, OrbStack and Colima all use different paths).
+---
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
