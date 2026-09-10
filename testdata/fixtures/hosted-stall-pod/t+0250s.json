@@ -1,0 +1,218 @@
+{
+  "_meta": {
+    "scenario": "hosted-stall-pod",
+    "t_plus_s": 250,
+    "capi": "v1.14.2",
+    "note": "hand-built: the hosted control-plane pods never become ready, so the phase names the K0smotronControlPlane rather than any machine",
+    "synthetic": true
+  },
+  "objects": [
+    {
+      "apiVersion": "cluster.x-k8s.io/v1beta2",
+      "kind": "Cluster",
+      "metadata": {
+        "creationTimestamp": "2026-09-10T12:00:00Z",
+        "labels": {},
+        "name": "hosted-1",
+        "namespace": "default",
+        "uid": "uid-Cluster-hosted-1"
+      },
+      "spec": {
+        "controlPlaneRef": {
+          "apiGroup": "controlplane.cluster.x-k8s.io",
+          "kind": "K0smotronControlPlane",
+          "name": "hosted-1-cp"
+        },
+        "infrastructureRef": {
+          "apiGroup": "infrastructure.cluster.x-k8s.io",
+          "kind": "DevCluster",
+          "name": "hosted-1"
+        },
+        "topology": {
+          "class": "std",
+          "variables": [
+            {
+              "name": "size",
+              "value": "dev"
+            },
+            {
+              "name": "placement",
+              "value": "hosted"
+            }
+          ],
+          "version": "v1.34.11",
+          "workers": {
+            "machineDeployments": [
+              {
+                "class": "default",
+                "name": "default",
+                "replicas": 2
+              }
+            ]
+          }
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-10T12:00:40Z",
+            "reason": "ReconcileSucceeded",
+            "status": "True",
+            "type": "TopologyReconciled"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:00:40Z",
+            "reason": "Ready",
+            "status": "True",
+            "type": "InfrastructureReady"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:00:00Z",
+            "message": "waiting for the control plane",
+            "reason": "NotInitialized",
+            "status": "False",
+            "type": "ControlPlaneInitialized"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:00:00Z",
+            "message": "waiting for the control plane",
+            "reason": "NotAvailable",
+            "status": "False",
+            "type": "ControlPlaneAvailable"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:00:00Z",
+            "message": "waiting for worker machines",
+            "reason": "NotAvailable",
+            "status": "False",
+            "type": "WorkersAvailable"
+          }
+        ],
+        "initialization": {
+          "controlPlaneInitialized": false,
+          "infrastructureProvisioned": true
+        },
+        "phase": "Provisioning",
+        "workers": {
+          "desiredReplicas": 2,
+          "readyReplicas": 0,
+          "replicas": 0
+        }
+      }
+    },
+    {
+      "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+      "kind": "DevCluster",
+      "metadata": {
+        "creationTimestamp": "2026-09-10T12:00:00Z",
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "hosted-1",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "name": "hosted-1",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "kind": "Cluster",
+            "name": "hosted-1",
+            "uid": "uid-Cluster-hosted-1"
+          }
+        ],
+        "uid": "uid-DevCluster-hosted-1"
+      },
+      "spec": {
+        "backend": {
+          "docker": {}
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-10T12:00:40Z",
+            "reason": "Available",
+            "status": "True",
+            "type": "LoadBalancerAvailable"
+          }
+        ],
+        "initialization": {
+          "provisioned": true
+        }
+      }
+    },
+    {
+      "apiVersion": "controlplane.cluster.x-k8s.io/v1beta2",
+      "kind": "K0smotronControlPlane",
+      "metadata": {
+        "creationTimestamp": "2026-09-10T12:00:00Z",
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "hosted-1",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "name": "hosted-1-cp",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "kind": "Cluster",
+            "name": "hosted-1",
+            "uid": "uid-Cluster-hosted-1"
+          }
+        ],
+        "uid": "uid-K0smotronControlPlane-hosted-1-cp"
+      },
+      "spec": {
+        "version": "v1.34.11"
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-10T12:01:00Z",
+            "message": "0 of 1 control-plane pods are ready: ImagePullBackOff",
+            "reason": "PodNotReady",
+            "status": "False",
+            "type": "Available"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "cluster.x-k8s.io/v1beta2",
+      "kind": "MachineDeployment",
+      "metadata": {
+        "creationTimestamp": "2026-09-10T12:00:00Z",
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "hosted-1",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "name": "hosted-1-md-0",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "kind": "Cluster",
+            "name": "hosted-1",
+            "uid": "uid-Cluster-hosted-1"
+          }
+        ],
+        "uid": "uid-MachineDeployment-hosted-1-md-0"
+      },
+      "spec": {
+        "replicas": 2
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-10T12:00:00Z",
+            "message": "no machines are ready",
+            "reason": "NotAvailable",
+            "status": "False",
+            "type": "Available"
+          }
+        ],
+        "readyReplicas": 0,
+        "replicas": 0
+      }
+    }
+  ]
+}

@@ -138,13 +138,27 @@ func Fold(env snapshot.Envelope, opt Options) Result {
 		if !p.StartedAt.IsZero() && !end.IsZero() && end.After(p.StartedAt) {
 			p.Elapsed = end.Sub(p.StartedAt)
 		}
-		if p.State == Running && stalled(*p, opt) {
+		// Only the frontier phase can stall. Workers sitting at 0/2 while the
+		// control plane is stuck are waiting, not stuck, and naming them would
+		// point the user at the wrong object.
+		if p.State == Running && i == frontier(phases) && stalled(*p, opt) {
 			p.State = Stalled
 		}
 	}
 	res.Phases = phases
 	res.Ready = allDone(phases)
 	return res
+}
+
+// frontier is the index of the earliest phase that is not done: the one thing the
+// cluster is actually waiting on.
+func frontier(phases []Phase) int {
+	for i, p := range phases {
+		if p.State != Done {
+			return i
+		}
+	}
+	return len(phases)
 }
 
 func stalled(p Phase, opt Options) bool {
@@ -190,14 +204,17 @@ func placement(cluster snapshot.Object) string {
 func foldInfrastructure(env snapshot.Envelope, cluster snapshot.Object) Phase {
 	p := Phase{Name: Infrastructure, State: Pending, Detail: "waiting"}
 	contributors := []snapshot.Object{cluster}
+	var seen clock
+	seen.only(cluster, clusterInfrastructureReady, clusterTopologyReconciled)
 	if ref, ok := cluster.ContractRef("spec", "infrastructureRef"); ok {
 		p.Contributors = append(p.Contributors, ref)
 		if infra, ok := env.FindRef(ref); ok {
 			contributors = append(contributors, infra)
+			seen.all(infra)
 			p.Detail = ref.Kind
 		}
 	}
-	p.LastTransition = latestTransition(contributors...)
+	p.LastTransition = seen.latest
 
 	if provisioned, ok := cluster.Bool("status", "initialization", "infrastructureProvisioned"); ok && provisioned {
 		p.State, p.Detail = Done, "ready"
@@ -221,6 +238,9 @@ func foldControlPlane(env snapshot.Envelope, cluster snapshot.Object) Phase {
 	p := Phase{Name: ControlPlane, State: Pending, Detail: "waiting"}
 	contributors := []snapshot.Object{cluster}
 
+	var seen clock
+	seen.only(cluster, clusterControlPlaneInit, clusterControlPlaneAvailable)
+
 	cpRef, hasRef := cluster.ContractRef("spec", "controlPlaneRef")
 	var cp snapshot.Object
 	if hasRef {
@@ -228,17 +248,28 @@ func foldControlPlane(env snapshot.Envelope, cluster snapshot.Object) Phase {
 		if obj, ok := env.FindRef(cpRef); ok {
 			cp = obj
 			contributors = append(contributors, obj)
+			seen.all(obj)
 		}
 	}
-	machines := controlPlaneMachines(env, cluster, cpRef)
-	for _, m := range machines {
+	for _, m := range controlPlaneMachines(env, cluster, cpRef) {
 		p.Contributors = append(p.Contributors, m.Ref())
 		contributors = append(contributors, m)
+		seen.all(m)
+		if infra, ok := m.ContractRef("spec", "infrastructureRef"); ok {
+			if obj, ok := env.FindRef(infra); ok {
+				seen.all(obj)
+			}
+		}
 	}
-	p.LastTransition = latestTransition(contributors...)
+	p.LastTransition = seen.latest
 
+	// A hosted control plane has no machines, so there is nothing to count: its
+	// own Available condition is the whole answer (PLAN.md Phase 4).
 	hosted := hostedControlPlaneKinds[cpRef.Kind]
-	ready, desired := replicaCounts(cluster, cp, "controlPlane")
+	var ready, desired int64
+	if !hosted {
+		ready, desired = replicaCounts(cluster, cp, "controlPlane")
+	}
 
 	avail, hasAvail := cluster.Condition(clusterControlPlaneAvailable)
 	switch {
@@ -288,21 +319,59 @@ func controlPlaneMachines(env snapshot.Envelope, cluster snapshot.Object, cpRef 
 	return out
 }
 
+// workerMachines are the Machines that are not owned by the control plane: pools
+// own them through a MachineSet, so ownership is one hop away and the cluster
+// label is the reliable filter.
+func workerMachines(env snapshot.Envelope, cluster snapshot.Object) []snapshot.Object {
+	cpRef, _ := cluster.ContractRef("spec", "controlPlaneRef")
+	var out []snapshot.Object
+	for _, m := range env.ByKind("Machine") {
+		if m.Labels()["cluster.x-k8s.io/cluster-name"] != cluster.Name() {
+			continue
+		}
+		owned := false
+		for _, owner := range m.OwnerRefs() {
+			if owner.Kind == cpRef.Kind && owner.Name == cpRef.Name {
+				owned = true
+			}
+		}
+		if !owned {
+			out = append(out, m)
+		}
+	}
+	return out
+}
+
 func foldWorkers(env snapshot.Envelope, cluster snapshot.Object) Phase {
 	p := Phase{Name: Workers, State: Pending, Detail: "waiting"}
 	contributors := []snapshot.Object{cluster}
 
+	var seen clock
+	seen.only(cluster, clusterWorkersAvailable)
+
 	// The user's noun is a pool; the class decides whether that is a
 	// MachineDeployment or a MachinePool, and this is the only place that shows.
 	pools := env.ByKind("MachineDeployment", "MachinePool")
+	var owned []snapshot.Object
 	for _, pool := range pools {
 		if pool.Labels()["cluster.x-k8s.io/cluster-name"] != cluster.Name() {
 			continue
 		}
+		owned = append(owned, pool)
 		p.Contributors = append(p.Contributors, pool.Ref())
 		contributors = append(contributors, pool)
+		seen.all(pool)
 	}
-	p.LastTransition = latestTransition(contributors...)
+	pools = owned
+	for _, m := range workerMachines(env, cluster) {
+		seen.all(m)
+		if infra, ok := m.ContractRef("spec", "infrastructureRef"); ok {
+			if obj, ok := env.FindRef(infra); ok {
+				seen.all(obj)
+			}
+		}
+	}
+	p.LastTransition = seen.latest
 
 	ready, desired := replicaCounts(cluster, snapshot.Object{}, "workers")
 	if desired == 0 && len(p.Contributors) == 0 {
@@ -355,7 +424,9 @@ func foldAddons(env snapshot.Envelope, cluster snapshot.Object) Phase {
 	if len(contributors) == 0 {
 		return p
 	}
-	p.LastTransition = latestTransition(contributors...)
+	var seen clock
+	seen.all(contributors...)
+	p.LastTransition = seen.latest
 
 	applied, total := 0, 0
 	for _, b := range contributors {
@@ -456,14 +527,33 @@ func firstFalse(obj snapshot.Object) (snapshot.Condition, bool) {
 	return snapshot.Condition{}, false
 }
 
-func latestTransition(objs ...snapshot.Object) time.Time {
-	var latest time.Time
-	for _, o := range objs {
-		if t := o.LastTransition(); t.After(latest) {
-			latest = t
+// clock accumulates the transition times that belong to one phase. The Cluster
+// carries conditions for all four phases at once, so taking its whole
+// LastTransition would make every phase look like it changed whenever any of them
+// did — and stall detection would never fire.
+type clock struct{ latest time.Time }
+
+// only adds the named conditions of an object.
+func (c *clock) only(o snapshot.Object, types ...string) {
+	for _, name := range types {
+		if cond, ok := o.Condition(name); ok {
+			c.at(cond.LastTransitionTime)
 		}
 	}
-	return latest
+}
+
+// all adds every condition of an object, for objects that exist solely for one
+// phase.
+func (c *clock) all(objs ...snapshot.Object) {
+	for _, o := range objs {
+		c.at(o.LastTransition())
+	}
+}
+
+func (c *clock) at(t time.Time) {
+	if t.After(c.latest) {
+		c.latest = t
+	}
 }
 
 // humanise turns a CamelCase provider reason into something readable:

@@ -1,0 +1,754 @@
+{
+  "_meta": {
+    "scenario": "scale-up",
+    "t_plus_s": 320,
+    "capi": "v1.14.2",
+    "note": "hand-built: the pool is scaled 2 -\u003e 4 after the cluster is Ready, so the workers phase goes from done back to running and then done again",
+    "synthetic": true
+  },
+  "objects": [
+    {
+      "apiVersion": "cluster.x-k8s.io/v1beta2",
+      "kind": "Cluster",
+      "metadata": {
+        "creationTimestamp": "2026-09-10T12:00:00Z",
+        "labels": {},
+        "name": "dev-1",
+        "namespace": "default",
+        "uid": "uid-Cluster-dev-1"
+      },
+      "spec": {
+        "controlPlaneRef": {
+          "apiGroup": "controlplane.cluster.x-k8s.io",
+          "kind": "KubeadmControlPlane",
+          "name": "dev-1-cp"
+        },
+        "infrastructureRef": {
+          "apiGroup": "infrastructure.cluster.x-k8s.io",
+          "kind": "DevCluster",
+          "name": "dev-1"
+        },
+        "topology": {
+          "class": "std",
+          "variables": [
+            {
+              "name": "size",
+              "value": "dev"
+            },
+            {
+              "name": "placement",
+              "value": "self"
+            }
+          ],
+          "version": "v1.34.11",
+          "workers": {
+            "machineDeployments": [
+              {
+                "class": "default",
+                "name": "default",
+                "replicas": 2
+              }
+            ]
+          }
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-10T12:01:00Z",
+            "reason": "ReconcileSucceeded",
+            "status": "True",
+            "type": "TopologyReconciled"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:01:00Z",
+            "reason": "Ready",
+            "status": "True",
+            "type": "InfrastructureReady"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:02:10Z",
+            "reason": "Initialized",
+            "status": "True",
+            "type": "ControlPlaneInitialized"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:02:10Z",
+            "reason": "Available",
+            "status": "True",
+            "type": "ControlPlaneAvailable"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:05:00Z",
+            "message": "2 of 4 replicas are ready",
+            "reason": "NotAvailable",
+            "status": "False",
+            "type": "WorkersAvailable"
+          }
+        ],
+        "controlPlane": {
+          "desiredReplicas": 1,
+          "readyReplicas": 1,
+          "replicas": 1
+        },
+        "initialization": {
+          "controlPlaneInitialized": true,
+          "infrastructureProvisioned": true
+        },
+        "phase": "Provisioned",
+        "workers": {
+          "desiredReplicas": 4,
+          "readyReplicas": 2,
+          "replicas": 4
+        }
+      }
+    },
+    {
+      "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+      "kind": "DevCluster",
+      "metadata": {
+        "creationTimestamp": "2026-09-10T12:00:00Z",
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "dev-1",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "name": "dev-1",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "kind": "Cluster",
+            "name": "dev-1",
+            "uid": "uid-Cluster-dev-1"
+          }
+        ],
+        "uid": "uid-DevCluster-dev-1"
+      },
+      "spec": {
+        "backend": {
+          "docker": {}
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-10T12:01:00Z",
+            "reason": "Available",
+            "status": "True",
+            "type": "LoadBalancerAvailable"
+          }
+        ],
+        "initialization": {
+          "provisioned": true
+        }
+      }
+    },
+    {
+      "apiVersion": "controlplane.cluster.x-k8s.io/v1beta2",
+      "kind": "KubeadmControlPlane",
+      "metadata": {
+        "creationTimestamp": "2026-09-10T12:00:00Z",
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "dev-1",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "name": "dev-1-cp",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "kind": "Cluster",
+            "name": "dev-1",
+            "uid": "uid-Cluster-dev-1"
+          }
+        ],
+        "uid": "uid-KubeadmControlPlane-dev-1-cp"
+      },
+      "spec": {
+        "replicas": 1,
+        "version": "v1.34.11"
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-10T12:02:10Z",
+            "reason": "Initialized",
+            "status": "True",
+            "type": "Initialized"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:02:10Z",
+            "reason": "Available",
+            "status": "True",
+            "type": "Available"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:02:10Z",
+            "reason": "Healthy",
+            "status": "True",
+            "type": "EtcdClusterHealthy"
+          }
+        ],
+        "readyReplicas": 1,
+        "replicas": 1
+      }
+    },
+    {
+      "apiVersion": "cluster.x-k8s.io/v1beta2",
+      "kind": "MachineDeployment",
+      "metadata": {
+        "creationTimestamp": "2026-09-10T12:00:00Z",
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "dev-1",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "name": "dev-1-md-0",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "kind": "Cluster",
+            "name": "dev-1",
+            "uid": "uid-Cluster-dev-1"
+          }
+        ],
+        "uid": "uid-MachineDeployment-dev-1-md-0"
+      },
+      "spec": {
+        "replicas": 4
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-10T12:05:00Z",
+            "message": "2 of 4 replicas are ready",
+            "reason": "ScalingUp",
+            "status": "False",
+            "type": "Available"
+          }
+        ],
+        "readyReplicas": 2,
+        "replicas": 2
+      }
+    },
+    {
+      "apiVersion": "cluster.x-k8s.io/v1beta2",
+      "kind": "Machine",
+      "metadata": {
+        "creationTimestamp": "2026-09-10T12:00:00Z",
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "dev-1",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "name": "dev-1-cp-abcde",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "controlplane.cluster.x-k8s.io/v1beta2",
+            "kind": "KubeadmControlPlane",
+            "name": "dev-1-cp",
+            "uid": "uid-KubeadmControlPlane-dev-1-cp"
+          }
+        ],
+        "uid": "uid-Machine-dev-1-cp-abcde"
+      },
+      "spec": {
+        "bootstrapRef": {
+          "apiGroup": "bootstrap.cluster.x-k8s.io",
+          "kind": "KubeadmConfig",
+          "name": "dev-1-cp-abcde"
+        },
+        "infrastructureRef": {
+          "apiGroup": "infrastructure.cluster.x-k8s.io",
+          "kind": "DevMachine",
+          "name": "dev-1-cp-abcde"
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-10T12:02:00Z",
+            "reason": "Ready",
+            "status": "True",
+            "type": "InfrastructureReady"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:00:45Z",
+            "reason": "Ready",
+            "status": "True",
+            "type": "BootstrapConfigReady"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:02:00Z",
+            "reason": "Healthy",
+            "status": "True",
+            "type": "NodeHealthy"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:02:00Z",
+            "reason": "Ready",
+            "status": "True",
+            "type": "Ready"
+          }
+        ],
+        "phase": "Running"
+      }
+    },
+    {
+      "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+      "kind": "DevMachine",
+      "metadata": {
+        "creationTimestamp": "2026-09-10T12:00:00Z",
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "dev-1",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "name": "dev-1-cp-abcde",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "kind": "Machine",
+            "name": "dev-1-cp-abcde",
+            "uid": "uid-Machine-dev-1-cp-abcde"
+          }
+        ],
+        "uid": "uid-DevMachine-dev-1-cp-abcde"
+      },
+      "spec": {},
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-10T12:02:00Z",
+            "reason": "Provisioned",
+            "status": "True",
+            "type": "ContainerProvisioned"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:02:00Z",
+            "reason": "Completed",
+            "status": "True",
+            "type": "BootstrapCompleted"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "bootstrap.cluster.x-k8s.io/v1beta2",
+      "kind": "KubeadmConfig",
+      "metadata": {
+        "creationTimestamp": "2026-09-10T12:00:00Z",
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "dev-1",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "name": "dev-1-cp-abcde",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "kind": "Machine",
+            "name": "dev-1-cp-abcde",
+            "uid": "uid-Machine-dev-1-cp-abcde"
+          }
+        ],
+        "uid": "uid-KubeadmConfig-dev-1-cp-abcde"
+      },
+      "spec": {},
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-10T12:00:45Z",
+            "reason": "Ready",
+            "status": "True",
+            "type": "Ready"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "cluster.x-k8s.io/v1beta2",
+      "kind": "Machine",
+      "metadata": {
+        "creationTimestamp": "2026-09-10T12:00:00Z",
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "dev-1",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "name": "dev-1-md-0-0",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "kind": "MachineSet",
+            "name": "dev-1-md-0-set",
+            "uid": "uid-MachineSet-dev-1-md-0-set"
+          }
+        ],
+        "uid": "uid-Machine-dev-1-md-0-0"
+      },
+      "spec": {
+        "infrastructureRef": {
+          "apiGroup": "infrastructure.cluster.x-k8s.io",
+          "kind": "DevMachine",
+          "name": "dev-1-md-0-0"
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-10T12:03:20Z",
+            "reason": "Ready",
+            "status": "True",
+            "type": "InfrastructureReady"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:02:20Z",
+            "reason": "Ready",
+            "status": "True",
+            "type": "BootstrapConfigReady"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:03:20Z",
+            "reason": "Healthy",
+            "status": "True",
+            "type": "NodeHealthy"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:03:20Z",
+            "reason": "Ready",
+            "status": "True",
+            "type": "Ready"
+          }
+        ],
+        "phase": "Running"
+      }
+    },
+    {
+      "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+      "kind": "DevMachine",
+      "metadata": {
+        "creationTimestamp": "2026-09-10T12:00:00Z",
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "dev-1",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "name": "dev-1-md-0-0",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "kind": "Machine",
+            "name": "dev-1-md-0-0",
+            "uid": "uid-Machine-dev-1-md-0-0"
+          }
+        ],
+        "uid": "uid-DevMachine-dev-1-md-0-0"
+      },
+      "spec": {},
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-10T12:03:20Z",
+            "reason": "Provisioned",
+            "status": "True",
+            "type": "ContainerProvisioned"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:03:20Z",
+            "reason": "Completed",
+            "status": "True",
+            "type": "BootstrapCompleted"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "cluster.x-k8s.io/v1beta2",
+      "kind": "Machine",
+      "metadata": {
+        "creationTimestamp": "2026-09-10T12:00:00Z",
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "dev-1",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "name": "dev-1-md-0-1",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "kind": "MachineSet",
+            "name": "dev-1-md-0-set",
+            "uid": "uid-MachineSet-dev-1-md-0-set"
+          }
+        ],
+        "uid": "uid-Machine-dev-1-md-0-1"
+      },
+      "spec": {
+        "infrastructureRef": {
+          "apiGroup": "infrastructure.cluster.x-k8s.io",
+          "kind": "DevMachine",
+          "name": "dev-1-md-0-1"
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-10T12:03:25Z",
+            "reason": "Ready",
+            "status": "True",
+            "type": "InfrastructureReady"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:02:20Z",
+            "reason": "Ready",
+            "status": "True",
+            "type": "BootstrapConfigReady"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:03:25Z",
+            "reason": "Healthy",
+            "status": "True",
+            "type": "NodeHealthy"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:03:25Z",
+            "reason": "Ready",
+            "status": "True",
+            "type": "Ready"
+          }
+        ],
+        "phase": "Running"
+      }
+    },
+    {
+      "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+      "kind": "DevMachine",
+      "metadata": {
+        "creationTimestamp": "2026-09-10T12:00:00Z",
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "dev-1",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "name": "dev-1-md-0-1",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "kind": "Machine",
+            "name": "dev-1-md-0-1",
+            "uid": "uid-Machine-dev-1-md-0-1"
+          }
+        ],
+        "uid": "uid-DevMachine-dev-1-md-0-1"
+      },
+      "spec": {},
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-10T12:03:25Z",
+            "reason": "Provisioned",
+            "status": "True",
+            "type": "ContainerProvisioned"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:03:25Z",
+            "reason": "Completed",
+            "status": "True",
+            "type": "BootstrapCompleted"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "cluster.x-k8s.io/v1beta2",
+      "kind": "Machine",
+      "metadata": {
+        "creationTimestamp": "2026-09-10T12:00:00Z",
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "dev-1",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "name": "dev-1-md-0-2",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "kind": "MachineSet",
+            "name": "dev-1-md-0-set",
+            "uid": "uid-MachineSet-dev-1-md-0-set"
+          }
+        ],
+        "uid": "uid-Machine-dev-1-md-0-2"
+      },
+      "spec": {
+        "infrastructureRef": {
+          "apiGroup": "infrastructure.cluster.x-k8s.io",
+          "kind": "DevMachine",
+          "name": "dev-1-md-0-2"
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-10T12:05:00Z",
+            "message": "waiting for the machine container",
+            "reason": "NotReady",
+            "status": "False",
+            "type": "InfrastructureReady"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:05:00Z",
+            "reason": "Ready",
+            "status": "True",
+            "type": "BootstrapConfigReady"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:05:00Z",
+            "message": "the node has not registered",
+            "reason": "NodeNotFound",
+            "status": "Unknown",
+            "type": "NodeHealthy"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:05:00Z",
+            "message": "waiting for infrastructure",
+            "reason": "NotReady",
+            "status": "False",
+            "type": "Ready"
+          }
+        ],
+        "phase": "Provisioning"
+      }
+    },
+    {
+      "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+      "kind": "DevMachine",
+      "metadata": {
+        "creationTimestamp": "2026-09-10T12:00:00Z",
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "dev-1",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "name": "dev-1-md-0-2",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "kind": "Machine",
+            "name": "dev-1-md-0-2",
+            "uid": "uid-Machine-dev-1-md-0-2"
+          }
+        ],
+        "uid": "uid-DevMachine-dev-1-md-0-2"
+      },
+      "spec": {},
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-10T12:05:00Z",
+            "message": "starting the machine container",
+            "reason": "Provisioning",
+            "status": "False",
+            "type": "ContainerProvisioned"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "cluster.x-k8s.io/v1beta2",
+      "kind": "Machine",
+      "metadata": {
+        "creationTimestamp": "2026-09-10T12:00:00Z",
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "dev-1",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "name": "dev-1-md-0-3",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "kind": "MachineSet",
+            "name": "dev-1-md-0-set",
+            "uid": "uid-MachineSet-dev-1-md-0-set"
+          }
+        ],
+        "uid": "uid-Machine-dev-1-md-0-3"
+      },
+      "spec": {
+        "infrastructureRef": {
+          "apiGroup": "infrastructure.cluster.x-k8s.io",
+          "kind": "DevMachine",
+          "name": "dev-1-md-0-3"
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-10T12:05:00Z",
+            "message": "waiting for the machine container",
+            "reason": "NotReady",
+            "status": "False",
+            "type": "InfrastructureReady"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:05:00Z",
+            "reason": "Ready",
+            "status": "True",
+            "type": "BootstrapConfigReady"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:05:00Z",
+            "message": "the node has not registered",
+            "reason": "NodeNotFound",
+            "status": "Unknown",
+            "type": "NodeHealthy"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:05:00Z",
+            "message": "waiting for infrastructure",
+            "reason": "NotReady",
+            "status": "False",
+            "type": "Ready"
+          }
+        ],
+        "phase": "Provisioning"
+      }
+    },
+    {
+      "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+      "kind": "DevMachine",
+      "metadata": {
+        "creationTimestamp": "2026-09-10T12:00:00Z",
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "dev-1",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "name": "dev-1-md-0-3",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "kind": "Machine",
+            "name": "dev-1-md-0-3",
+            "uid": "uid-Machine-dev-1-md-0-3"
+          }
+        ],
+        "uid": "uid-DevMachine-dev-1-md-0-3"
+      },
+      "spec": {},
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-10T12:05:00Z",
+            "message": "starting the machine container",
+            "reason": "Provisioning",
+            "status": "False",
+            "type": "ContainerProvisioned"
+          }
+        ]
+      }
+    }
+  ]
+}

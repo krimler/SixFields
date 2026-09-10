@@ -1,0 +1,78 @@
+{
+  "cluster": {
+    "kind": "Cluster",
+    "name": "inmem-1",
+    "namespace": "default",
+    "group": "cluster.x-k8s.io"
+  },
+  "class": "std",
+  "version": "v1.34.11",
+  "placement": "self",
+  "phases": [
+    {
+      "name": "infrastructure",
+      "state": "done",
+      "detail": "ready",
+      "elapsed_ns": 3000000000,
+      "last_transition": "2026-09-10T12:00:03Z",
+      "started_at": "2026-09-10T12:00:00Z",
+      "contributors": [
+        {
+          "kind": "DevCluster",
+          "name": "inmem-1",
+          "namespace": "default",
+          "group": "infrastructure.cluster.x-k8s.io"
+        }
+      ]
+    },
+    {
+      "name": "control plane",
+      "state": "stalled",
+      "detail": "0/1 nodes",
+      "elapsed_ns": 197000000000,
+      "last_transition": "2026-09-10T12:00:08Z",
+      "started_at": "2026-09-10T12:00:03Z",
+      "contributors": [
+        {
+          "kind": "KubeadmControlPlane",
+          "name": "inmem-1-cp",
+          "namespace": "default",
+          "group": "controlplane.cluster.x-k8s.io"
+        },
+        {
+          "kind": "Machine",
+          "name": "inmem-1-cp-abcde",
+          "namespace": "default",
+          "group": "cluster.x-k8s.io"
+        }
+      ]
+    },
+    {
+      "name": "workers",
+      "state": "running",
+      "detail": "0/2 nodes",
+      "elapsed_ns": 197000000000,
+      "last_transition": "2026-09-10T12:00:00Z",
+      "started_at": "2026-09-10T12:00:03Z",
+      "contributors": [
+        {
+          "kind": "MachineDeployment",
+          "name": "inmem-1-md-0",
+          "namespace": "default",
+          "group": "cluster.x-k8s.io"
+        }
+      ]
+    },
+    {
+      "name": "addons",
+      "state": "done",
+      "detail": "none",
+      "elapsed_ns": 197000000000,
+      "started_at": "2026-09-10T12:00:03Z",
+      "contributors": null
+    }
+  ],
+  "ready": false,
+  "at": "2026-09-10T12:03:20Z",
+  "elapsed_ns": 200000000000
+}

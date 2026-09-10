@@ -1,0 +1,78 @@
+{
+  "cluster": {
+    "kind": "Cluster",
+    "name": "dev-1",
+    "namespace": "default",
+    "group": "cluster.x-k8s.io"
+  },
+  "class": "std",
+  "version": "v1.34.11",
+  "placement": "self",
+  "phases": [
+    {
+      "name": "infrastructure",
+      "state": "done",
+      "detail": "ready",
+      "elapsed_ns": 60000000000,
+      "last_transition": "2026-09-10T12:01:00Z",
+      "started_at": "2026-09-10T12:00:00Z",
+      "contributors": [
+        {
+          "kind": "DevCluster",
+          "name": "dev-1",
+          "namespace": "default",
+          "group": "infrastructure.cluster.x-k8s.io"
+        }
+      ]
+    },
+    {
+      "name": "control plane",
+      "state": "done",
+      "detail": "1/1 nodes",
+      "elapsed_ns": 70000000000,
+      "last_transition": "2026-09-10T12:02:10Z",
+      "started_at": "2026-09-10T12:01:00Z",
+      "contributors": [
+        {
+          "kind": "KubeadmControlPlane",
+          "name": "dev-1-cp",
+          "namespace": "default",
+          "group": "controlplane.cluster.x-k8s.io"
+        },
+        {
+          "kind": "Machine",
+          "name": "dev-1-cp-abcde",
+          "namespace": "default",
+          "group": "cluster.x-k8s.io"
+        }
+      ]
+    },
+    {
+      "name": "workers",
+      "state": "running",
+      "detail": "2/4 nodes",
+      "elapsed_ns": 190000000000,
+      "last_transition": "2026-09-10T12:05:00Z",
+      "started_at": "2026-09-10T12:02:10Z",
+      "contributors": [
+        {
+          "kind": "MachineDeployment",
+          "name": "dev-1-md-0",
+          "namespace": "default",
+          "group": "cluster.x-k8s.io"
+        }
+      ]
+    },
+    {
+      "name": "addons",
+      "state": "done",
+      "detail": "none",
+      "elapsed_ns": 190000000000,
+      "started_at": "2026-09-10T12:02:10Z",
+      "contributors": null
+    }
+  ],
+  "ready": false,
+  "at": "2026-09-10T12:05:20Z",
+  "elapsed_ns": 320000000000
+}

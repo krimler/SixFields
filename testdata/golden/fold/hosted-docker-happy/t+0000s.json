@@ -1,0 +1,72 @@
+{
+  "cluster": {
+    "kind": "Cluster",
+    "name": "hosted-1",
+    "namespace": "default",
+    "group": "cluster.x-k8s.io"
+  },
+  "class": "std",
+  "version": "v1.34.11",
+  "placement": "hosted",
+  "phases": [
+    {
+      "name": "infrastructure",
+      "state": "running",
+      "detail": "not ready",
+      "elapsed_ns": 0,
+      "last_transition": "2026-09-10T12:00:00Z",
+      "started_at": "2026-09-10T12:00:00Z",
+      "contributors": [
+        {
+          "kind": "DevCluster",
+          "name": "hosted-1",
+          "namespace": "default",
+          "group": "infrastructure.cluster.x-k8s.io"
+        }
+      ]
+    },
+    {
+      "name": "control plane",
+      "state": "running",
+      "detail": "hosted · not initialized",
+      "elapsed_ns": 0,
+      "last_transition": "2026-09-10T12:00:00Z",
+      "started_at": "2026-09-10T12:00:00Z",
+      "contributors": [
+        {
+          "kind": "K0smotronControlPlane",
+          "name": "hosted-1-cp",
+          "namespace": "default",
+          "group": "controlplane.cluster.x-k8s.io"
+        }
+      ]
+    },
+    {
+      "name": "workers",
+      "state": "running",
+      "detail": "0/2 nodes",
+      "elapsed_ns": 0,
+      "last_transition": "2026-09-10T12:00:00Z",
+      "started_at": "2026-09-10T12:00:00Z",
+      "contributors": [
+        {
+          "kind": "MachineDeployment",
+          "name": "hosted-1-md-0",
+          "namespace": "default",
+          "group": "cluster.x-k8s.io"
+        }
+      ]
+    },
+    {
+      "name": "addons",
+      "state": "done",
+      "detail": "none",
+      "elapsed_ns": 0,
+      "started_at": "2026-09-10T12:00:00Z",
+      "contributors": null
+    }
+  ],
+  "ready": false,
+  "at": "2026-09-10T12:00:00Z",
+  "elapsed_ns": 0
+}

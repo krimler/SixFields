@@ -1,0 +1,428 @@
+{
+  "_meta": {
+    "scenario": "inmem-stall-etcd",
+    "t_plus_s": 10,
+    "capi": "v1.14.2",
+    "note": "hand-built from the inMemory backend: etcd startupDuration set past stallAfter, so EtcdProvisioned stays False on one DevMachine and nothing transitions after t+8",
+    "synthetic": true
+  },
+  "objects": [
+    {
+      "apiVersion": "cluster.x-k8s.io/v1beta2",
+      "kind": "Cluster",
+      "metadata": {
+        "creationTimestamp": "2026-09-10T12:00:00Z",
+        "labels": {},
+        "name": "inmem-1",
+        "namespace": "default",
+        "uid": "uid-Cluster-inmem-1"
+      },
+      "spec": {
+        "controlPlaneRef": {
+          "apiGroup": "controlplane.cluster.x-k8s.io",
+          "kind": "KubeadmControlPlane",
+          "name": "inmem-1-cp"
+        },
+        "infrastructureRef": {
+          "apiGroup": "infrastructure.cluster.x-k8s.io",
+          "kind": "DevCluster",
+          "name": "inmem-1"
+        },
+        "topology": {
+          "class": "std",
+          "variables": [
+            {
+              "name": "size",
+              "value": "dev"
+            },
+            {
+              "name": "placement",
+              "value": "self"
+            }
+          ],
+          "version": "v1.34.11",
+          "workers": {
+            "machineDeployments": [
+              {
+                "class": "default",
+                "name": "default",
+                "replicas": 2
+              }
+            ]
+          }
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-10T12:00:03Z",
+            "reason": "ReconcileSucceeded",
+            "status": "True",
+            "type": "TopologyReconciled"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:00:03Z",
+            "reason": "Ready",
+            "status": "True",
+            "type": "InfrastructureReady"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:00:00Z",
+            "message": "waiting for the control plane",
+            "reason": "NotInitialized",
+            "status": "False",
+            "type": "ControlPlaneInitialized"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:00:00Z",
+            "message": "waiting for the control plane",
+            "reason": "NotAvailable",
+            "status": "False",
+            "type": "ControlPlaneAvailable"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:00:00Z",
+            "message": "waiting for worker machines",
+            "reason": "NotAvailable",
+            "status": "False",
+            "type": "WorkersAvailable"
+          }
+        ],
+        "controlPlane": {
+          "desiredReplicas": 1,
+          "readyReplicas": 0,
+          "replicas": 1
+        },
+        "initialization": {
+          "controlPlaneInitialized": false,
+          "infrastructureProvisioned": true
+        },
+        "phase": "Provisioning",
+        "workers": {
+          "desiredReplicas": 2,
+          "readyReplicas": 0,
+          "replicas": 0
+        }
+      }
+    },
+    {
+      "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+      "kind": "DevCluster",
+      "metadata": {
+        "creationTimestamp": "2026-09-10T12:00:00Z",
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "inmem-1",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "name": "inmem-1",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "kind": "Cluster",
+            "name": "inmem-1",
+            "uid": "uid-Cluster-inmem-1"
+          }
+        ],
+        "uid": "uid-DevCluster-inmem-1"
+      },
+      "spec": {
+        "backend": {
+          "inMemory": {
+            "apiServer": {
+              "provisioning": {
+                "startupDuration": "2s"
+              }
+            },
+            "etcd": {
+              "provisioning": {
+                "startupDuration": "30m"
+              }
+            },
+            "node": {
+              "provisioning": {
+                "startupDuration": "2s"
+              }
+            },
+            "vm": {
+              "provisioning": {
+                "startupDuration": "2s"
+              }
+            }
+          }
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-10T12:00:03Z",
+            "reason": "Available",
+            "status": "True",
+            "type": "LoadBalancerAvailable"
+          }
+        ],
+        "initialization": {
+          "provisioned": true
+        }
+      }
+    },
+    {
+      "apiVersion": "controlplane.cluster.x-k8s.io/v1beta2",
+      "kind": "KubeadmControlPlane",
+      "metadata": {
+        "creationTimestamp": "2026-09-10T12:00:00Z",
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "inmem-1",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "name": "inmem-1-cp",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "kind": "Cluster",
+            "name": "inmem-1",
+            "uid": "uid-Cluster-inmem-1"
+          }
+        ],
+        "uid": "uid-KubeadmControlPlane-inmem-1-cp"
+      },
+      "spec": {
+        "replicas": 1,
+        "version": "v1.34.11"
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-10T12:00:00Z",
+            "message": "waiting for the first control-plane machine",
+            "reason": "NotInitialized",
+            "status": "False",
+            "type": "Initialized"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:00:00Z",
+            "message": "waiting for the API server",
+            "reason": "NotAvailable",
+            "status": "False",
+            "type": "Available"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:00:00Z",
+            "message": "etcd has not started",
+            "reason": "Provisioning",
+            "status": "Unknown",
+            "type": "EtcdClusterHealthy"
+          }
+        ],
+        "readyReplicas": 0,
+        "replicas": 0
+      }
+    },
+    {
+      "apiVersion": "cluster.x-k8s.io/v1beta2",
+      "kind": "MachineDeployment",
+      "metadata": {
+        "creationTimestamp": "2026-09-10T12:00:00Z",
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "inmem-1",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "name": "inmem-1-md-0",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "kind": "Cluster",
+            "name": "inmem-1",
+            "uid": "uid-Cluster-inmem-1"
+          }
+        ],
+        "uid": "uid-MachineDeployment-inmem-1-md-0"
+      },
+      "spec": {
+        "replicas": 2
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-10T12:00:00Z",
+            "message": "no machines are ready",
+            "reason": "NotAvailable",
+            "status": "False",
+            "type": "Available"
+          }
+        ],
+        "readyReplicas": 0,
+        "replicas": 0
+      }
+    },
+    {
+      "apiVersion": "cluster.x-k8s.io/v1beta2",
+      "kind": "Machine",
+      "metadata": {
+        "creationTimestamp": "2026-09-10T12:00:00Z",
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "inmem-1",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "name": "inmem-1-cp-abcde",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "controlplane.cluster.x-k8s.io/v1beta2",
+            "kind": "KubeadmControlPlane",
+            "name": "inmem-1-cp",
+            "uid": "uid-KubeadmControlPlane-inmem-1-cp"
+          }
+        ],
+        "uid": "uid-Machine-inmem-1-cp-abcde"
+      },
+      "spec": {
+        "bootstrapRef": {
+          "apiGroup": "bootstrap.cluster.x-k8s.io",
+          "kind": "KubeadmConfig",
+          "name": "inmem-1-cp-abcde"
+        },
+        "infrastructureRef": {
+          "apiGroup": "infrastructure.cluster.x-k8s.io",
+          "kind": "DevMachine",
+          "name": "inmem-1-cp-abcde"
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-10T12:00:02Z",
+            "message": "waiting for the machine container",
+            "reason": "NotReady",
+            "status": "False",
+            "type": "InfrastructureReady"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:00:02Z",
+            "reason": "Ready",
+            "status": "True",
+            "type": "BootstrapConfigReady"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:00:02Z",
+            "message": "the node has not registered",
+            "reason": "NodeNotFound",
+            "status": "Unknown",
+            "type": "NodeHealthy"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:00:02Z",
+            "message": "waiting for infrastructure",
+            "reason": "NotReady",
+            "status": "False",
+            "type": "Ready"
+          }
+        ],
+        "phase": "Provisioning"
+      }
+    },
+    {
+      "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+      "kind": "DevMachine",
+      "metadata": {
+        "creationTimestamp": "2026-09-10T12:00:00Z",
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "inmem-1",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "name": "inmem-1-cp-abcde",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "kind": "Machine",
+            "name": "inmem-1-cp-abcde",
+            "uid": "uid-Machine-inmem-1-cp-abcde"
+          }
+        ],
+        "uid": "uid-DevMachine-inmem-1-cp-abcde"
+      },
+      "spec": {},
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-10T12:00:02Z",
+            "message": "starting the machine container",
+            "reason": "Provisioning",
+            "status": "False",
+            "type": "ContainerProvisioned"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:00:02Z",
+            "message": "bootstrap has not run",
+            "reason": "Provisioning",
+            "status": "False",
+            "type": "BootstrapCompleted"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:00:06Z",
+            "reason": "Provisioned",
+            "status": "True",
+            "type": "VMProvisioned"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:00:08Z",
+            "message": "etcd has not finished starting after 30m0s",
+            "reason": "Provisioning",
+            "status": "False",
+            "type": "EtcdProvisioned"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:00:02Z",
+            "message": "waiting for the API server",
+            "reason": "Provisioning",
+            "status": "False",
+            "type": "APIServerProvisioned"
+          },
+          {
+            "lastTransitionTime": "2026-09-10T12:00:02Z",
+            "message": "waiting for the node",
+            "reason": "Provisioning",
+            "status": "False",
+            "type": "NodeProvisioned"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "bootstrap.cluster.x-k8s.io/v1beta2",
+      "kind": "KubeadmConfig",
+      "metadata": {
+        "creationTimestamp": "2026-09-10T12:00:00Z",
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "inmem-1",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "name": "inmem-1-cp-abcde",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "kind": "Machine",
+            "name": "inmem-1-cp-abcde",
+            "uid": "uid-Machine-inmem-1-cp-abcde"
+          }
+        ],
+        "uid": "uid-KubeadmConfig-inmem-1-cp-abcde"
+      },
+      "spec": {},
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-10T12:00:02Z",
+            "reason": "Ready",
+            "status": "True",
+            "type": "Ready"
+          }
+        ]
+      }
+    }
+  ]
+}
