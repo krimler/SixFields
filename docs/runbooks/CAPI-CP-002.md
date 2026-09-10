@@ -121,10 +121,12 @@ cannot reach the workload API server, so those conditions say nothing about the 
      -o jsonpath='{range .items[*]}{.metadata.name}{"  "}{.spec.template.spec.backend.inMemory}{"\n"}{end}'
    ```
 
-   Good: the `startupDuration` values are seconds and the elapsed time in the stall line
-   is shorter than the sum.
-   Bad: one component's `startupDuration` is longer than `--stall-after`. That is an
-   induced stall; it is the fixture doing its job.
+   Each component has its own `provisioning.startupDuration` under `vm`, `node`, `etcd`
+   and `apiServer`.
+   Good: those durations are seconds and the elapsed time in the stall line is shorter
+   than their sum.
+   Bad: one component's `startupDuration` is longer than the stall threshold
+   (`--stall-after`, default 3m). That is an induced stall; it is the fixture doing its job.
 
 ## Common causes
 

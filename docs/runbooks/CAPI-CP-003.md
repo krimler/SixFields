@@ -79,7 +79,8 @@ how `inmem-stall-etcd` is induced.
    ```
 
    Good: `EtcdProvisioned=WaitingForStartupTimeout` and the elapsed time is shorter than
-   the template's `startupDuration` — it is a timer, wait it out.
+   the template's `spec.template.spec.backend.inMemory.etcd.provisioning.startupDuration`
+   — it is a timer, wait it out.
    Bad: `EtcdProvisioned=WaitingForVMProvisioned` — etcd is not the blocked step at all;
    the machine is. Read `cluster docs CAPI-CP-002`.
 

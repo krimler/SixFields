@@ -1,0 +1,232 @@
+{
+  "object": {
+    "kind": "DevMachine",
+    "name": "inmem-1-cp-abcde",
+    "namespace": "default",
+    "group": "infrastructure.cluster.x-k8s.io"
+  },
+  "code": "CAPI-CP-003",
+  "phase": "control plane",
+  "reason": "Provisioning",
+  "message": "etcd has not finished starting after 30m0s",
+  "since_ns": 392000000000,
+  "raw": "kubectl get devmachine.infrastructure.cluster.x-k8s.io inmem-1-cp-abcde -n default -o yaml",
+  "candidates": [
+    {
+      "object": {
+        "kind": "DevMachine",
+        "name": "inmem-1-cp-abcde",
+        "namespace": "default",
+        "group": "infrastructure.cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "EtcdProvisioned",
+        "status": "False",
+        "reason": "Provisioning",
+        "message": "etcd has not finished starting after 30m0s",
+        "lastTransitionTime": "2026-09-10T12:00:08Z"
+      },
+      "specificity": 45,
+      "since_ns": 392000000000
+    },
+    {
+      "object": {
+        "kind": "DevMachine",
+        "name": "inmem-1-cp-abcde",
+        "namespace": "default",
+        "group": "infrastructure.cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "ContainerProvisioned",
+        "status": "False",
+        "reason": "Provisioning",
+        "message": "starting the machine container",
+        "lastTransitionTime": "2026-09-10T12:00:02Z"
+      },
+      "specificity": 45,
+      "since_ns": 398000000000,
+      "lost_to": "older transition"
+    },
+    {
+      "object": {
+        "kind": "DevMachine",
+        "name": "inmem-1-cp-abcde",
+        "namespace": "default",
+        "group": "infrastructure.cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "BootstrapCompleted",
+        "status": "False",
+        "reason": "Provisioning",
+        "message": "bootstrap has not run",
+        "lastTransitionTime": "2026-09-10T12:00:02Z"
+      },
+      "specificity": 45,
+      "since_ns": 398000000000,
+      "lost_to": "older transition"
+    },
+    {
+      "object": {
+        "kind": "DevMachine",
+        "name": "inmem-1-cp-abcde",
+        "namespace": "default",
+        "group": "infrastructure.cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "APIServerProvisioned",
+        "status": "False",
+        "reason": "Provisioning",
+        "message": "waiting for the API server",
+        "lastTransitionTime": "2026-09-10T12:00:02Z"
+      },
+      "specificity": 45,
+      "since_ns": 398000000000,
+      "lost_to": "older transition"
+    },
+    {
+      "object": {
+        "kind": "DevMachine",
+        "name": "inmem-1-cp-abcde",
+        "namespace": "default",
+        "group": "infrastructure.cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "NodeProvisioned",
+        "status": "False",
+        "reason": "Provisioning",
+        "message": "waiting for the node",
+        "lastTransitionTime": "2026-09-10T12:00:02Z"
+      },
+      "specificity": 45,
+      "since_ns": 398000000000,
+      "lost_to": "older transition"
+    },
+    {
+      "object": {
+        "kind": "Machine",
+        "name": "inmem-1-cp-abcde",
+        "namespace": "default",
+        "group": "cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "InfrastructureReady",
+        "status": "False",
+        "reason": "NotReady",
+        "message": "waiting for the machine container",
+        "lastTransitionTime": "2026-09-10T12:00:02Z"
+      },
+      "specificity": 40,
+      "since_ns": 398000000000,
+      "lost_to": "less specific object"
+    },
+    {
+      "object": {
+        "kind": "Machine",
+        "name": "inmem-1-cp-abcde",
+        "namespace": "default",
+        "group": "cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "Ready",
+        "status": "False",
+        "reason": "NotReady",
+        "message": "waiting for infrastructure",
+        "lastTransitionTime": "2026-09-10T12:00:02Z"
+      },
+      "specificity": 40,
+      "since_ns": 398000000000,
+      "lost_to": "less specific object"
+    },
+    {
+      "object": {
+        "kind": "KubeadmControlPlane",
+        "name": "inmem-1-cp",
+        "namespace": "default",
+        "group": "controlplane.cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "Initialized",
+        "status": "False",
+        "reason": "NotInitialized",
+        "message": "waiting for the first control-plane machine",
+        "lastTransitionTime": "2026-09-10T12:00:00Z"
+      },
+      "specificity": 20,
+      "since_ns": 400000000000,
+      "lost_to": "less specific object"
+    },
+    {
+      "object": {
+        "kind": "KubeadmControlPlane",
+        "name": "inmem-1-cp",
+        "namespace": "default",
+        "group": "controlplane.cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "Available",
+        "status": "False",
+        "reason": "NotAvailable",
+        "message": "waiting for the API server",
+        "lastTransitionTime": "2026-09-10T12:00:00Z"
+      },
+      "specificity": 20,
+      "since_ns": 400000000000,
+      "lost_to": "less specific object"
+    },
+    {
+      "object": {
+        "kind": "Cluster",
+        "name": "inmem-1",
+        "namespace": "default",
+        "group": "cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "ControlPlaneInitialized",
+        "status": "False",
+        "reason": "NotInitialized",
+        "message": "waiting for the control plane",
+        "lastTransitionTime": "2026-09-10T12:00:00Z"
+      },
+      "specificity": 10,
+      "since_ns": 400000000000,
+      "lost_to": "less specific object"
+    },
+    {
+      "object": {
+        "kind": "Cluster",
+        "name": "inmem-1",
+        "namespace": "default",
+        "group": "cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "ControlPlaneAvailable",
+        "status": "False",
+        "reason": "NotAvailable",
+        "message": "waiting for the control plane",
+        "lastTransitionTime": "2026-09-10T12:00:00Z"
+      },
+      "specificity": 10,
+      "since_ns": 400000000000,
+      "lost_to": "less specific object"
+    },
+    {
+      "object": {
+        "kind": "Cluster",
+        "name": "inmem-1",
+        "namespace": "default",
+        "group": "cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "WorkersAvailable",
+        "status": "False",
+        "reason": "NotAvailable",
+        "message": "waiting for worker machines",
+        "lastTransitionTime": "2026-09-10T12:00:00Z"
+      },
+      "specificity": 10,
+      "since_ns": 400000000000,
+      "lost_to": "less specific object"
+    }
+  ],
+  "condition_type": "EtcdProvisioned"
+}

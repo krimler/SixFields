@@ -1,0 +1,142 @@
+{
+  "object": {
+    "kind": "DevMachine",
+    "name": "dev-1-cp-abcde",
+    "namespace": "default",
+    "group": "infrastructure.cluster.x-k8s.io"
+  },
+  "code": "CAPI-CP-002",
+  "phase": "control plane",
+  "reason": "ContainerMissing",
+  "message": "the machine container no longer exists",
+  "since_ns": 200000000000,
+  "raw": "kubectl get devmachine.infrastructure.cluster.x-k8s.io dev-1-cp-abcde -n default -o yaml",
+  "candidates": [
+    {
+      "object": {
+        "kind": "DevMachine",
+        "name": "dev-1-cp-abcde",
+        "namespace": "default",
+        "group": "infrastructure.cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "ContainerProvisioned",
+        "status": "False",
+        "reason": "ContainerMissing",
+        "message": "the machine container no longer exists",
+        "lastTransitionTime": "2026-09-10T12:05:00Z"
+      },
+      "specificity": 45,
+      "since_ns": 200000000000
+    },
+    {
+      "object": {
+        "kind": "Machine",
+        "name": "dev-1-cp-abcde",
+        "namespace": "default",
+        "group": "cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "InfrastructureReady",
+        "status": "False",
+        "reason": "ContainerMissing",
+        "message": "the machine container no longer exists",
+        "lastTransitionTime": "2026-09-10T12:05:00Z"
+      },
+      "specificity": 40,
+      "since_ns": 200000000000,
+      "lost_to": "less specific object"
+    },
+    {
+      "object": {
+        "kind": "Machine",
+        "name": "dev-1-cp-abcde",
+        "namespace": "default",
+        "group": "cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "NodeHealthy",
+        "status": "False",
+        "reason": "NodeNotFound",
+        "message": "the node is gone",
+        "lastTransitionTime": "2026-09-10T12:05:00Z"
+      },
+      "specificity": 40,
+      "since_ns": 200000000000,
+      "lost_to": "less specific object"
+    },
+    {
+      "object": {
+        "kind": "Machine",
+        "name": "dev-1-cp-abcde",
+        "namespace": "default",
+        "group": "cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "Ready",
+        "status": "False",
+        "reason": "NotReady",
+        "message": "infrastructure is not ready",
+        "lastTransitionTime": "2026-09-10T12:05:00Z"
+      },
+      "specificity": 40,
+      "since_ns": 200000000000,
+      "lost_to": "less specific object"
+    },
+    {
+      "object": {
+        "kind": "KubeadmControlPlane",
+        "name": "dev-1-cp",
+        "namespace": "default",
+        "group": "controlplane.cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "Available",
+        "status": "False",
+        "reason": "NotAvailable",
+        "message": "0 of 1 replicas are ready",
+        "lastTransitionTime": "2026-09-10T12:05:00Z"
+      },
+      "specificity": 20,
+      "since_ns": 200000000000,
+      "lost_to": "less specific object"
+    },
+    {
+      "object": {
+        "kind": "KubeadmControlPlane",
+        "name": "dev-1-cp",
+        "namespace": "default",
+        "group": "controlplane.cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "EtcdClusterHealthy",
+        "status": "False",
+        "reason": "EtcdMemberNotHealthy",
+        "message": "etcd has lost its only member",
+        "lastTransitionTime": "2026-09-10T12:05:00Z"
+      },
+      "specificity": 20,
+      "since_ns": 200000000000,
+      "lost_to": "less specific object"
+    },
+    {
+      "object": {
+        "kind": "Cluster",
+        "name": "dev-1",
+        "namespace": "default",
+        "group": "cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "ControlPlaneAvailable",
+        "status": "False",
+        "reason": "NotAvailable",
+        "message": "0 of 1 replicas are ready",
+        "lastTransitionTime": "2026-09-10T12:05:00Z"
+      },
+      "specificity": 10,
+      "since_ns": 200000000000,
+      "lost_to": "less specific object"
+    }
+  ],
+  "condition_type": "ContainerProvisioned"
+}

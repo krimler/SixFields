@@ -1,0 +1,88 @@
+{
+  "object": {
+    "kind": "K0smotronControlPlane",
+    "name": "hosted-1-cp",
+    "namespace": "default",
+    "group": "controlplane.cluster.x-k8s.io"
+  },
+  "code": "CAPI-CP-001",
+  "phase": "control plane",
+  "reason": "PodNotReady",
+  "message": "0 of 1 control-plane pods are ready: ImagePullBackOff",
+  "since_ns": 370000000000,
+  "raw": "kubectl get k0smotroncontrolplane.controlplane.cluster.x-k8s.io hosted-1-cp -n default -o yaml",
+  "candidates": [
+    {
+      "object": {
+        "kind": "K0smotronControlPlane",
+        "name": "hosted-1-cp",
+        "namespace": "default",
+        "group": "controlplane.cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "Available",
+        "status": "False",
+        "reason": "PodNotReady",
+        "message": "0 of 1 control-plane pods are ready: ImagePullBackOff",
+        "lastTransitionTime": "2026-09-10T12:01:00Z"
+      },
+      "specificity": 20,
+      "since_ns": 370000000000
+    },
+    {
+      "object": {
+        "kind": "Cluster",
+        "name": "hosted-1",
+        "namespace": "default",
+        "group": "cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "ControlPlaneInitialized",
+        "status": "False",
+        "reason": "NotInitialized",
+        "message": "waiting for the control plane",
+        "lastTransitionTime": "2026-09-10T12:00:00Z"
+      },
+      "specificity": 10,
+      "since_ns": 430000000000,
+      "lost_to": "less specific object"
+    },
+    {
+      "object": {
+        "kind": "Cluster",
+        "name": "hosted-1",
+        "namespace": "default",
+        "group": "cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "ControlPlaneAvailable",
+        "status": "False",
+        "reason": "NotAvailable",
+        "message": "waiting for the control plane",
+        "lastTransitionTime": "2026-09-10T12:00:00Z"
+      },
+      "specificity": 10,
+      "since_ns": 430000000000,
+      "lost_to": "less specific object"
+    },
+    {
+      "object": {
+        "kind": "Cluster",
+        "name": "hosted-1",
+        "namespace": "default",
+        "group": "cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "WorkersAvailable",
+        "status": "False",
+        "reason": "NotAvailable",
+        "message": "waiting for worker machines",
+        "lastTransitionTime": "2026-09-10T12:00:00Z"
+      },
+      "specificity": 10,
+      "since_ns": 430000000000,
+      "lost_to": "less specific object"
+    }
+  ],
+  "condition_type": "Available"
+}

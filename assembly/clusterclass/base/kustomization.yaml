@@ -1,0 +1,9 @@
+---
+# Not appliable on its own: the ClusterClass points at Dev* templates that only
+# an overlay supplies, because spec.backend is what the overlay chooses.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- clusterclass.yaml
+- control-plane-template.yaml
+- bootstrap-template.yaml

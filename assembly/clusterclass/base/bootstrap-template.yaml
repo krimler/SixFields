@@ -1,0 +1,15 @@
+---
+# The operator's opinion, not a user variable: workers join with kubeadm until
+# PLAN.md Phase 5 replaces it with k0smotron's K0sWorkerConfigTemplate.
+apiVersion: bootstrap.cluster.x-k8s.io/v1beta2
+kind: KubeadmConfigTemplate
+metadata:
+  name: std-default-bootstrap
+spec:
+  template:
+    spec:
+      joinConfiguration:
+        nodeRegistration:
+          kubeletExtraArgs:
+          - name: eviction-hard
+            value: 'nodefs.available<0%,nodefs.inodesFree<0%,imagefs.available<0%'

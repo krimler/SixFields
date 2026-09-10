@@ -1,0 +1,106 @@
+{
+  "object": {
+    "kind": "Cluster",
+    "name": "dev-1",
+    "namespace": "default",
+    "group": "cluster.x-k8s.io"
+  },
+  "code": "CAPI-TOPO-001",
+  "phase": "infrastructure",
+  "reason": "ReconcileFailed",
+  "message": "variable \"gpuPool\" is not defined in ClusterClass std",
+  "since_ns": 280000000000,
+  "raw": "kubectl get cluster.cluster.x-k8s.io dev-1 -n default -o yaml",
+  "candidates": [
+    {
+      "object": {
+        "kind": "Cluster",
+        "name": "dev-1",
+        "namespace": "default",
+        "group": "cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "TopologyReconciled",
+        "status": "False",
+        "reason": "ReconcileFailed",
+        "message": "variable \"gpuPool\" is not defined in ClusterClass std",
+        "lastTransitionTime": "2026-09-10T12:00:20Z"
+      },
+      "specificity": 10,
+      "since_ns": 280000000000
+    },
+    {
+      "object": {
+        "kind": "Cluster",
+        "name": "dev-1",
+        "namespace": "default",
+        "group": "cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "InfrastructureReady",
+        "status": "False",
+        "reason": "NotReady",
+        "message": "waiting for the infrastructure provider",
+        "lastTransitionTime": "2026-09-10T12:00:00Z"
+      },
+      "specificity": 10,
+      "since_ns": 300000000000,
+      "lost_to": "older transition"
+    },
+    {
+      "object": {
+        "kind": "Cluster",
+        "name": "dev-1",
+        "namespace": "default",
+        "group": "cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "ControlPlaneInitialized",
+        "status": "False",
+        "reason": "NotInitialized",
+        "message": "waiting for the control plane",
+        "lastTransitionTime": "2026-09-10T12:00:00Z"
+      },
+      "specificity": 10,
+      "since_ns": 300000000000,
+      "lost_to": "older transition"
+    },
+    {
+      "object": {
+        "kind": "Cluster",
+        "name": "dev-1",
+        "namespace": "default",
+        "group": "cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "ControlPlaneAvailable",
+        "status": "False",
+        "reason": "NotAvailable",
+        "message": "waiting for the control plane",
+        "lastTransitionTime": "2026-09-10T12:00:00Z"
+      },
+      "specificity": 10,
+      "since_ns": 300000000000,
+      "lost_to": "older transition"
+    },
+    {
+      "object": {
+        "kind": "Cluster",
+        "name": "dev-1",
+        "namespace": "default",
+        "group": "cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "WorkersAvailable",
+        "status": "False",
+        "reason": "NotAvailable",
+        "message": "waiting for worker machines",
+        "lastTransitionTime": "2026-09-10T12:00:00Z"
+      },
+      "specificity": 10,
+      "since_ns": 300000000000,
+      "lost_to": "older transition"
+    }
+  ],
+  "condition_type": "TopologyReconciled"
+}

@@ -1,0 +1,28 @@
+---
+apiVersion: controlplane.cluster.x-k8s.io/v1beta2
+kind: KubeadmControlPlaneTemplate
+metadata:
+  name: std-control-plane
+spec:
+  template:
+    spec:
+      kubeadmConfigSpec:
+        clusterConfiguration:
+          apiServer:
+            # host.docker.internal is how a Mac host reaches the workload
+            # apiserver through the CAPD load balancer container; the loopback
+            # entries cover the port-forwarded kubeconfig. Same list as
+            # test@v1.14.2 e2e/data/infrastructure-docker/main/clusterclass-quick-start.yaml.
+            certSANs: [localhost, host.docker.internal, "::", "::1", "127.0.0.1", "0.0.0.0"]
+        initConfiguration:
+          nodeRegistration:
+            # CAPD nodes share the host filesystem, so kubelet's default
+            # eviction thresholds see the host's disk pressure and evict.
+            kubeletExtraArgs:
+            - name: eviction-hard
+              value: 'nodefs.available<0%,nodefs.inodesFree<0%,imagefs.available<0%'
+        joinConfiguration:
+          nodeRegistration:
+            kubeletExtraArgs:
+            - name: eviction-hard
+              value: 'nodefs.available<0%,nodefs.inodesFree<0%,imagefs.available<0%'

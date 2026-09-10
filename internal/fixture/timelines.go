@@ -112,7 +112,7 @@ func stallBadVariable() Timeline {
 	const note = "hand-built stall: a variable the class does not define reaches the topology " +
 		"controller, which reports ReconcileFailed on the Cluster and creates nothing"
 	s, objs := build(opts{name: "stall-bad-variable", note: note, cluster: "dev-1",
-		placement: "self", backend: "docker", cpReplicas: 1, workerCount: 2})
+		placement: "self", backend: "docker", cpReplicas: 1, workerCount: 2, noDerived: true})
 	tl := Timeline{Name: s.name, Note: note}
 
 	objs["cluster"].condition("TopologyReconciled", "False", "ReconcileFailed",

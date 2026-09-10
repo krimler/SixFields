@@ -52,6 +52,10 @@ type opts struct {
 	backend     string // docker | inMemory
 	cpReplicas  int64
 	workerCount int64
+	// noDerived builds only the Cluster. A topology that never reconciled has no
+	// infrastructure, control plane or pool objects at all, and a fixture that
+	// pretended otherwise would let the ranker pick an object that does not exist.
+	noDerived bool
 }
 
 // build assembles the object graph a topology controller would have created, in
@@ -95,6 +99,9 @@ func build(o opts) (*scenario, map[string]*object) {
 	}
 	cluster.status("workers", map[string]any{"desiredReplicas": o.workerCount, "replicas": int64(0), "readyReplicas": int64(0)})
 	objs["cluster"] = cluster
+	if o.noDerived {
+		return s, objs
+	}
 
 	infra := s.add(newObject(infraAPI, "DevCluster", o.cluster)).owned(o.cluster).ownedBy("Cluster", o.cluster)
 	infra.spec("backend", backendSpec(o.backend))

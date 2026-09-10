@@ -43,19 +43,12 @@
     },
     {
       "name": "workers",
-      "state": "running",
-      "detail": "0/2 nodes",
+      "state": "pending",
+      "detail": "waiting",
       "elapsed_ns": 150000000000,
       "last_transition": "2026-09-10T12:00:00Z",
       "started_at": "2026-09-10T12:00:00Z",
-      "contributors": [
-        {
-          "kind": "MachineDeployment",
-          "name": "dev-1-md-0",
-          "namespace": "default",
-          "group": "cluster.x-k8s.io"
-        }
-      ]
+      "contributors": null
     },
     {
       "name": "addons",

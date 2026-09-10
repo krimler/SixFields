@@ -1,0 +1,32 @@
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta2
+kind: DevClusterTemplate
+metadata:
+  name: std-cluster
+spec:
+  template:
+    spec:
+      backend:
+        docker: {}
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta2
+kind: DevMachineTemplate
+metadata:
+  name: std-control-plane-machine
+spec:
+  template:
+    spec:
+      backend:
+        # customImage is filled in by the nodeImage patch below; an empty docker
+        # backend is what makes the JSON patch path resolvable.
+        docker: {}
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta2
+kind: DevMachineTemplate
+metadata:
+  name: std-default-machine
+spec:
+  template:
+    spec:
+      backend:
+        docker: {}
