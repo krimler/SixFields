@@ -7,7 +7,9 @@ import (
 	"go/token"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strconv"
+	"strings"
 	"testing"
 	"time"
 
@@ -267,4 +269,33 @@ func TestFixtures_SyntheticAreDeclared(t *testing.T) {
 		}
 	}
 	require.NotZero(t, recorded, "no fixture has been recorded from a real run")
+}
+
+// Fixtures are recorded from real clusters and then committed, so a credential
+// that survives recording is published. Seven fixtures held live kubeadm bootstrap
+// tokens until a release check found them.
+func TestFixtures_CarryNoCredentials(t *testing.T) {
+	// A kubeadm bootstrap token is six characters, a dot, then sixteen.
+	token := regexp.MustCompile(`\b[a-z0-9]{6}\.[a-z0-9]{16}\b`)
+
+	scenarios, err := fixture.Scenarios(fixturesDir)
+	require.NoError(t, err)
+
+	for _, name := range scenarios {
+		t.Run(name, func(t *testing.T) {
+			entries, err := os.ReadDir(filepath.Join(fixturesDir, name))
+			require.NoError(t, err)
+
+			for _, entry := range entries {
+				raw, err := os.ReadFile(filepath.Join(fixturesDir, name, entry.Name()))
+				require.NoError(t, err)
+
+				for _, found := range token.FindAllString(string(raw), -1) {
+					require.True(t, strings.HasPrefix(found, "redacted."),
+						"%s/%s carries what looks like a bootstrap token; re-record it",
+						name, entry.Name())
+				}
+			}
+		})
+	}
 }

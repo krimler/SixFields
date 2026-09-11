@@ -45,6 +45,7 @@ func Write(dir string, tl Timeline) error {
 		if e.Meta.Scenario == "" {
 			e.Meta.Scenario = tl.Name
 		}
+		e = Redact(e)
 		name := Filename(e)
 		wanted[name] = true
 		b, err := json.MarshalIndent(e, "", "  ")
@@ -119,4 +120,40 @@ func NowFor(env snapshot.Envelope) time.Time {
 		}
 	}
 	return start.Add(time.Duration(env.Meta.TPlusS) * time.Second)
+}
+
+// redactions are the fields a recorded cluster carries that nobody should publish.
+// A fixture is committed to this repository and read by strangers, so the recorder
+// replaces these before anything reaches disk. Real bootstrap tokens were found in
+// seven fixtures during a release check.
+var redactions = []struct {
+	path        []string
+	placeholder string
+}{
+	{[]string{"spec", "joinConfiguration", "discovery", "bootstrapToken", "token"}, "redacted.0123456789abcdef"},
+	{[]string{"spec", "joinConfiguration", "discovery", "bootstrapToken", "caCertHashes"}, ""},
+	{[]string{"spec", "clusterConfiguration", "certificateKey"}, "redacted"},
+}
+
+// Redact replaces every credential in an envelope. The shape is untouched, so a
+// redacted fixture folds exactly as the run it came from did.
+func Redact(env snapshot.Envelope) snapshot.Envelope {
+	for _, o := range env.Objects {
+		for _, r := range redactions {
+			parent, ok := o.Map(r.path[:len(r.path)-1]...)
+			if !ok {
+				continue
+			}
+			key := r.path[len(r.path)-1]
+			if _, present := parent[key]; !present {
+				continue
+			}
+			if r.placeholder == "" {
+				parent[key] = []any{"sha256:" + strings.Repeat("0", 64)}
+				continue
+			}
+			parent[key] = r.placeholder
+		}
+	}
+	return env
 }

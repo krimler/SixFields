@@ -1928,9 +1928,9 @@
             "bootstrapToken": {
               "apiServerEndpoint": "172.19.0.11:6443",
               "caCertHashes": [
-                "sha256:c87d9c3461acb40c233227380fdee0a8a62ecb6f36130799c7580567f078b635"
+                "sha256:0000000000000000000000000000000000000000000000000000000000000000"
               ],
-              "token": "d9w9he.1x3694budpb91ibw"
+              "token": "redacted.0123456789abcdef"
             }
           },
           "nodeRegistration": {
@@ -2180,9 +2180,9 @@
             "bootstrapToken": {
               "apiServerEndpoint": "172.19.0.11:6443",
               "caCertHashes": [
-                "sha256:c87d9c3461acb40c233227380fdee0a8a62ecb6f36130799c7580567f078b635"
+                "sha256:0000000000000000000000000000000000000000000000000000000000000000"
               ],
-              "token": "mqj7z1.z5nqnd6a2gdbxv1x"
+              "token": "redacted.0123456789abcdef"
             }
           },
           "nodeRegistration": {
