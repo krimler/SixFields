@@ -3,6 +3,52 @@
 Newest first. Each entry: date, decision, alternatives, why, `REVISIT` if a human
 should confirm.
 
+## 2026-09-11 — The in-memory stall comes from the VM stage, not from etcd
+
+Finding. PLAN.md D1 and D3 both say a deterministic stall is induced by setting one
+component's `startupDuration` past `stallAfter`, and name etcd. Setting etcd to 30m does
+not stall anything: the cluster reached Ready in 56s with that value in the machine's spec.
+The wait is measured from the `NodeProvisioned` condition's transition time
+(`test@v1.14.2 infrastructure/docker/internal/controllers/backends/inmemory/inmemorymachine_backend.go`),
+and it is skipped once the machine carries the bootstrapped annotation.
+
+Setting the **vm** duration does stall, because its clock starts from the cloud machine's
+creation timestamp, which always exists. `inmem-stall-vm` is recorded from a real run of
+that, and it replaces the two synthetic in-memory stalls PLAN.md asked for.
+
+Consequence worth keeping: the other three conditions report
+`WaitingForVMProvisioned`, so a ranker that ignores that names a symptom. `internal/why`
+now ranks a condition below the one its reason names.
+
+## 2026-09-11 — The in-memory substrate is its own class
+
+Decision: `std-inmemory` is a separate ClusterClass with its own `Dev*` templates.
+Alternatives: one class with two overlays swapping the backend (what the repo had, which
+had never been run).
+Why: CAPD's in-memory backend simulates a kubeadm control plane, so it cannot use the k0s
+control plane `std` now has; and `Dev*Template.spec.template.spec` is immutable, so two
+backends need two objects under two names. Installing both under one name fails with
+"spec.template.spec field is immutable". The six fields a user writes are unchanged, and
+the class name is the only difference in their file.
+
+## 2026-09-11 — cluster-bench measures fidelity, because the baseline is the ceiling
+
+PLAN.md D4 says an AI feature that does not beat the no-AI baseline is not shipped. On this
+benchmark the baseline cannot be beaten: `why` decides and the model only explains, so the
+`noop` backend is correct by construction and is five orders of magnitude faster. Read
+literally, `--explain` never ships.
+
+What the benchmark measures instead is fidelity and its cost: routing the analyzer's
+finding through a model, does the object and the stall class survive, and what does that
+take. Measured on the pinned local model: 6 of 6 tasks, 0 ungrounded, median 13s against
+the analyzer's 250ns. `docs/bench.md` states the rule and then states this. `REVISIT` if
+`/cluster-fix` ever makes the model decide something, because then the rule applies again.
+
+Two related facts. "Interactions to answer" is not measurable here: `Explainer` is one
+request and one answer, so the count is 1 everywhere. And the `anthropic` arm has never
+run, because `AI_CREDIT_CAP_USD` is 0 and CLAUDE.md puts spending past that cap on the
+must-ask list.
+
 ## 2026-09-11 — The project is SixFields, under Apache-2.0
 
 Decision: the name is **SixFields**, after the surface it gives a user, and the licence is
