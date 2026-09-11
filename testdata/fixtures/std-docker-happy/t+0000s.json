@@ -1,7 +1,7 @@
 {
   "_meta": {
     "scenario": "std-docker-happy",
-    "t_plus_s": 60,
+    "t_plus_s": 0,
     "capi": "v1.14.2",
     "note": "stands in for a recorded `make dev-up` run of the std class on CAPD: infrastructure, then a single control-plane machine, then two workers",
     "synthetic": true
@@ -95,7 +95,7 @@
         "controlPlane": {
           "desiredReplicas": 1,
           "readyReplicas": 0,
-          "replicas": 1
+          "replicas": 0
         },
         "initialization": {
           "controlPlaneInitialized": false,
@@ -239,146 +239,6 @@
         ],
         "readyReplicas": 0,
         "replicas": 0
-      }
-    },
-    {
-      "apiVersion": "cluster.x-k8s.io/v1beta2",
-      "kind": "Machine",
-      "metadata": {
-        "creationTimestamp": "2026-09-10T12:00:00Z",
-        "labels": {
-          "cluster.x-k8s.io/cluster-name": "dev-1",
-          "topology.cluster.x-k8s.io/owned": ""
-        },
-        "name": "dev-1-cp-abcde",
-        "namespace": "default",
-        "ownerReferences": [
-          {
-            "apiVersion": "controlplane.cluster.x-k8s.io/v1beta2",
-            "kind": "KubeadmControlPlane",
-            "name": "dev-1-cp",
-            "uid": "uid-KubeadmControlPlane-dev-1-cp"
-          }
-        ],
-        "uid": "uid-Machine-dev-1-cp-abcde"
-      },
-      "spec": {
-        "bootstrapRef": {
-          "apiGroup": "bootstrap.cluster.x-k8s.io",
-          "kind": "KubeadmConfig",
-          "name": "dev-1-cp-abcde"
-        },
-        "infrastructureRef": {
-          "apiGroup": "infrastructure.cluster.x-k8s.io",
-          "kind": "DevMachine",
-          "name": "dev-1-cp-abcde"
-        }
-      },
-      "status": {
-        "conditions": [
-          {
-            "lastTransitionTime": "2026-09-10T12:00:45Z",
-            "message": "waiting for the machine container",
-            "reason": "NotReady",
-            "status": "False",
-            "type": "InfrastructureReady"
-          },
-          {
-            "lastTransitionTime": "2026-09-10T12:00:45Z",
-            "reason": "Ready",
-            "status": "True",
-            "type": "BootstrapConfigReady"
-          },
-          {
-            "lastTransitionTime": "2026-09-10T12:00:45Z",
-            "message": "the node has not registered",
-            "reason": "NodeNotFound",
-            "status": "Unknown",
-            "type": "NodeHealthy"
-          },
-          {
-            "lastTransitionTime": "2026-09-10T12:00:45Z",
-            "message": "waiting for infrastructure",
-            "reason": "NotReady",
-            "status": "False",
-            "type": "Ready"
-          }
-        ],
-        "phase": "Provisioning"
-      }
-    },
-    {
-      "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
-      "kind": "DevMachine",
-      "metadata": {
-        "creationTimestamp": "2026-09-10T12:00:00Z",
-        "labels": {
-          "cluster.x-k8s.io/cluster-name": "dev-1",
-          "topology.cluster.x-k8s.io/owned": ""
-        },
-        "name": "dev-1-cp-abcde",
-        "namespace": "default",
-        "ownerReferences": [
-          {
-            "apiVersion": "cluster.x-k8s.io/v1beta2",
-            "kind": "Machine",
-            "name": "dev-1-cp-abcde",
-            "uid": "uid-Machine-dev-1-cp-abcde"
-          }
-        ],
-        "uid": "uid-DevMachine-dev-1-cp-abcde"
-      },
-      "spec": {},
-      "status": {
-        "conditions": [
-          {
-            "lastTransitionTime": "2026-09-10T12:00:45Z",
-            "message": "starting the machine container",
-            "reason": "Provisioning",
-            "status": "False",
-            "type": "ContainerProvisioned"
-          },
-          {
-            "lastTransitionTime": "2026-09-10T12:00:45Z",
-            "message": "bootstrap has not run",
-            "reason": "Provisioning",
-            "status": "False",
-            "type": "BootstrapCompleted"
-          }
-        ]
-      }
-    },
-    {
-      "apiVersion": "bootstrap.cluster.x-k8s.io/v1beta2",
-      "kind": "KubeadmConfig",
-      "metadata": {
-        "creationTimestamp": "2026-09-10T12:00:00Z",
-        "labels": {
-          "cluster.x-k8s.io/cluster-name": "dev-1",
-          "topology.cluster.x-k8s.io/owned": ""
-        },
-        "name": "dev-1-cp-abcde",
-        "namespace": "default",
-        "ownerReferences": [
-          {
-            "apiVersion": "cluster.x-k8s.io/v1beta2",
-            "kind": "Machine",
-            "name": "dev-1-cp-abcde",
-            "uid": "uid-Machine-dev-1-cp-abcde"
-          }
-        ],
-        "uid": "uid-KubeadmConfig-dev-1-cp-abcde"
-      },
-      "spec": {},
-      "status": {
-        "conditions": [
-          {
-            "lastTransitionTime": "2026-09-10T12:00:45Z",
-            "reason": "Ready",
-            "status": "True",
-            "type": "Ready"
-          }
-        ]
       }
     }
   ]

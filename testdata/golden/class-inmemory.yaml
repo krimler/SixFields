@@ -65,6 +65,9 @@ spec:
           apiVersion: infrastructure.cluster.x-k8s.io/v1beta2
           kind: DevMachineTemplate
           name: std-default-machine
+      metadata:
+        annotations:
+          machineset.cluster.x-k8s.io/skip-preflight-checks: ControlPlaneIsStable
 ---
 apiVersion: controlplane.cluster.x-k8s.io/v1beta1
 kind: K0sControlPlaneTemplate

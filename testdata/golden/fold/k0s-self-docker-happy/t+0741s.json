@@ -1,7 +1,7 @@
 {
   "cluster": {
     "kind": "Cluster",
-    "name": "dev-4",
+    "name": "k0s-1",
     "namespace": "default",
     "group": "cluster.x-k8s.io"
   },
@@ -13,13 +13,13 @@
       "name": "infrastructure",
       "state": "done",
       "detail": "ready",
-      "elapsed_ns": 4000000000,
-      "last_transition": "2026-09-10T18:53:53Z",
-      "started_at": "2026-09-10T18:53:49Z",
+      "elapsed_ns": 127000000000,
+      "last_transition": "2026-09-11T07:12:41Z",
+      "started_at": "2026-09-11T07:10:34Z",
       "contributors": [
         {
           "kind": "DevCluster",
-          "name": "dev-4-w8b9h",
+          "name": "k0s-1-mqz8h",
           "namespace": "default",
           "group": "infrastructure.cluster.x-k8s.io"
         }
@@ -27,21 +27,21 @@
     },
     {
       "name": "control plane",
-      "state": "running",
-      "detail": "0/1 nodes",
-      "elapsed_ns": 19000000000,
-      "last_transition": "2026-09-10T18:54:05Z",
-      "started_at": "2026-09-10T18:53:53Z",
+      "state": "done",
+      "detail": "1/1 nodes",
+      "elapsed_ns": 39000000000,
+      "last_transition": "2026-09-11T07:13:20Z",
+      "started_at": "2026-09-11T07:12:41Z",
       "contributors": [
         {
-          "kind": "KubeadmControlPlane",
-          "name": "dev-4-6zh89",
+          "kind": "K0sControlPlane",
+          "name": "k0s-1-ddhmx",
           "namespace": "default",
           "group": "controlplane.cluster.x-k8s.io"
         },
         {
           "kind": "Machine",
-          "name": "dev-4-6zh89-49zkr",
+          "name": "k0s-1-ddhmx-dg9jn",
           "namespace": "default",
           "group": "cluster.x-k8s.io"
         }
@@ -49,15 +49,15 @@
     },
     {
       "name": "workers",
-      "state": "running",
-      "detail": "0/2 nodes",
-      "elapsed_ns": 19000000000,
-      "last_transition": "2026-09-10T18:54:00Z",
-      "started_at": "2026-09-10T18:53:53Z",
+      "state": "done",
+      "detail": "2/2 nodes",
+      "elapsed_ns": 103000000000,
+      "last_transition": "2026-09-11T07:15:03Z",
+      "started_at": "2026-09-11T07:13:20Z",
       "contributors": [
         {
           "kind": "MachineDeployment",
-          "name": "dev-4-default-2hxx9",
+          "name": "k0s-1-default-hbqmd",
           "namespace": "default",
           "group": "cluster.x-k8s.io"
         }
@@ -65,21 +65,21 @@
     },
     {
       "name": "addons",
-      "state": "running",
-      "detail": "waiting",
-      "elapsed_ns": 19000000000,
-      "started_at": "2026-09-10T18:53:53Z",
+      "state": "done",
+      "detail": "1/1 applied",
+      "elapsed_ns": 472000000000,
+      "started_at": "2026-09-11T07:15:03Z",
       "contributors": [
         {
           "kind": "ClusterResourceSetBinding",
-          "name": "dev-4",
+          "name": "k0s-1",
           "namespace": "default",
           "group": "addons.cluster.x-k8s.io"
         }
       ]
     }
   ],
-  "ready": false,
-  "at": "2026-09-10T18:54:12Z",
-  "elapsed_ns": 23000000000
+  "ready": true,
+  "at": "2026-09-11T07:22:55Z",
+  "elapsed_ns": 741000000000
 }

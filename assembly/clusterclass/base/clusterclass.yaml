@@ -26,6 +26,20 @@ spec:
   workers:
     machineDeployments:
     - class: default
+      metadata:
+        annotations:
+          # k0smotron's K0sControlPlane reports status.version as the k0s release
+          # (v1.34.11+k0s.0) while the MachineSet carries the Kubernetes version
+          # (v1.34.11). CAPI's ControlPlaneIsStable preflight compares the two as
+          # strings, concludes an upgrade is permanently pending, and holds worker
+          # scale-up for ever: "Scale up on hold because K0sControlPlane ... has a
+          # pending version upgrade ... MachineSet version (v1.34.11) is not yet
+          # the same as the ControlPlane version (v1.34.11+k0s.0)".
+          #
+          # The annotation name is from the pinned release
+          # (api@v1.14.2 core/v1beta2/common_types.go, MachineSetSkipPreflightChecksAnnotation)
+          # and only this one check is skipped; the rest still run.
+          machineset.cluster.x-k8s.io/skip-preflight-checks: ControlPlaneIsStable
       bootstrap:
         templateRef:
           apiVersion: bootstrap.cluster.x-k8s.io/v1beta1

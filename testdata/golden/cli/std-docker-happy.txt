@@ -1,4 +1,4 @@
-t+0s    infrastructure  running  not ready
-t+0s    control plane   running  0/1 nodes
-t+0s    workers         running  0/2 nodes
-t+0s    addons          running  waiting
+t+1m00s infrastructure  running  not ready
+t+1m00s control plane   running  0/1 nodes
+t+1m00s workers         running  0/2 nodes
+t+1m00s addons          done     none

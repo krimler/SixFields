@@ -152,8 +152,19 @@ func TestAssembly_PlacementsDifferInOneReference(t *testing.T) {
 
 	require.Equal(t, self["infrastructure"], hosted["infrastructure"])
 	require.Equal(t, self["variables"], hosted["variables"])
-	require.Equal(t, self["workers"], hosted["workers"],
-		"both placements join workers the same way")
+	// Both placements join workers with the same bootstrap and the same machine.
+	// The one difference is an annotation that only the machine-based control
+	// plane needs — K0sControlPlane reports its version as a k0s release, which
+	// CAPI's ControlPlaneIsStable preflight misreads; a hosted control plane does
+	// not, so adding it there would be cargo cult.
+	require.Equal(t, bootstrapKind(t, self), bootstrapKind(t, hosted))
+	require.Equal(t, firstPool(t, self)["bootstrap"], firstPool(t, hosted)["bootstrap"])
+	require.Equal(t, firstPool(t, self)["infrastructure"], firstPool(t, hosted)["infrastructure"])
+
+	selfAnnotations := firstPool(t, self)["metadata"].(map[string]any)["annotations"].(map[string]any)
+	require.Contains(t, selfAnnotations, "machineset.cluster.x-k8s.io/skip-preflight-checks")
+	_, hostedHasMetadata := firstPool(t, hosted)["metadata"]
+	require.False(t, hostedHasMetadata, "a hosted control plane needs no preflight exemption")
 
 	require.Equal(t, "K0sControlPlaneTemplate", templateKind(t, self, "controlPlane"))
 	require.Equal(t, "K0smotronControlPlaneTemplate", templateKind(t, hosted, "controlPlane"))
@@ -196,11 +207,6 @@ func firstPool(t *testing.T, spec map[string]any) map[string]any {
 func bootstrapKind(t *testing.T, spec map[string]any) string {
 	t.Helper()
 	return firstPool(t, spec)["bootstrap"].(map[string]any)["templateRef"].(map[string]any)["kind"].(string)
-}
-
-func workerInfrastructure(t *testing.T, spec map[string]any) any {
-	t.Helper()
-	return firstPool(t, spec)["infrastructure"]
 }
 
 func backendKeys(t *testing.T, template map[string]any) []string {
