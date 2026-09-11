@@ -71,7 +71,7 @@ safe to Ctrl-C; `cluster status dev-1` resumes
 
 The estimate is p50 over your last twenty runs of that phase on this machine,
 partitioned by provider, class and placement. Under three runs it says `no history
-yet` rather than inventing a number.
+yet`. Three runs is too few to estimate from.
 
 `--no-tty` prints one line per state change instead, for logs and CI. `--json`
 prints a versioned document (`docs/schema/status.v1.json`); `--json --verbose`

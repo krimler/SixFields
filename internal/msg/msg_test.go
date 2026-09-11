@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -269,4 +270,39 @@ func stripInlineCode(line string) string {
 		}
 	}
 	return b.String()
+}
+
+// Contrastive constructions — "not just X but Y", "rather than", "instead of" —
+// are how generated prose pads a sentence that has one thing to say. The
+// user-facing pages say the thing.
+func TestUX_UserFacingDocsAreStraightStatements(t *testing.T) {
+	patterns := []*regexp.Regexp{
+		regexp.MustCompile(`(?i)\bnot (just|only|merely|simply)\b`),
+		regexp.MustCompile(`(?i)\brather than\b`),
+		regexp.MustCompile(`(?i)\binstead of\b`),
+		regexp.MustCompile(`(?i)\bbut rather\b`),
+		regexp.MustCompile(`(?i)\bas opposed to\b`),
+		regexp.MustCompile(`(?i)\bmore than just\b`),
+		regexp.MustCompile(`(?i)\bis(n't| not) about .*,? it'?s about\b`),
+		regexp.MustCompile(`(?i)\bthink of it less as\b`),
+	}
+
+	for _, path := range []string{
+		"../../README.md",
+		"../../docs/user-guide.md",
+		"../../docs/eject.md",
+		"../../docs/ai.md",
+	} {
+		t.Run(filepath.Base(path), func(t *testing.T) {
+			b, err := os.ReadFile(path)
+			require.NoError(t, err)
+
+			for i, line := range prose(string(b)) {
+				for _, pattern := range patterns {
+					require.NotRegexp(t, pattern, line,
+						"%s:%d uses a contrastive construction; say the thing plainly", path, i+1)
+				}
+			}
+		})
+	}
 }
