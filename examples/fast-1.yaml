@@ -1,0 +1,21 @@
+---
+# The fast substrate. This cluster is simulated inside the management cluster, so
+# it needs no containers and comes up in about a minute. Use it to see how the
+# tool behaves; use examples/dev-1.yaml for a cluster that really boots.
+#
+# The version is the one versions.env pins; TestExamples_MatchPinnedVersions fails if they drift.
+apiVersion: cluster.x-k8s.io/v1beta2
+kind: Cluster
+metadata:
+  name: fast-1
+  namespace: default
+spec:
+  topology:
+    classRef:
+      name: std-inmemory
+    version: v1.34.11
+    workers:
+      machineDeployments:
+      - name: default
+        class: default
+        replicas: 2

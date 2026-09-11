@@ -40,6 +40,23 @@ finishes you have a working Kubernetes cluster called `dev-1`.
 If something goes wrong, run `make doctor`. It checks your machine and tells you
 what to fix.
 
+## A faster way to look around
+
+The cluster above is real. Its machines are containers, it downloads images, and
+it takes several minutes.
+
+There is a second kind of cluster that is simulated inside the factory. It has no
+containers and it comes up in about a minute. Everything in this guide works the
+same way on it, so it is a good place to try things.
+
+```sh
+cluster up fast-1 -f examples/fast-1.yaml
+```
+
+The only difference in the file is one line. `classRef.name` reads
+`std-inmemory`. Run `kubectl get clusterclass` to see every blueprint the
+factory has.
+
 ## The order form
 
 This is `examples/dev-1.yaml`. It is the whole thing.

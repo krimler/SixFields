@@ -42,6 +42,15 @@ patch cannot set control-plane replicas at this Cluster API release, so the two
 have to agree; `cluster new --size ha` writes both, and admission rejects a pair
 that disagrees.
 
+`classRef.name` chooses the blueprint. `kubectl get clusterclass` lists them:
+
+| class | what it builds |
+|---|---|
+| `std` | machines as containers, k0s control plane. A few minutes |
+| `std-hosted` | the control plane as pods in the management cluster |
+| `std-inmemory` | simulated, no containers, about a minute. Good for trying things |
+| `std-kubeadm` | the kubeadm fallback. Rendered and tested, installed on request |
+
 Write the file by hand, or:
 
 ```sh
