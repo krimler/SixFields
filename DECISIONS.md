@@ -3,6 +3,79 @@
 Newest first. Each entry: date, decision, alternatives, why, `REVISIT` if a human
 should confirm.
 
+## 2026-09-11 — Both placements bootstrap with k0s; kubeadm is a rendered fallback
+
+Decision: `std` uses `K0sControlPlaneTemplate` and `K0sWorkerConfigTemplate`,
+`std-hosted` uses `K0smotronControlPlaneTemplate` and the same worker bootstrap. The two
+classes differ in exactly one reference, which is PLAN.md Phase 5's acceptance.
+Alternatives: keep kubeadm for `self` (two provider families, two sets of condition types
+to fold, and the fold table doubles); make k0s a third class (three classes to install and
+explain).
+Why: one bootstrap mechanism means one set of conditions in `internal/fold`, one runbook
+vocabulary, and a worker that joins the same way whatever runs its control plane.
+`std-kubeadm` is still rendered and tested so a reader who needs kubeadm finds a working
+class rather than reconstructing one; `make dev-up` does not install it.
+
+## 2026-09-11 — Three things k0s on CAPD needs, each with its citation
+
+Found by running it, not by reading:
+
+1. `--enable-worker=true` on the control plane. A k0s controller is not a Kubernetes node
+   unless it also runs a worker, so the control-plane Machine never gets a `nodeRef`,
+   never becomes Ready, and CAPI's MachineSet preflight holds every worker for ever. The
+   control-plane taint still keeps ordinary workloads off it.
+2. `machineset.cluster.x-k8s.io/skip-preflight-checks: ControlPlaneIsStable` on the worker
+   class. `K0sControlPlane` reports `status.version` as the k0s release (`v1.34.11+k0s.0`)
+   while the MachineSet carries the Kubernetes version (`v1.34.11`); CAPI compares them as
+   strings and concludes an upgrade is permanently pending. Only that one check is
+   skipped. `REVISIT` when k0smotron reports a Kubernetes version.
+3. The k0s version must carry the same Kubernetes version the assembly installs
+   everywhere else. A control plane on one minor and a topology version on another leaves
+   workers unable to fetch the `worker-config-default-<minor>` ConfigMap their k0s expects:
+   they reach the API server, authenticate, and exit.
+
+## 2026-09-11 — k0s bootstrap fetches its binary at machine boot
+
+Finding. The k0s bootstrap runs `curl https://get.k0s.sh | sh` on each machine, so
+provisioning depends on a network fetch that can fail — it did, with
+`curl: (56) OpenSSL SSL_read: unexpected eof`, and the machine sat at `Provisioned` for
+an hour. kubeadm does not have this property: its node image already contains everything.
+Taken: nothing, beyond recording it. `cluster why` named the DevMachine and quoted the
+curl error on the first try, which is the behaviour this project exists to provide.
+`REVISIT` if it recurs often enough to be worth pre-installing k0s in the node image
+(`K0sWorkerConfigSpec.preInstalledK0s` exists for that).
+
+## 2026-09-11 — Three CAPI immutabilities that shape the dev loop
+
+CAPI refuses, in three places, to change a control plane's kind after the fact: a
+Cluster's placement cannot change, a Cluster's class cannot change to one with a
+different control-plane kind, and a ClusterClass's own control-plane kind cannot change in
+place ("to prevent incompatible changes in the Clusters"). Consequence for the dev loop:
+switching a class's bootstrap is a recreate. `hack/dev-up.sh` recreates a class whose
+control plane changed and refuses while any Cluster uses it, naming them. Consequence for
+a user: `placement` is chosen once, which belongs in the user guide.
+
+## 2026-09-11 — The assembly ships a CNI
+
+Decision: `hack/addons.sh` installs a `ClusterResourceSet` with a digest-pinned Calico
+manifest, selected by the `topology.cluster.x-k8s.io/owned` label CAPI puts on every
+Cluster built from a class.
+Alternatives: leave the CNI to the user (then no cluster from this class ever reaches
+Ready, which is what happened); a `capi-distro.io/cni` label the user sets (a seventh
+field); an empty selector (CAPI rejects it).
+Why: an opinionated assembly that produces a cluster whose nodes never become Ready is not
+an assembly. It also makes the fourth phase report something real instead of "none".
+
+## 2026-09-11 — The local model is `qwen2.5:14b`, picked by measurement
+
+`make doctor-ai` on the 24 GB reference machine: 24 − 5 (container VM, dev profile) − 5
+(macOS reserve) = 14 GB for the model, so the heaviest dense Qwen that fits with headroom.
+It measured 6.6 tok/s on a cold load and refused the model, then 26 tok/s warm and
+accepted it — the 8 tok/s floor exists because a slow `--explain` is worse than the runbook
+alone. Pinned in `versions.env` with its quantisation, digest and runtime. The seven
+cassettes in `testdata/cassettes/` are recorded from it and every one passes the grounding
+check, so no answer that named an object the analyzer never saw has ever reached a user.
+
 ## 2026-09-10 — The next action comes from the message registry, not from the renderer
 
 The renderer used to print `cluster docs <code>` under every stall. It now prints
