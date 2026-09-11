@@ -63,7 +63,7 @@ func newDoctorCmd(g *globals) *cobra.Command {
 // managedKindRefused submits a KubeadmControlPlane as a server-side dry run. The
 // API server runs admission and discards the object, so nothing is created either
 // way; a Forbidden naming the policy is the answer we want.
-func managedKindRefused(g *globals) (bool, string) {
+func managedKindRefused(g *globals) (refused bool, detail string) {
 	const manifest = `apiVersion: controlplane.cluster.x-k8s.io/v1beta2
 kind: KubeadmControlPlane
 metadata:
