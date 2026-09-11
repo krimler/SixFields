@@ -20,10 +20,46 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-const (
-	namespace = "default"
-	upTimeout = 15 * time.Minute
-)
+const namespace = "default"
+
+// The suite runs on the in-memory substrate by default: a whole cluster comes up
+// in about a minute with no containers, so the whole suite fits inside the budget
+// and people actually run it. E2E_SUBSTRATE=docker runs the same tests against
+// real containers, which takes about ten minutes per cluster.
+func substrate() (class string, timeout time.Duration) {
+	if os.Getenv("E2E_SUBSTRATE") == "docker" {
+		return "std", 15 * time.Minute
+	}
+	return "std-inmemory", 5 * time.Minute
+}
+
+// writeCluster generates a six-field Cluster with the CLI, which exercises
+// `cluster new` on the way to exercising everything else.
+func writeCluster(t *testing.T, name string) string {
+	t.Helper()
+	class, _ := substrate()
+	manifest, code := run(t, time.Minute, cli(t), "new", name,
+		"--version", pinned(t, "WORKLOAD_K8S_VERSION"),
+		"--class", class, "--pool", "default=2")
+	require.Equal(t, 0, code, manifest)
+
+	path := filepath.Join(t.TempDir(), name+".yaml")
+	require.NoError(t, os.WriteFile(path, []byte(manifest), 0o644))
+	return path
+}
+
+// pinned reads one value out of versions.env, so no test hardcodes a version.
+func pinned(t *testing.T, key string) string {
+	t.Helper()
+	b, err := os.ReadFile(filepath.Join(repoRoot(t), "versions.env"))
+	require.NoError(t, err)
+	for _, line := range strings.Split(string(b), "\n") {
+		if name, value, ok := strings.Cut(strings.TrimSpace(line), "="); ok && name == key {
+			return value
+		}
+	}
+	return ""
+}
 
 func repoRoot(t *testing.T) string {
 	t.Helper()
@@ -104,14 +140,15 @@ func deleteCluster(t *testing.T, name string) {
 // fields, and the tool blocks until it is ready and exits 0.
 func TestE2E_SixFieldClusterReachesReady(t *testing.T) {
 	const name = "e2e-dev-1"
+	_, timeout := substrate()
 	deleteCluster(t, name)
 
-	out, code := run(t, upTimeout, cli(t), "up", name,
-		"-f", filepath.Join(repoRoot(t), "examples", "dev-1.yaml"),
-		"--no-tty", "--timeout", upTimeout.String())
+	out, code := run(t, timeout+time.Minute, cli(t), "up", name,
+		"-f", writeCluster(t, name), "--no-tty", "--timeout", timeout.String())
 	require.Equal(t, 0, code, "cluster up did not reach Ready:\n%s", out)
 	require.Contains(t, out, "ready in ")
 	require.Contains(t, out, "control plane   done")
+	require.Contains(t, out, "workers         done")
 }
 
 // The untouched test: the only objects in the namespace besides the Cluster are
@@ -153,12 +190,22 @@ spec:
 
 // The eject test: `cluster render` re-applies with zero diff.
 //
-// It runs with the policy's bindings removed, which is not a workaround — it is
-// what ejecting means. The objects render describes are managed kinds, so while
-// the policy is enforcing, re-applying them is denied; docs/eject.md says to
-// remove the bindings first and this test proves that sequence works.
+// It runs with the policy's bindings removed. That is what ejecting means: the
+// objects render describes are managed kinds, so while the policy is enforcing,
+// re-applying them is denied. docs/eject.md says to remove the bindings first and
+// this test proves that sequence works.
+//
+// It builds its own cluster. Sharing one with another test made it depend on that
+// test's cleanup order, and it failed the first time the suite ran.
 func TestE2E_RenderReAppliesWithNoDiff(t *testing.T) {
-	const name = "e2e-dev-1"
+	const name = "e2e-eject"
+	_, timeout := substrate()
+	deleteCluster(t, name)
+
+	up, code := run(t, timeout+time.Minute, cli(t), "up", name,
+		"-f", writeCluster(t, name), "--no-tty", "--timeout", timeout.String())
+	require.Equal(t, 0, code, up)
+
 	rendered, code := run(t, 2*time.Minute, cli(t), "render", name)
 	require.Equal(t, 0, code)
 	require.NotEmpty(t, strings.TrimSpace(rendered), "render wrote nothing to stdout")
@@ -166,12 +213,9 @@ func TestE2E_RenderReAppliesWithNoDiff(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "rendered.yaml")
 	require.NoError(t, os.WriteFile(path, []byte(rendered), 0o644))
 
-	// While the policy enforces, re-applying a managed kind is denied. That is the
-	// assembly working, so assert it before ejecting.
-	denied, code := run(t, 2*time.Minute, "kubectl", "diff", "-f", path)
-	require.NotEqual(t, 0, code, "a managed kind was patchable while the policy was enforcing")
-	require.Contains(t, denied, "break-glass")
-
+	// The bindings come off first. kubectl diff sends no patch for an object that
+	// has not changed, so it is not a reliable way to observe the policy denying;
+	// TestE2E_ManagedKindIsRejectedAtAdmission covers that with a real write.
 	run(t, time.Minute, "kubectl", "delete", "validatingadmissionpolicybinding",
 		"sixfields-cluster-fields", "sixfields-managed-kinds")
 	t.Cleanup(func() { run(t, time.Minute, "kubectl", "apply", "-f", "policy/vap/") })
@@ -185,11 +229,11 @@ func TestE2E_RenderReAppliesWithNoDiff(t *testing.T) {
 // detail, and either an estimate or a stall reason — never a bare Provisioning.
 func TestE2E_NoBareProvisioning(t *testing.T) {
 	const name = "e2e-dev-2"
+	_, timeout := substrate()
 	deleteCluster(t, name)
 
-	out, _ := run(t, upTimeout, cli(t), "up", name,
-		"-f", filepath.Join(repoRoot(t), "examples", "dev-1.yaml"),
-		"--no-tty", "--timeout", upTimeout.String())
+	out, _ := run(t, timeout+time.Minute, cli(t), "up", name,
+		"-f", writeCluster(t, name), "--no-tty", "--timeout", timeout.String())
 
 	for _, line := range strings.Split(out, "\n") {
 		if !strings.HasPrefix(line, "t+") {
@@ -204,6 +248,7 @@ func TestE2E_NoBareProvisioning(t *testing.T) {
 
 // Break-glass works end to end, and half of it does not.
 func TestE2E_BreakGlassNeedsBothHalves(t *testing.T) {
+	class, _ := substrate()
 	manifest := `apiVersion: cluster.x-k8s.io/v1beta2
 kind: Cluster
 metadata:
@@ -217,8 +262,8 @@ spec:
       cidrBlocks: ["10.128.0.0/12"]
   topology:
     classRef:
-      name: std
-    version: v1.34.11
+      name: ` + class + `
+    version: ` + pinned(t, "WORKLOAD_K8S_VERSION") + `
 `
 	path := filepath.Join(t.TempDir(), "break-glass.yaml")
 	require.NoError(t, os.WriteFile(path, []byte(manifest), 0o644))
