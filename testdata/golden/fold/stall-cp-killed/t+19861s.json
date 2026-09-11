@@ -1,0 +1,85 @@
+{
+  "cluster": {
+    "kind": "Cluster",
+    "name": "dev-3",
+    "namespace": "default",
+    "group": "cluster.x-k8s.io"
+  },
+  "class": "std",
+  "version": "v1.34.11",
+  "placement": "self",
+  "phases": [
+    {
+      "name": "infrastructure",
+      "state": "done",
+      "detail": "ready",
+      "elapsed_ns": 5000000000,
+      "last_transition": "2026-09-10T18:51:16Z",
+      "started_at": "2026-09-10T18:51:11Z",
+      "contributors": [
+        {
+          "kind": "DevCluster",
+          "name": "dev-3-cc5xt",
+          "namespace": "default",
+          "group": "infrastructure.cluster.x-k8s.io"
+        }
+      ]
+    },
+    {
+      "name": "control plane",
+      "state": "stalled",
+      "detail": "0/1 nodes",
+      "elapsed_ns": 19856000000000,
+      "last_transition": "2026-09-11T00:11:33Z",
+      "started_at": "2026-09-10T18:51:16Z",
+      "contributors": [
+        {
+          "kind": "KubeadmControlPlane",
+          "name": "dev-3-zqx65",
+          "namespace": "default",
+          "group": "controlplane.cluster.x-k8s.io"
+        },
+        {
+          "kind": "Machine",
+          "name": "dev-3-zqx65-zlwhb",
+          "namespace": "default",
+          "group": "cluster.x-k8s.io"
+        }
+      ]
+    },
+    {
+      "name": "workers",
+      "state": "running",
+      "detail": "0/2 nodes",
+      "elapsed_ns": 19856000000000,
+      "last_transition": "2026-09-11T00:11:35Z",
+      "started_at": "2026-09-10T18:51:16Z",
+      "contributors": [
+        {
+          "kind": "MachineDeployment",
+          "name": "dev-3-default-p5xlz",
+          "namespace": "default",
+          "group": "cluster.x-k8s.io"
+        }
+      ]
+    },
+    {
+      "name": "addons",
+      "state": "done",
+      "detail": "1/1 applied",
+      "elapsed_ns": 19856000000000,
+      "started_at": "2026-09-10T18:51:16Z",
+      "contributors": [
+        {
+          "kind": "ClusterResourceSetBinding",
+          "name": "dev-3",
+          "namespace": "default",
+          "group": "addons.cluster.x-k8s.io"
+        }
+      ]
+    }
+  ],
+  "ready": false,
+  "at": "2026-09-11T00:22:12Z",
+  "elapsed_ns": 19861000000000
+}

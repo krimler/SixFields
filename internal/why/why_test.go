@@ -56,27 +56,37 @@ func TestWhy_EveryStallFixtureMatchesItsGolden(t *testing.T) {
 	}
 }
 
-// The intended object ranks first in every stall fixture. This is the assertion
-// that would survive a rewrite of the ranker.
+// The intended object ranks first in every stall fixture. The assertion is on the
+// kind and the stall class, not on the name: a recorded fixture carries whatever
+// name CAPI generated, and re-recording must not rewrite a test.
 func TestUX_StallLineNamesTheRightObject(t *testing.T) {
 	for _, tc := range []struct {
 		scenario string
-		object   string
+		kind     string
 		code     msg.Code
 	}{
-		{"stall-bad-version", "DevMachine/dev-1-cp-abcde", msg.VersionUnavailable},
-		{"stall-cp-killed", "DevMachine/dev-1-cp-abcde", msg.ControlPlaneMachine},
-		{"stall-bad-variable", "Cluster/dev-1", msg.TopologyFailed},
-		{"inmem-stall-etcd", "DevMachine/inmem-1-cp-abcde", msg.EtcdNotHealthy},
+		{"stall-bad-version", "DevMachine", msg.VersionUnavailable},
+		{"stall-cp-killed", "DevMachine", msg.ControlPlaneMachine},
+		{"stall-bad-variable", "Cluster", msg.TopologyFailed},
+		{"inmem-stall-etcd", "DevMachine", msg.EtcdNotHealthy},
 		// A node that never became ready is the same problem, and the same runbook,
 		// whether it is a control-plane node or a worker.
-		{"inmem-stall-node", "DevMachine/inmem-1-cp-abcde", msg.NodeNotJoining},
-		{"hosted-stall-pod", "K0smotronControlPlane/hosted-1-cp", msg.ControlPlaneNotInit},
+		{"inmem-stall-node", "DevMachine", msg.NodeNotJoining},
+		{"hosted-stall-pod", "K0smotronControlPlane", msg.ControlPlaneNotInit},
 	} {
 		t.Run(tc.scenario, func(t *testing.T) {
 			stall := rank(t, tc.scenario)
-			require.Equal(t, tc.object, stall.Object.String())
+			require.Equal(t, tc.kind, stall.Object.Kind)
 			require.Equal(t, tc.code, stall.Code)
+
+			// The object named must be one that is actually failing, in the
+			// envelope, with the condition the line was built from.
+			env := lastEnvelope(t, tc.scenario)
+			obj, ok := env.FindRef(stall.Object)
+			require.True(t, ok, "the stall names an object that is not in the envelope")
+			cond, ok := obj.Condition(stall.ConditionType)
+			require.True(t, ok, "%s has no %s condition", stall.Object, stall.ConditionType)
+			require.True(t, cond.IsFalse(), "%s %s is not False", stall.Object, stall.ConditionType)
 		})
 	}
 }

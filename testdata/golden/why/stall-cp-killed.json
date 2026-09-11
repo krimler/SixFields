@@ -1,74 +1,91 @@
 {
   "object": {
     "kind": "DevMachine",
-    "name": "dev-1-cp-abcde",
+    "name": "dev-3-zqx65-zlwhb",
     "namespace": "default",
     "group": "infrastructure.cluster.x-k8s.io"
   },
   "code": "CAPI-CP-002",
   "phase": "control plane",
-  "reason": "ContainerMissing",
-  "message": "the machine container no longer exists",
-  "since_ns": 200000000000,
-  "raw": "kubectl get devmachine.infrastructure.cluster.x-k8s.io dev-1-cp-abcde -n default -o yaml",
+  "reason": "NotProvisioned",
+  "message": "Container dev-3-zqx65-zlwhb is not running anymore",
+  "since_ns": 880000000000,
+  "raw": "kubectl get devmachine.infrastructure.cluster.x-k8s.io dev-3-zqx65-zlwhb -n default -o yaml",
   "candidates": [
     {
       "object": {
         "kind": "DevMachine",
-        "name": "dev-1-cp-abcde",
+        "name": "dev-3-zqx65-zlwhb",
         "namespace": "default",
         "group": "infrastructure.cluster.x-k8s.io"
       },
       "condition": {
         "type": "ContainerProvisioned",
         "status": "False",
-        "reason": "ContainerMissing",
-        "message": "the machine container no longer exists",
-        "lastTransitionTime": "2026-09-10T12:05:00Z"
+        "reason": "NotProvisioned",
+        "message": "Container dev-3-zqx65-zlwhb is not running anymore",
+        "lastTransitionTime": "2026-09-11T00:07:32Z"
       },
       "specificity": 45,
-      "since_ns": 200000000000
+      "since_ns": 880000000000
+    },
+    {
+      "object": {
+        "kind": "DevMachine",
+        "name": "dev-3-zqx65-zlwhb",
+        "namespace": "default",
+        "group": "infrastructure.cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "Ready",
+        "status": "False",
+        "reason": "NotReady",
+        "message": "* ContainerProvisioned: Container dev-3-zqx65-zlwhb is not running anymore",
+        "lastTransitionTime": "2026-09-11T00:07:32Z"
+      },
+      "specificity": 45,
+      "since_ns": 880000000000,
+      "lost_to": "summary condition"
     },
     {
       "object": {
         "kind": "Machine",
-        "name": "dev-1-cp-abcde",
+        "name": "dev-3-zqx65-zlwhb",
         "namespace": "default",
         "group": "cluster.x-k8s.io"
       },
       "condition": {
         "type": "InfrastructureReady",
         "status": "False",
-        "reason": "ContainerMissing",
-        "message": "the machine container no longer exists",
-        "lastTransitionTime": "2026-09-10T12:05:00Z"
+        "reason": "NotReady",
+        "message": "* ContainerProvisioned: Container dev-3-zqx65-zlwhb is not running anymore",
+        "lastTransitionTime": "2026-09-11T00:07:32Z"
       },
       "specificity": 40,
-      "since_ns": 200000000000,
+      "since_ns": 880000000000,
       "lost_to": "less specific object"
     },
     {
       "object": {
         "kind": "Machine",
-        "name": "dev-1-cp-abcde",
+        "name": "dev-3-zqx65-zlwhb",
         "namespace": "default",
         "group": "cluster.x-k8s.io"
       },
       "condition": {
-        "type": "NodeHealthy",
+        "type": "Available",
         "status": "False",
-        "reason": "NodeNotFound",
-        "message": "the node is gone",
-        "lastTransitionTime": "2026-09-10T12:05:00Z"
+        "reason": "NotReady",
+        "lastTransitionTime": "2026-09-11T00:07:32Z"
       },
       "specificity": 40,
-      "since_ns": 200000000000,
+      "since_ns": 880000000000,
       "lost_to": "less specific object"
     },
     {
       "object": {
         "kind": "Machine",
-        "name": "dev-1-cp-abcde",
+        "name": "dev-3-zqx65-zlwhb",
         "namespace": "default",
         "group": "cluster.x-k8s.io"
       },
@@ -76,65 +93,101 @@
         "type": "Ready",
         "status": "False",
         "reason": "NotReady",
-        "message": "infrastructure is not ready",
-        "lastTransitionTime": "2026-09-10T12:05:00Z"
+        "message": "* InfrastructureReady:\n  * ContainerProvisioned: Container dev-3-zqx65-zlwhb is not running anymore\n* NodeHealthy: Last successful probe at 2026-09-11T00:06:16Z\n* NodeKubeadmLabelsAndTaintsSet: Last successful probe at 2026-09-11T00:06:20Z\n* Control plane components: Last successful probe at 2026-09-11T00:06:20Z\n* EtcdMemberHealthy: Last successful probe at 2026-09-11T00:06:20Z",
+        "lastTransitionTime": "2026-09-11T00:07:32Z"
       },
       "specificity": 40,
-      "since_ns": 200000000000,
+      "since_ns": 880000000000,
       "lost_to": "less specific object"
     },
     {
       "object": {
         "kind": "KubeadmControlPlane",
-        "name": "dev-1-cp",
+        "name": "dev-3-zqx65",
         "namespace": "default",
         "group": "controlplane.cluster.x-k8s.io"
       },
       "condition": {
-        "type": "EtcdClusterHealthy",
+        "type": "MachinesReady",
         "status": "False",
-        "reason": "EtcdMemberNotHealthy",
-        "message": "etcd has lost its only member",
-        "lastTransitionTime": "2026-09-10T12:05:00Z"
+        "reason": "NotReady",
+        "message": "* Machine dev-3-zqx65-zlwhb:\n  * InfrastructureReady:\n    * ContainerProvisioned: Container dev-3-zqx65-zlwhb is not running anymore\n  * NodeHealthy: Last successful probe at 2026-09-11T00:06:16Z\n  * NodeKubeadmLabelsAndTaintsSet: Last successful probe at 2026-09-11T00:06:20Z\n  * Control plane components: Last successful probe at 2026-09-11T00:06:20Z\n  * EtcdMemberHealthy: Last successful probe at 2026-09-11T00:06:20Z",
+        "lastTransitionTime": "2026-09-11T00:07:57Z"
       },
       "specificity": 20,
-      "since_ns": 200000000000,
-      "lost_to": "less specific object"
-    },
-    {
-      "object": {
-        "kind": "KubeadmControlPlane",
-        "name": "dev-1-cp",
-        "namespace": "default",
-        "group": "controlplane.cluster.x-k8s.io"
-      },
-      "condition": {
-        "type": "Available",
-        "status": "False",
-        "reason": "NotAvailable",
-        "message": "0 of 1 replicas are ready",
-        "lastTransitionTime": "2026-09-10T12:05:00Z"
-      },
-      "specificity": 20,
-      "since_ns": 200000000000,
+      "since_ns": 855000000000,
       "lost_to": "less specific object"
     },
     {
       "object": {
         "kind": "Cluster",
-        "name": "dev-1",
+        "name": "dev-3",
         "namespace": "default",
         "group": "cluster.x-k8s.io"
       },
       "condition": {
-        "type": "ControlPlaneAvailable",
+        "type": "WorkersAvailable",
         "status": "False",
         "reason": "NotAvailable",
-        "message": "0 of 1 replicas are ready",
-        "lastTransitionTime": "2026-09-10T12:05:00Z"
+        "message": "* MachineDeployment dev-3-default-p5xlz: 0 available replicas, at least 2 required (spec.strategy.rollout.maxUnavailable is 0, spec.replicas is 2)",
+        "lastTransitionTime": "2026-09-11T00:11:35Z"
       },
       "specificity": 10,
-      "since_ns": 200000000000,
+      "since_ns": 637000000000,
+      "lost_to": "less specific object"
+    },
+    {
+      "object": {
+        "kind": "Cluster",
+        "name": "dev-3",
+        "namespace": "default",
+        "group": "cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "ControlPlaneMachinesReady",
+        "status": "False",
+        "reason": "NotReady",
+        "message": "* Machine dev-3-zqx65-zlwhb:\n  * InfrastructureReady:\n    * ContainerProvisioned: Container dev-3-zqx65-zlwhb is not running anymore\n  * NodeHealthy: Last successful probe at 2026-09-11T00:06:16Z\n  * NodeKubeadmLabelsAndTaintsSet: Last successful probe at 2026-09-11T00:06:20Z\n  * Control plane components: Last successful probe at 2026-09-11T00:06:20Z\n  * EtcdMemberHealthy: Last successful probe at 2026-09-11T00:06:20Z",
+        "lastTransitionTime": "2026-09-11T00:07:57Z"
+      },
+      "specificity": 10,
+      "since_ns": 855000000000,
+      "lost_to": "less specific object"
+    },
+    {
+      "object": {
+        "kind": "Cluster",
+        "name": "dev-3",
+        "namespace": "default",
+        "group": "cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "RemoteConnectionProbe",
+        "status": "False",
+        "reason": "ProbeFailed",
+        "message": "Remote connection probe failed, probe last succeeded at 2026-09-11T00:06:16Z",
+        "lastTransitionTime": "2026-09-11T00:07:16Z"
+      },
+      "specificity": 10,
+      "since_ns": 896000000000,
+      "lost_to": "less specific object"
+    },
+    {
+      "object": {
+        "kind": "Cluster",
+        "name": "dev-3",
+        "namespace": "default",
+        "group": "cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "Available",
+        "status": "False",
+        "reason": "NotAvailable",
+        "message": "* RemoteConnectionProbe: Remote connection probe failed, probe last succeeded at 2026-09-11T00:06:16Z\n* ControlPlaneAvailable: Failed to get etcd members\n* WorkersAvailable:\n  * MachineDeployment dev-3-default-p5xlz: 0 available replicas, at least 2 required (spec.strategy.rollout.maxUnavailable is 0, spec.replicas is 2)",
+        "lastTransitionTime": "2026-09-11T00:07:16Z"
+      },
+      "specificity": 10,
+      "since_ns": 896000000000,
       "lost_to": "less specific object"
     }
   ],
