@@ -36,13 +36,17 @@ func newDoctorCmd(g *globals) *cobra.Command {
 
 			outln(cmd, "permissions in "+g.namespace)
 			check("create clusters", kubectl(g, "auth", "can-i", "create", "clusters.cluster.x-k8s.io", "-n", g.namespace))
-			// Being able to write a managed kind means the policy is missing or you
-			// are exempt from it. Either way it is worth knowing before you rely on
-			// errors arriving at admission time.
-			if err := kubectl(g, "auth", "can-i", "create", "kubeadmcontrolplanes.controlplane.cluster.x-k8s.io", "-n", g.namespace); err == nil {
-				outln(cmd, "  warn  you can create a KubeadmControlPlane directly: the admission policy is not covering you")
-			} else {
-				outln(cmd, "  ok    managed kinds are refused")
+			// `auth can-i` answers about RBAC, and RBAC is not what refuses a
+			// managed kind — the admission policy is. A cluster-admin passes the
+			// RBAC check and is still denied, so this asks the layer that decides,
+			// with a dry-run the API server evaluates and then discards.
+			switch refused, why := managedKindRefused(g); {
+			case refused:
+				outln(cmd, "  ok    managed kinds are refused at admission")
+			default:
+				failed = true
+				outf(cmd, "  fail  a KubeadmControlPlane was admitted: %s\n", why)
+				outln(cmd, "        the policy is not installed or you are exempt from it — see docs/eject.md")
 			}
 
 			outln(cmd, "classes")
@@ -54,6 +58,43 @@ func newDoctorCmd(g *globals) *cobra.Command {
 			return nil
 		},
 	}
+}
+
+// managedKindRefused submits a KubeadmControlPlane as a server-side dry run. The
+// API server runs admission and discards the object, so nothing is created either
+// way; a Forbidden naming the policy is the answer we want.
+func managedKindRefused(g *globals) (bool, string) {
+	const manifest = `apiVersion: controlplane.cluster.x-k8s.io/v1beta2
+kind: KubeadmControlPlane
+metadata:
+  name: capi-distro-doctor-probe
+spec:
+  replicas: 1
+  version: v1.0.0
+  machineTemplate:
+    spec:
+      infrastructureRef:
+        apiGroup: infrastructure.cluster.x-k8s.io
+        kind: DevMachineTemplate
+        name: capi-distro-doctor-probe
+`
+	args := []string{"apply", "--dry-run=server", "-n", g.namespace, "-f", "-"}
+	if g.kubeconfig != "" {
+		args = append(args, "--kubeconfig", g.kubeconfig)
+	}
+	cmd := exec.Command("kubectl", args...)
+	cmd.Stdin = strings.NewReader(manifest)
+	out, err := cmd.CombinedOutput()
+	if err == nil {
+		return false, "it was accepted"
+	}
+	text := string(out)
+	if strings.Contains(text, "break-glass") {
+		return true, ""
+	}
+	// Denied by something else — RBAC, a webhook, a missing CRD. Still refused,
+	// but not by this policy, and a user should know which.
+	return true, text
 }
 
 func kubectl(g *globals, args ...string) error {

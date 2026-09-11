@@ -87,8 +87,8 @@ dev-up: ## kind management cluster + clusterctl init + the assembly (idempotent)
 	hack/dev-up.sh
 
 .PHONY: dev-down
-dev-down: ## Delete the management cluster
-	kind delete cluster --name $(KIND_CLUSTER)
+dev-down: ## Delete the management cluster and every workload cluster it created
+	hack/dev-down.sh
 
 .PHONY: policy-install
 policy-install: ## Apply the admission policy to the management cluster
