@@ -30,6 +30,15 @@ func (t *TTY) Render(v View, width int) (string, bool) {
 	return frame, true
 }
 
+// Heartbeat redraws the frame. A TTY frame carries elapsed times, so it usually
+// differs anyway; this makes the promise hold even when it does not.
+func (t *TTY) Heartbeat(v View, width int) (string, bool) {
+	if v.Result.Ready {
+		return "", false
+	}
+	return t.Frame(v, width), true
+}
+
 // Frame is the whole screen. It is a pure function of the view and the width,
 // which is what makes the goldens at 80 and 120 columns meaningful.
 func (t *TTY) Frame(v View, width int) string {

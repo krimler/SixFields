@@ -39,6 +39,13 @@ type Renderer interface {
 	Render(v View, width int) (string, bool)
 }
 
+// Heartbeater says something when nothing has changed for a while. A renderer
+// that cannot do this will go silent during a long phase, and a silent tool looks
+// like a hung one — which is the whole problem this project is about.
+type Heartbeater interface {
+	Heartbeat(v View, width int) (string, bool)
+}
+
 // DefaultWidth is used when the terminal width is unknown, e.g. in a pipe.
 const DefaultWidth = 80
 

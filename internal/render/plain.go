@@ -15,6 +15,22 @@ type Plain struct {
 	done  bool
 }
 
+// Heartbeat restates the phase the cluster is waiting on, with the time it has
+// been waiting. It is what stops a long phase looking like a hung command.
+func (p *Plain) Heartbeat(v View, _ int) (string, bool) {
+	if v.Result.Ready {
+		return "", false
+	}
+	for _, phase := range v.Result.Phases {
+		if phase.State == fold.Done {
+			continue
+		}
+		return fmt.Sprintf("%-7s %-15s %-8s %s\n",
+			"t+"+Short(v.Elapsed), phase.Name, "waiting", phase.Detail), true
+	}
+	return "", false
+}
+
 func (p *Plain) Render(v View, _ int) (string, bool) {
 	if p.seen == nil {
 		p.seen = map[fold.PhaseName]string{}

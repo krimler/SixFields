@@ -158,9 +158,9 @@ func TestUX_NoHistorySaysSo(t *testing.T) {
 	require.Contains(t, frame, "no history yet")
 }
 
-// Time to first output and no silent gaps, measured on a replay with a fake clock
-// (D2.1). The stream must speak within a second and never go quiet for long.
-func TestUX_FirstFeedbackUnder1sAndNoSilentGaps(t *testing.T) {
+// The stream says something within a second of starting, measured on a replay
+// with a fake clock (D2.1).
+func TestUX_FirstFeedbackUnder1s(t *testing.T) {
 	envelopes := load(t, "std-docker-happy")
 	clock := fixture.NowFor(envelopes[0])
 	var buf bytes.Buffer
@@ -174,6 +174,39 @@ func TestUX_FirstFeedbackUnder1sAndNoSilentGaps(t *testing.T) {
 	}
 	require.Less(t, stream.TimeToFirstOutput(), time.Second)
 	require.NotEmpty(t, buf.String())
+}
+
+// While a cluster is still coming up the tool never goes quiet for long: a silent
+// command looks like a hung one, which is the problem this project exists to fix.
+func TestUX_NoSilentGaps(t *testing.T) {
+	envelopes := load(t, "std-docker-happy")
+	start := fixture.NowFor(envelopes[0])
+	clock := start
+
+	var buf bytes.Buffer
+	stream := &render.Stream{
+		Out: &buf, Renderer: &render.Plain{}, Now: func() time.Time { return clock },
+		Width: func() int { return 80 },
+	}
+
+	// Replay the recorded timeline a second at a time, so a phase that stays the
+	// same for minutes is exercised rather than skipped over.
+	last := envelopes[len(envelopes)-1]
+	for offset := 0; offset <= last.Meta.TPlusS; offset++ {
+		env := envelopes[0]
+		for _, candidate := range envelopes {
+			if candidate.Meta.TPlusS <= offset {
+				env = candidate
+			}
+		}
+		clock = start.Add(time.Duration(offset) * time.Second)
+		view := viewAt(env, sampleEstimates())
+		view.Elapsed = clock.Sub(start)
+		require.NoError(t, stream.Update(view))
+	}
+
+	require.LessOrEqual(t, stream.LongestSilence(), render.DefaultHeartbeat,
+		"the stream went %s without saying anything", stream.LongestSilence())
 }
 
 // The render budget: replaying a timeline at fifty times speed must not produce

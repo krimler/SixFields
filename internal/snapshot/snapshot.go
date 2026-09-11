@@ -81,7 +81,6 @@ func (o Object) APIVersion() string { return o.String("apiVersion") }
 func (o Object) Kind() string       { return o.String("kind") }
 func (o Object) Name() string       { return o.String("metadata", "name") }
 func (o Object) Namespace() string  { return o.String("metadata", "namespace") }
-func (o Object) UID() string        { return o.String("metadata", "uid") }
 
 // Group is the API group without the version: cluster.x-k8s.io, not
 // cluster.x-k8s.io/v1beta2.
@@ -347,19 +346,4 @@ func (e Envelope) Cluster() (Object, bool) {
 		}
 	}
 	return Object{}, false
-}
-
-// OwnedBy returns objects whose ownerReferences include ref.
-func (e Envelope) OwnedBy(ref Ref) []Object {
-	var out []Object
-	for _, o := range e.Objects {
-		for _, owner := range o.OwnerRefs() {
-			if owner.Kind == ref.Kind && owner.Name == ref.Name {
-				out = append(out, o)
-				break
-			}
-		}
-	}
-	sort.Slice(out, func(i, j int) bool { return out[i].Name() < out[j].Name() })
-	return out
 }

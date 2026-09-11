@@ -71,14 +71,20 @@ func (s *Stream) Update(v View) error {
 	}
 
 	out, changed := s.Renderer.Render(v, s.width())
-	// The heartbeat exists so a long phase never looks hung. Nothing is redrawn
-	// identically: the elapsed time in the view moves, so a heartbeat frame always
-	// differs from the one before it.
-	if !changed && !first && silent < heartbeat {
-		return nil
-	}
 	if !changed && !first {
-		return nil
+		// Nothing has changed. Stay quiet unless the silence is long enough to
+		// look like a hung command, and then say what is being waited on.
+		if silent < heartbeat {
+			return nil
+		}
+		beater, ok := s.Renderer.(Heartbeater)
+		if !ok {
+			return nil
+		}
+		out, changed = beater.Heartbeat(v, s.width())
+		if !changed {
+			return nil
+		}
 	}
 
 	if !s.lastAt.IsZero() && silent > s.maxSilen {
