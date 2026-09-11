@@ -276,7 +276,7 @@ func TestFixtures_SyntheticAreDeclared(t *testing.T) {
 // tokens until a release check found them.
 func TestFixtures_CarryNoCredentials(t *testing.T) {
 	// A kubeadm bootstrap token is six characters, a dot, then sixteen.
-	token := regexp.MustCompile(`\b[a-z0-9]{6}\.[a-z0-9]{16}\b`)
+	bootstrapToken := regexp.MustCompile(`\b[a-z0-9]{6}\.[a-z0-9]{16}\b`)
 
 	scenarios, err := fixture.Scenarios(fixturesDir)
 	require.NoError(t, err)
@@ -290,7 +290,7 @@ func TestFixtures_CarryNoCredentials(t *testing.T) {
 				raw, err := os.ReadFile(filepath.Join(fixturesDir, name, entry.Name()))
 				require.NoError(t, err)
 
-				for _, found := range token.FindAllString(string(raw), -1) {
+				for _, found := range bootstrapToken.FindAllString(string(raw), -1) {
 					require.True(t, strings.HasPrefix(found, "redacted."),
 						"%s/%s carries what looks like a bootstrap token; re-record it",
 						name, entry.Name())

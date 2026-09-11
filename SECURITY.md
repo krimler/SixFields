@@ -3,7 +3,7 @@
 ## Reporting a problem
 
 Report a security problem privately. Open a GitHub security advisory on
-[krimler/sixfields](https://github.com/krimler/sixfields/security/advisories/new),
+[krimler/SixFields](https://github.com/krimler/SixFields/security/advisories/new),
 which is visible only to the maintainers, or email yavan@outlook.com.
 
 Do not open a public issue for a security problem.

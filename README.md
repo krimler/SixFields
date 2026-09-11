@@ -9,7 +9,7 @@ Create a Kubernetes cluster from a file of six fields, and watch it being built.
 [![Cluster API](https://img.shields.io/badge/Cluster%20API-v1beta2-326ce5)](https://cluster-api.sigs.k8s.io/)
 [![Licence](https://img.shields.io/badge/licence-Apache--2.0-blue)](LICENSE)
 <!-- When CI exists, add:
-[![CI](https://github.com/krimler/sixfields/actions/workflows/ci.yml/badge.svg)](https://github.com/krimler/sixfields/actions/workflows/ci.yml)
+[![CI](https://github.com/krimler/SixFields/actions/workflows/ci.yml/badge.svg)](https://github.com/krimler/SixFields/actions/workflows/ci.yml)
 -->
 
 </div>

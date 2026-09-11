@@ -81,7 +81,7 @@ directories.
 ## Who maintains this
 
 `OWNERS` lists the maintainers. Open issues and pull requests on
-[krimler/sixfields](https://github.com/krimler/sixfields).
+[krimler/SixFields](https://github.com/krimler/SixFields).
 
 ## Licence
 
