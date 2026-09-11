@@ -6,56 +6,6 @@ package fixture
 // without Docker: set one component's duration past stallAfter and nothing else
 // changes. These are the primary fixtures for `why` ranking and ETA math.
 
-func inmemDevMachineConditions(m map[string]*object, seconds int) {
-	dm := m["devmachine"]
-	dm.condition("VMProvisioned", "False", "Provisioning", "waiting for the fake VM", at(seconds))
-	dm.condition("EtcdProvisioned", "False", "Provisioning", "waiting for etcd", at(seconds))
-	dm.condition("APIServerProvisioned", "False", "Provisioning", "waiting for the API server", at(seconds))
-	dm.condition("NodeProvisioned", "False", "Provisioning", "waiting for the node", at(seconds))
-}
-
-func inmemHappy() Timeline {
-	const note = "stands in for a recorded run of the std-inmemory overlay: same four phases as " +
-		"the docker path but seconds instead of minutes, and DevMachine reports the four " +
-		"in-memory provisioning conditions"
-	s, objs := build(opts{name: "inmem-happy", note: note, cluster: "inmem-1",
-		placement: "self", backend: "inMemory", cpReplicas: 1, workerCount: 2})
-	tl := Timeline{Name: s.name, Note: note}
-
-	snap(s, &tl, 0)
-
-	cpM := s.controlPlaneMachine("inmem-1", "inmem-1-cp", "inmem-1-cp-abcde", at(2))
-	inmemDevMachineConditions(cpM, 2)
-	infraReady(objs, at(3))
-	snap(s, &tl, 4)
-
-	dm := cpM["devmachine"]
-	dm.condition("VMProvisioned", "True", "Provisioned", "", at(6))
-	dm.condition("EtcdProvisioned", "True", "Provisioned", "", at(8))
-	dm.condition("APIServerProvisioned", "True", "Provisioned", "", at(10))
-	dm.condition("NodeProvisioned", "True", "Provisioned", "", at(12))
-	machineReady(cpM, at(12))
-	controlPlaneUp(objs, at(13))
-	snap(s, &tl, 14)
-
-	w0 := s.workerMachine("inmem-1", "inmem-1-md-0", fmtName("inmem-1", 0), at(15))
-	w1 := s.workerMachine("inmem-1", "inmem-1-md-0", fmtName("inmem-1", 1), at(15))
-	inmemDevMachineConditions(w0, 15)
-	inmemDevMachineConditions(w1, 15)
-	objs["md"].status("replicas", int64(2))
-	snap(s, &tl, 16)
-
-	for _, m := range []map[string]*object{w0, w1} {
-		m["devmachine"].condition("VMProvisioned", "True", "Provisioned", "", at(20))
-		m["devmachine"].condition("NodeProvisioned", "True", "Provisioned", "", at(22))
-		machineReady(m, at(22))
-	}
-	workersUp(objs, 2, at(23))
-	snap(s, &tl, 24)
-
-	return tl
-}
-
 func hostedDockerHappy() Timeline {
 	const note = "stands in for placement: hosted — a k0smotron control plane runs as pods in the " +
 		"management cluster, so the control-plane phase reports readiness, not node counts"
@@ -115,7 +65,7 @@ func twoStalls() Timeline {
 	infraReady(objs, at(30))
 	objs["cluster"].condition("TopologyReconciled", "False", "ReconcileFailed",
 		"the class could not compute the control plane", at(40))
-	cpM := s.controlPlaneMachine("dev-1", "dev-1-cp", "dev-1-cp-abcde", at(50))
+	cpM := s.controlPlaneMachine(at(50))
 	cpM["machine"].condition("InfrastructureReady", "False", "ImagePullFailure",
 		"failed to pull the node image", at(80))
 	cpM["devmachine"].condition("ContainerProvisioned", "False", "ImagePullFailure",

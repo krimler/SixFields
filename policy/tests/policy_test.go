@@ -447,3 +447,15 @@ func shortSA(sa string) string {
 	parts := strings.Split(sa, ":")
 	return parts[len(parts)-1]
 }
+
+// A managed object carries the cluster's name, never its class, so the policy
+// cannot know which of the assembly's classes produced it. Naming one told a
+// std-inmemory user their object belonged to std, which a UX probe caught.
+func TestUX_KindDenialNamesNoParticularClass(t *testing.T) {
+	got := decide(t, kindsPolicy, tests.Request{Object: managed("MachineDeployment")})
+	require.False(t, got.Allowed)
+	require.Contains(t, got.Message, "the ClusterClass that created it")
+	require.NotContains(t, got.Message, "'std'")
+	require.Equal(t, msg.Render(msg.KindManaged, msg.Vars{Kind: "MachineDeployment"}), got.Message,
+		"the policy and internal/msg have drifted")
+}

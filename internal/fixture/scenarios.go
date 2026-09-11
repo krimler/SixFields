@@ -25,7 +25,6 @@ func All() []Timeline {
 		stallCPKilled(),
 		stallBadVariable(),
 		scaleUp(),
-		inmemHappy(),
 		hostedDockerHappy(),
 		hostedStallPod(),
 		twoStalls(),
@@ -136,9 +135,14 @@ func backendSpec(backend string) map[string]any {
 }
 
 // controlPlaneMachine adds a control-plane Machine with its infra and bootstrap
-// objects, in the shape CAPI creates them.
-func (s *scenario) controlPlaneMachine(cluster, cpName, name string, at time.Time) map[string]*object {
+// objects. The owner is the scenario's own control plane, which build() names.
+func (s *scenario) controlPlaneMachine(at time.Time) map[string]*object {
 	const cpKind = "KubeadmControlPlane"
+	cluster := s.cluster
+	cpName := cluster + "-cp"
+	// A recorded fixture carries whatever name CAPI generated; a synthetic one
+	// says plainly that it was written.
+	name := cluster + "-cp-abcde"
 	m := s.add(newObject(coreAPI, "Machine", name)).owned(cluster).ownedBy(cpKind, cpName)
 	m.ref("infrastructureRef", "DevMachine", name, "infrastructure.cluster.x-k8s.io")
 	m.ref("bootstrapRef", "KubeadmConfig", name, "bootstrap.cluster.x-k8s.io")

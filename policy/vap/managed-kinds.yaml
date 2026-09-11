@@ -116,15 +116,16 @@ spec:
         variables.kind
         + " needs both the sixfields.io/break-glass label and membership"
         + " of group sixfields:break-glass. Use break-glass (docs/eject.md)."
-    # 'std' is a literal here, where cluster-fields.yaml reads it from
+    # No class name in this message, where cluster-fields.yaml reads one from
     # spec.topology.classRef.name. These objects carry no class name: the topology
     # controller labels what it creates with cluster.x-k8s.io/cluster-name, never with the
-    # class. Change this string with the class this assembly ships.
+    # class. The assembly ships four classes, and naming one of them told a std-inmemory
+    # user their object belonged to std.
     - expression: variables.breakGlass || variables.breakGlassPartial
       reason: Forbidden
       messageExpression: |-
-        variables.kind + " is managed by ClusterClass 'std'."
-        + " Set it via the class or use break-glass (docs/eject.md)."
+        variables.kind + " is managed by the ClusterClass that created it."
+        + " Set it via the Cluster or use break-glass (docs/eject.md)."
   # Written to the audit event as sixfields-managed-kinds/break-glass. String-typed
   # throughout, yielding "" when no break-glass was involved, because a v1.34 API server
   # rejects the documented `condition ? 'value' : null` shape: CEL has no conditional

@@ -146,8 +146,11 @@ var registry = map[Code]Entry{
 	},
 	KindManaged: {
 		Code: KindManaged, Class: Denial,
-		Title:      "the kind is managed by the class",
-		Summary:    "{{.Kind}} is managed by ClusterClass '{{.Class}}'. Set it via the class or use break-glass (docs/eject.md).",
+		Title: "the kind is managed by the class",
+		// No class name: a managed object carries the cluster's name, never its
+		// class, so the policy cannot know which of the assembly's classes made it.
+		// Naming one told a std-inmemory user their object belonged to std.
+		Summary:    "{{.Kind}} is managed by the ClusterClass that created it. Set it via the Cluster or use break-glass (docs/eject.md).",
 		NextAction: "docs/eject.md",
 	},
 	VariableUnknown: {

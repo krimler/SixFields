@@ -1,0 +1,85 @@
+{
+  "cluster": {
+    "kind": "Cluster",
+    "name": "inmem-happy-rec",
+    "namespace": "default",
+    "group": "cluster.x-k8s.io"
+  },
+  "class": "std-inmemory",
+  "version": "v1.34.11",
+  "placement": "self",
+  "phases": [
+    {
+      "name": "infrastructure",
+      "state": "done",
+      "detail": "ready",
+      "elapsed_ns": 5000000000,
+      "last_transition": "2026-09-11T10:08:56Z",
+      "started_at": "2026-09-11T10:08:51Z",
+      "contributors": [
+        {
+          "kind": "DevCluster",
+          "name": "inmem-happy-rec-b6mhx",
+          "namespace": "default",
+          "group": "infrastructure.cluster.x-k8s.io"
+        }
+      ]
+    },
+    {
+      "name": "control plane",
+      "state": "running",
+      "detail": "0/1 nodes",
+      "elapsed_ns": 27000000000,
+      "last_transition": "2026-09-11T10:09:09Z",
+      "started_at": "2026-09-11T10:08:56Z",
+      "contributors": [
+        {
+          "kind": "KubeadmControlPlane",
+          "name": "inmem-happy-rec-rz9lb",
+          "namespace": "default",
+          "group": "controlplane.cluster.x-k8s.io"
+        },
+        {
+          "kind": "Machine",
+          "name": "inmem-happy-rec-rz9lb-cpvvj",
+          "namespace": "default",
+          "group": "cluster.x-k8s.io"
+        }
+      ]
+    },
+    {
+      "name": "workers",
+      "state": "running",
+      "detail": "0/2 nodes",
+      "elapsed_ns": 27000000000,
+      "last_transition": "2026-09-11T10:09:17Z",
+      "started_at": "2026-09-11T10:08:56Z",
+      "contributors": [
+        {
+          "kind": "MachineDeployment",
+          "name": "inmem-happy-rec-default-4lvwf",
+          "namespace": "default",
+          "group": "cluster.x-k8s.io"
+        }
+      ]
+    },
+    {
+      "name": "addons",
+      "state": "running",
+      "detail": "waiting",
+      "elapsed_ns": 27000000000,
+      "started_at": "2026-09-11T10:08:56Z",
+      "contributors": [
+        {
+          "kind": "ClusterResourceSetBinding",
+          "name": "inmem-happy-rec",
+          "namespace": "default",
+          "group": "addons.cluster.x-k8s.io"
+        }
+      ]
+    }
+  ],
+  "ready": false,
+  "at": "2026-09-11T10:09:23Z",
+  "elapsed_ns": 32000000000
+}

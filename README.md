@@ -134,7 +134,8 @@ Read it top to bottom:
 - `raw:` is a command you can paste. It prints everything Kubernetes knows about
   that object. Nothing is hidden from you.
 - `typical:` is how long this step usually takes, so you can tell "slow" from
-  "stuck".
+  "stuck". This line appears once you have built three clusters and SixFields has
+  something to compare against.
 - `next:` is what to do.
 
 There are five levels of detail, and most people stop at the first.
@@ -182,11 +183,13 @@ go:
 
 ```sh
 cluster render dev-1 > dev-1-objects.yaml
+kubectl diff -f dev-1-objects.yaml && echo "no diff"
 ```
 
-That file is your whole cluster. Applying it again changes nothing, which is how
-you know it is complete. `docs/eject.md` shows how to turn off the six-field rule
-and keep your clusters running.
+That file is your whole cluster, and `kubectl diff` exits 0 to prove it matches
+what is running. Most of those objects are kinds the blueprint owns, so actually
+applying the file needs the six-field rule switched off first. `docs/eject.md`
+shows how, without stopping any cluster.
 
 ## Cleaning up
 

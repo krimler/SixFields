@@ -91,8 +91,11 @@ typical: p50 1m15s · p95 2m00s
 next: cluster docs CAPI-CP-003
 ```
 
-One object is named: the most specific one that is failing, most recently. Why
-that one and not another:
+One object is named: the most specific one that is failing, most recently. The
+`typical:` line appears once three runs of that phase are in the history; before
+that there is nothing to compare against and the line is left out.
+
+Why that object and not another:
 
 ```sh
 cluster why dev-1 --explain-ranking
@@ -124,8 +127,13 @@ the published port, so this works without editing anything.
 
 ```sh
 cluster render dev-1 > dev-1-objects.yaml
-kubectl apply --dry-run=server -f dev-1-objects.yaml   # no diff
+kubectl diff -f dev-1-objects.yaml && echo "no diff"
 ```
+
+`kubectl diff` exits 0 when the file matches what is running. Use `diff` here and
+not `apply --dry-run=server`: most of these objects are kinds the policy manages,
+so an apply is denied while the policy is switched on. `docs/eject.md` shows the
+order to switch it off in.
 
 That file is every Cluster API object behind the cluster. `docs/eject.md` is how to
 remove the admission policy without touching a running cluster.

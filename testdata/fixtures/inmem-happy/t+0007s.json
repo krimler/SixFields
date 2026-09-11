@@ -1,0 +1,2299 @@
+{
+  "_meta": {
+    "scenario": "inmem-happy",
+    "t_plus_s": 7,
+    "capi": "cluster.x-k8s.io/v1beta2",
+    "note": "recorded from cluster inmem-happy-rec on 2026-09-11T10:08:57Z",
+    "recorded_at": "2026-09-11T10:08:57Z"
+  },
+  "objects": [
+    {
+      "apiVersion": "cluster.x-k8s.io/v1beta2",
+      "kind": "Cluster",
+      "metadata": {
+        "annotations": {
+          "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"cluster.x-k8s.io/v1beta2\",\"kind\":\"Cluster\",\"metadata\":{\"annotations\":{},\"name\":\"inmem-happy-rec\",\"namespace\":\"default\"},\"spec\":{\"topology\":{\"classRef\":{\"name\":\"std-inmemory\"},\"controlPlane\":{\"replicas\":1},\"variables\":[{\"name\":\"size\",\"value\":\"dev\"},{\"name\":\"placement\",\"value\":\"self\"}],\"version\":\"v1.34.11\",\"workers\":{\"machineDeployments\":[{\"class\":\"default\",\"name\":\"default\",\"replicas\":2}]}}}}\n"
+        },
+        "creationTimestamp": "2026-09-11T10:08:51Z",
+        "finalizers": [
+          "cluster.cluster.x-k8s.io"
+        ],
+        "generation": 3,
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "inmem-happy-rec",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "managedFields": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:annotations": {
+                  ".": {},
+                  "f:kubectl.kubernetes.io/last-applied-configuration": {}
+                }
+              },
+              "f:spec": {
+                ".": {},
+                "f:topology": {
+                  ".": {},
+                  "f:classRef": {
+                    ".": {},
+                    "f:name": {}
+                  },
+                  "f:controlPlane": {
+                    ".": {},
+                    "f:replicas": {}
+                  },
+                  "f:variables": {
+                    ".": {},
+                    "k:{\"name\":\"placement\"}": {
+                      ".": {},
+                      "f:name": {},
+                      "f:value": {}
+                    },
+                    "k:{\"name\":\"size\"}": {
+                      ".": {},
+                      "f:name": {},
+                      "f:value": {}
+                    }
+                  },
+                  "f:version": {},
+                  "f:workers": {
+                    ".": {},
+                    "f:machineDeployments": {
+                      ".": {},
+                      "k:{\"name\":\"default\"}": {
+                        ".": {},
+                        "f:class": {},
+                        "f:name": {},
+                        "f:replicas": {}
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "manager": "kubectl-client-side-apply",
+            "operation": "Update",
+            "time": "2026-09-11T10:08:51Z"
+          },
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:finalizers": {
+                  ".": {},
+                  "v:\"cluster.cluster.x-k8s.io\"": {}
+                },
+                "f:labels": {
+                  ".": {},
+                  "f:cluster.x-k8s.io/cluster-name": {},
+                  "f:topology.cluster.x-k8s.io/owned": {}
+                }
+              },
+              "f:spec": {
+                "f:controlPlaneEndpoint": {
+                  ".": {},
+                  "f:host": {},
+                  "f:port": {}
+                },
+                "f:controlPlaneRef": {
+                  ".": {},
+                  "f:apiGroup": {},
+                  "f:kind": {},
+                  "f:name": {}
+                },
+                "f:infrastructureRef": {
+                  ".": {},
+                  "f:apiGroup": {},
+                  "f:kind": {},
+                  "f:name": {}
+                }
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "time": "2026-09-11T10:08:56Z"
+          },
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                ".": {},
+                "f:conditions": {
+                  ".": {},
+                  "k:{\"type\":\"Available\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"ControlPlaneAvailable\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"ControlPlaneInitialized\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"ControlPlaneMachinesReady\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"ControlPlaneMachinesUpToDate\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Deleting\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"InfrastructureReady\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Paused\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Remediating\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"RemoteConnectionProbe\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"RollingOut\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"ScalingDown\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"ScalingUp\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"TopologyReconciled\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"WorkerMachinesReady\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"WorkerMachinesUpToDate\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"WorkersAvailable\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  }
+                },
+                "f:controlPlane": {
+                  ".": {},
+                  "f:availableReplicas": {},
+                  "f:desiredReplicas": {},
+                  "f:readyReplicas": {},
+                  "f:replicas": {},
+                  "f:upToDateReplicas": {}
+                },
+                "f:deprecated": {
+                  ".": {},
+                  "f:v1beta1": {
+                    ".": {},
+                    "f:conditions": {}
+                  }
+                },
+                "f:initialization": {
+                  ".": {},
+                  "f:infrastructureProvisioned": {}
+                },
+                "f:observedGeneration": {},
+                "f:phase": {},
+                "f:workers": {
+                  ".": {},
+                  "f:desiredReplicas": {}
+                }
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "subresource": "status",
+            "time": "2026-09-11T10:08:56Z"
+          }
+        ],
+        "name": "inmem-happy-rec",
+        "namespace": "default",
+        "resourceVersion": "38947",
+        "uid": "9c0060cc-ff0c-42da-b578-e3067b793c01"
+      },
+      "spec": {
+        "controlPlaneEndpoint": {
+          "host": "10.244.0.11",
+          "port": 20019
+        },
+        "controlPlaneRef": {
+          "apiGroup": "controlplane.cluster.x-k8s.io",
+          "kind": "KubeadmControlPlane",
+          "name": "inmem-happy-rec-rz9lb"
+        },
+        "infrastructureRef": {
+          "apiGroup": "infrastructure.cluster.x-k8s.io",
+          "kind": "DevCluster",
+          "name": "inmem-happy-rec-b6mhx"
+        },
+        "topology": {
+          "classRef": {
+            "name": "std-inmemory"
+          },
+          "controlPlane": {
+            "replicas": 1
+          },
+          "variables": [
+            {
+              "name": "size",
+              "value": "dev"
+            },
+            {
+              "name": "placement",
+              "value": "self"
+            }
+          ],
+          "version": "v1.34.11",
+          "workers": {
+            "machineDeployments": [
+              {
+                "class": "default",
+                "name": "default",
+                "replicas": 2
+              }
+            ]
+          }
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-11T10:08:53Z",
+            "message": "* RemoteConnectionProbe: Remote connection not established yet\n* ControlPlaneAvailable: Control plane not yet initialized\n* WorkersAvailable:\n  * MachineDeployment inmem-happy-rec-default-4lvwf: Waiting for status.availableReplicas set",
+            "observedGeneration": 2,
+            "reason": "NotAvailable",
+            "status": "False",
+            "type": "Available"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T10:08:53Z",
+            "message": "Remote connection not established yet",
+            "observedGeneration": 2,
+            "reason": "ProbeFailed",
+            "status": "False",
+            "type": "RemoteConnectionProbe"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T10:08:56Z",
+            "message": "",
+            "observedGeneration": 2,
+            "reason": "Ready",
+            "status": "True",
+            "type": "InfrastructureReady"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T10:08:53Z",
+            "message": "Control plane not yet initialized",
+            "observedGeneration": 2,
+            "reason": "NotInitialized",
+            "status": "False",
+            "type": "ControlPlaneInitialized"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T10:08:53Z",
+            "message": "Control plane not yet initialized",
+            "observedGeneration": 2,
+            "reason": "NotAvailable",
+            "status": "False",
+            "type": "ControlPlaneAvailable"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T10:08:53Z",
+            "message": "* MachineDeployment inmem-happy-rec-default-4lvwf: Waiting for status.availableReplicas set",
+            "observedGeneration": 2,
+            "reason": "AvailableUnknown",
+            "status": "Unknown",
+            "type": "WorkersAvailable"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T10:08:51Z",
+            "message": "",
+            "observedGeneration": 2,
+            "reason": "ReconcileSucceeded",
+            "status": "True",
+            "type": "TopologyReconciled"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T10:08:54Z",
+            "message": "",
+            "observedGeneration": 2,
+            "reason": "NotRollingOut",
+            "status": "False",
+            "type": "RollingOut"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T10:08:53Z",
+            "message": "",
+            "observedGeneration": 2,
+            "reason": "NotRemediating",
+            "status": "False",
+            "type": "Remediating"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T10:08:54Z",
+            "message": "",
+            "observedGeneration": 2,
+            "reason": "NotScalingDown",
+            "status": "False",
+            "type": "ScalingDown"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T10:08:54Z",
+            "message": "* KubeadmControlPlane inmem-happy-rec-rz9lb: Scaling up from 0 to 1 replicas\n* MachineDeployment inmem-happy-rec-default-4lvwf: Scaling up from 0 to 2 replicas",
+            "observedGeneration": 2,
+            "reason": "ScalingUp",
+            "status": "True",
+            "type": "ScalingUp"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T10:08:53Z",
+            "message": "",
+            "observedGeneration": 2,
+            "reason": "NoReplicas",
+            "status": "True",
+            "type": "ControlPlaneMachinesReady"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T10:08:53Z",
+            "message": "",
+            "observedGeneration": 2,
+            "reason": "NoReplicas",
+            "status": "True",
+            "type": "WorkerMachinesReady"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T10:08:53Z",
+            "message": "",
+            "observedGeneration": 2,
+            "reason": "NoReplicas",
+            "status": "True",
+            "type": "ControlPlaneMachinesUpToDate"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T10:08:53Z",
+            "message": "",
+            "observedGeneration": 2,
+            "reason": "NoReplicas",
+            "status": "True",
+            "type": "WorkerMachinesUpToDate"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T10:08:52Z",
+            "message": "",
+            "observedGeneration": 2,
+            "reason": "NotPaused",
+            "status": "False",
+            "type": "Paused"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T10:08:53Z",
+            "message": "",
+            "observedGeneration": 2,
+            "reason": "NotDeleting",
+            "status": "False",
+            "type": "Deleting"
+          }
+        ],
+        "controlPlane": {
+          "availableReplicas": 0,
+          "desiredReplicas": 1,
+          "readyReplicas": 0,
+          "replicas": 0,
+          "upToDateReplicas": 0
+        },
+        "deprecated": {
+          "v1beta1": {
+            "conditions": [
+              {
+                "lastTransitionTime": "2026-09-11T10:08:56Z",
+                "message": "Scaling up control plane to 1 replicas (actual 0)",
+                "reason": "ScalingUp",
+                "severity": "Warning",
+                "status": "False",
+                "type": "Ready"
+              },
+              {
+                "lastTransitionTime": "2026-09-11T10:08:53Z",
+                "message": "Waiting for control plane provider to indicate the control plane has been initialized",
+                "reason": "WaitingForControlPlaneProviderInitialized",
+                "severity": "Info",
+                "status": "False",
+                "type": "ControlPlaneInitialized"
+              },
+              {
+                "lastTransitionTime": "2026-09-11T10:08:56Z",
+                "message": "Scaling up control plane to 1 replicas (actual 0)",
+                "reason": "ScalingUp",
+                "severity": "Warning",
+                "status": "False",
+                "type": "ControlPlaneReady"
+              },
+              {
+                "lastTransitionTime": "2026-09-11T10:08:56Z",
+                "status": "True",
+                "type": "InfrastructureReady"
+              },
+              {
+                "lastTransitionTime": "2026-09-11T10:08:51Z",
+                "status": "True",
+                "type": "TopologyReconciled"
+              }
+            ]
+          }
+        },
+        "initialization": {
+          "infrastructureProvisioned": true
+        },
+        "observedGeneration": 2,
+        "phase": "Provisioned",
+        "workers": {
+          "desiredReplicas": 2
+        }
+      }
+    },
+    {
+      "apiVersion": "addons.cluster.x-k8s.io/v1beta2",
+      "kind": "ClusterResourceSetBinding",
+      "metadata": {
+        "creationTimestamp": "2026-09-11T10:08:51Z",
+        "generation": 2,
+        "managedFields": [
+          {
+            "apiVersion": "addons.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:ownerReferences": {
+                  ".": {},
+                  "k:{\"uid\":\"7c1ea051-9d36-4e76-b66a-2afa2fcbcd64\"}": {}
+                }
+              },
+              "f:spec": {
+                ".": {},
+                "f:bindings": {},
+                "f:clusterName": {}
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "time": "2026-09-11T10:08:51Z"
+          }
+        ],
+        "name": "inmem-happy-rec",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "addons.cluster.x-k8s.io/v1beta2",
+            "kind": "ClusterResourceSet",
+            "name": "calico",
+            "uid": "7c1ea051-9d36-4e76-b66a-2afa2fcbcd64"
+          }
+        ],
+        "resourceVersion": "38878",
+        "uid": "ff2c9744-64bf-469a-a01d-0fcebc5fe18e"
+      },
+      "spec": {
+        "bindings": [
+          {
+            "clusterResourceSetName": "calico"
+          }
+        ],
+        "clusterName": "inmem-happy-rec"
+      }
+    },
+    {
+      "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+      "kind": "DevCluster",
+      "metadata": {
+        "annotations": {
+          "cluster.x-k8s.io/cloned-from-groupkind": "DevClusterTemplate.infrastructure.cluster.x-k8s.io",
+          "cluster.x-k8s.io/cloned-from-name": "std-inmemory-cluster",
+          "inmemorycluster.infrastructure.cluster.x-k8s.io/listener": "default/inmem-happy-rec"
+        },
+        "creationTimestamp": "2026-09-11T10:08:51Z",
+        "finalizers": [
+          "dockercluster.infrastructure.cluster.x-k8s.io"
+        ],
+        "generation": 2,
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "inmem-happy-rec",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "managedFields": [
+          {
+            "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:annotations": {
+                  "f:cluster.x-k8s.io/cloned-from-groupkind": {},
+                  "f:cluster.x-k8s.io/cloned-from-name": {}
+                },
+                "f:labels": {
+                  "f:cluster.x-k8s.io/cluster-name": {},
+                  "f:topology.cluster.x-k8s.io/owned": {}
+                }
+              },
+              "f:spec": {
+                "f:backend": {
+                  "f:inMemory": {}
+                }
+              }
+            },
+            "manager": "capi-topology",
+            "operation": "Apply",
+            "time": "2026-09-11T10:08:51Z"
+          },
+          {
+            "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:annotations": {
+                  "f:inmemorycluster.infrastructure.cluster.x-k8s.io/listener": {}
+                },
+                "f:finalizers": {
+                  ".": {},
+                  "v:\"dockercluster.infrastructure.cluster.x-k8s.io\"": {}
+                },
+                "f:ownerReferences": {
+                  "k:{\"uid\":\"9c0060cc-ff0c-42da-b578-e3067b793c01\"}": {}
+                }
+              },
+              "f:spec": {
+                "f:controlPlaneEndpoint": {
+                  ".": {},
+                  "f:host": {},
+                  "f:port": {}
+                }
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "time": "2026-09-11T10:08:55Z"
+          },
+          {
+            "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                ".": {},
+                "f:conditions": {
+                  ".": {},
+                  "k:{\"type\":\"Paused\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  }
+                },
+                "f:initialization": {
+                  ".": {},
+                  "f:provisioned": {}
+                }
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "subresource": "status",
+            "time": "2026-09-11T10:08:56Z"
+          }
+        ],
+        "name": "inmem-happy-rec-b6mhx",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Cluster",
+            "name": "inmem-happy-rec",
+            "uid": "9c0060cc-ff0c-42da-b578-e3067b793c01"
+          }
+        ],
+        "resourceVersion": "38945",
+        "uid": "ad4285be-d10a-4aed-bbe8-6f17c84ecc00"
+      },
+      "spec": {
+        "backend": {
+          "inMemory": {}
+        },
+        "controlPlaneEndpoint": {
+          "host": "10.244.0.11",
+          "port": 20019
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-11T10:08:54Z",
+            "message": "",
+            "observedGeneration": 2,
+            "reason": "NotPaused",
+            "status": "False",
+            "type": "Paused"
+          }
+        ],
+        "initialization": {
+          "provisioned": true
+        }
+      }
+    },
+    {
+      "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+      "kind": "DevMachineTemplate",
+      "metadata": {
+        "annotations": {
+          "cluster.x-k8s.io/cloned-from-groupkind": "DevMachineTemplate.infrastructure.cluster.x-k8s.io",
+          "cluster.x-k8s.io/cloned-from-name": "std-inmemory-control-plane-machine"
+        },
+        "creationTimestamp": "2026-09-11T10:08:51Z",
+        "generation": 1,
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "inmem-happy-rec",
+          "sixfields.io/break-glass": "true",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "managedFields": [
+          {
+            "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:annotations": {
+                  "f:cluster.x-k8s.io/cloned-from-groupkind": {},
+                  "f:cluster.x-k8s.io/cloned-from-name": {}
+                },
+                "f:labels": {
+                  "f:cluster.x-k8s.io/cluster-name": {},
+                  "f:sixfields.io/break-glass": {},
+                  "f:topology.cluster.x-k8s.io/owned": {}
+                },
+                "f:ownerReferences": {
+                  "k:{\"uid\":\"9c0060cc-ff0c-42da-b578-e3067b793c01\"}": {}
+                }
+              },
+              "f:spec": {
+                "f:template": {
+                  "f:spec": {
+                    "f:backend": {
+                      "f:inMemory": {
+                        "f:apiServer": {
+                          "f:provisioning": {
+                            "f:startupDuration": {},
+                            "f:startupJitter": {}
+                          }
+                        },
+                        "f:etcd": {
+                          "f:provisioning": {
+                            "f:startupDuration": {},
+                            "f:startupJitter": {}
+                          }
+                        },
+                        "f:node": {
+                          "f:provisioning": {
+                            "f:startupDuration": {},
+                            "f:startupJitter": {}
+                          }
+                        },
+                        "f:vm": {
+                          "f:provisioning": {
+                            "f:startupDuration": {},
+                            "f:startupJitter": {}
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "manager": "capi-topology",
+            "operation": "Apply",
+            "time": "2026-09-11T10:08:51Z"
+          },
+          {
+            "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                ".": {},
+                "f:capacity": {
+                  ".": {},
+                  "f:cpu": {},
+                  "f:memory": {}
+                }
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "subresource": "status",
+            "time": "2026-09-11T10:08:51Z"
+          }
+        ],
+        "name": "inmem-happy-rec-2dk79",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "kind": "Cluster",
+            "name": "inmem-happy-rec",
+            "uid": "9c0060cc-ff0c-42da-b578-e3067b793c01"
+          }
+        ],
+        "resourceVersion": "38875",
+        "uid": "6cf19a1e-1d72-4e21-8992-375705ee6d87"
+      },
+      "spec": {
+        "template": {
+          "spec": {
+            "backend": {
+              "inMemory": {
+                "apiServer": {
+                  "provisioning": {
+                    "startupDuration": "1s",
+                    "startupJitter": "0.2"
+                  }
+                },
+                "etcd": {
+                  "provisioning": {
+                    "startupDuration": "1s",
+                    "startupJitter": "0.2"
+                  }
+                },
+                "node": {
+                  "provisioning": {
+                    "startupDuration": "1s",
+                    "startupJitter": "0.2"
+                  }
+                },
+                "vm": {
+                  "provisioning": {
+                    "startupDuration": "2s",
+                    "startupJitter": "0.2"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "status": {
+        "capacity": {
+          "cpu": "2",
+          "memory": "8125552Ki"
+        }
+      }
+    },
+    {
+      "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+      "kind": "DevMachineTemplate",
+      "metadata": {
+        "annotations": {
+          "cluster.x-k8s.io/cloned-from-groupkind": "DevMachineTemplate.infrastructure.cluster.x-k8s.io",
+          "cluster.x-k8s.io/cloned-from-name": "std-inmemory-default-machine"
+        },
+        "creationTimestamp": "2026-09-11T10:08:51Z",
+        "generation": 1,
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "inmem-happy-rec",
+          "sixfields.io/break-glass": "true",
+          "topology.cluster.x-k8s.io/deployment-name": "default",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "managedFields": [
+          {
+            "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:annotations": {
+                  "f:cluster.x-k8s.io/cloned-from-groupkind": {},
+                  "f:cluster.x-k8s.io/cloned-from-name": {}
+                },
+                "f:labels": {
+                  "f:cluster.x-k8s.io/cluster-name": {},
+                  "f:sixfields.io/break-glass": {},
+                  "f:topology.cluster.x-k8s.io/deployment-name": {},
+                  "f:topology.cluster.x-k8s.io/owned": {}
+                },
+                "f:ownerReferences": {
+                  "k:{\"uid\":\"9c0060cc-ff0c-42da-b578-e3067b793c01\"}": {}
+                }
+              },
+              "f:spec": {
+                "f:template": {
+                  "f:spec": {
+                    "f:backend": {
+                      "f:inMemory": {
+                        "f:node": {
+                          "f:provisioning": {
+                            "f:startupDuration": {},
+                            "f:startupJitter": {}
+                          }
+                        },
+                        "f:vm": {
+                          "f:provisioning": {
+                            "f:startupDuration": {},
+                            "f:startupJitter": {}
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "manager": "capi-topology",
+            "operation": "Apply",
+            "time": "2026-09-11T10:08:51Z"
+          },
+          {
+            "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                ".": {},
+                "f:capacity": {
+                  ".": {},
+                  "f:cpu": {},
+                  "f:memory": {}
+                }
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "subresource": "status",
+            "time": "2026-09-11T10:08:51Z"
+          }
+        ],
+        "name": "inmem-happy-rec-default-lmlfl",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "kind": "Cluster",
+            "name": "inmem-happy-rec",
+            "uid": "9c0060cc-ff0c-42da-b578-e3067b793c01"
+          }
+        ],
+        "resourceVersion": "38882",
+        "uid": "f90cf581-4c79-4cb9-8eed-128cbadcce49"
+      },
+      "spec": {
+        "template": {
+          "spec": {
+            "backend": {
+              "inMemory": {
+                "node": {
+                  "provisioning": {
+                    "startupDuration": "1s",
+                    "startupJitter": "0.2"
+                  }
+                },
+                "vm": {
+                  "provisioning": {
+                    "startupDuration": "2s",
+                    "startupJitter": "0.2"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "status": {
+        "capacity": {
+          "cpu": "2",
+          "memory": "8125552Ki"
+        }
+      }
+    },
+    {
+      "apiVersion": "bootstrap.cluster.x-k8s.io/v1beta2",
+      "kind": "KubeadmConfigTemplate",
+      "metadata": {
+        "annotations": {
+          "cluster.x-k8s.io/cloned-from-groupkind": "KubeadmConfigTemplate.bootstrap.cluster.x-k8s.io",
+          "cluster.x-k8s.io/cloned-from-name": "std-kubeadm-default-bootstrap"
+        },
+        "creationTimestamp": "2026-09-11T10:08:51Z",
+        "generation": 1,
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "inmem-happy-rec",
+          "sixfields.io/break-glass": "true",
+          "topology.cluster.x-k8s.io/deployment-name": "default",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "managedFields": [
+          {
+            "apiVersion": "bootstrap.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:annotations": {
+                  "f:cluster.x-k8s.io/cloned-from-groupkind": {},
+                  "f:cluster.x-k8s.io/cloned-from-name": {}
+                },
+                "f:labels": {
+                  "f:cluster.x-k8s.io/cluster-name": {},
+                  "f:sixfields.io/break-glass": {},
+                  "f:topology.cluster.x-k8s.io/deployment-name": {},
+                  "f:topology.cluster.x-k8s.io/owned": {}
+                },
+                "f:ownerReferences": {
+                  "k:{\"uid\":\"9c0060cc-ff0c-42da-b578-e3067b793c01\"}": {}
+                }
+              },
+              "f:spec": {
+                "f:template": {
+                  "f:spec": {
+                    "f:joinConfiguration": {
+                      "f:nodeRegistration": {
+                        "f:kubeletExtraArgs": {
+                          "k:{\"name\":\"eviction-hard\",\"value\":\"nodefs.available\\u003c0%,nodefs.inodesFree\\u003c0%,imagefs.available\\u003c0%\"}": {
+                            ".": {},
+                            "f:name": {},
+                            "f:value": {}
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "manager": "capi-topology",
+            "operation": "Apply",
+            "time": "2026-09-11T10:08:51Z"
+          }
+        ],
+        "name": "inmem-happy-rec-default-jpzpg",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "kind": "Cluster",
+            "name": "inmem-happy-rec",
+            "uid": "9c0060cc-ff0c-42da-b578-e3067b793c01"
+          }
+        ],
+        "resourceVersion": "38883",
+        "uid": "70ab1afe-4356-4548-82d0-e21746a1e9fc"
+      },
+      "spec": {
+        "template": {
+          "spec": {
+            "joinConfiguration": {
+              "nodeRegistration": {
+                "kubeletExtraArgs": [
+                  {
+                    "name": "eviction-hard",
+                    "value": "nodefs.available\u003c0%,nodefs.inodesFree\u003c0%,imagefs.available\u003c0%"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "controlplane.cluster.x-k8s.io/v1beta2",
+      "kind": "KubeadmControlPlane",
+      "metadata": {
+        "annotations": {
+          "cluster.x-k8s.io/cloned-from-groupkind": "KubeadmControlPlaneTemplate.controlplane.cluster.x-k8s.io",
+          "cluster.x-k8s.io/cloned-from-name": "std-kubeadm-control-plane"
+        },
+        "creationTimestamp": "2026-09-11T10:08:51Z",
+        "finalizers": [
+          "kubeadm.controlplane.cluster.x-k8s.io"
+        ],
+        "generation": 1,
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "inmem-happy-rec",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "managedFields": [
+          {
+            "apiVersion": "controlplane.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:annotations": {
+                  "f:cluster.x-k8s.io/cloned-from-groupkind": {},
+                  "f:cluster.x-k8s.io/cloned-from-name": {}
+                },
+                "f:labels": {
+                  "f:cluster.x-k8s.io/cluster-name": {},
+                  "f:topology.cluster.x-k8s.io/owned": {}
+                }
+              },
+              "f:spec": {
+                "f:kubeadmConfigSpec": {
+                  "f:clusterConfiguration": {
+                    "f:apiServer": {
+                      "f:certSANs": {}
+                    }
+                  },
+                  "f:initConfiguration": {
+                    "f:nodeRegistration": {
+                      "f:kubeletExtraArgs": {
+                        "k:{\"name\":\"eviction-hard\",\"value\":\"nodefs.available\\u003c0%,nodefs.inodesFree\\u003c0%,imagefs.available\\u003c0%\"}": {
+                          ".": {},
+                          "f:name": {},
+                          "f:value": {}
+                        }
+                      }
+                    }
+                  },
+                  "f:joinConfiguration": {
+                    "f:nodeRegistration": {
+                      "f:kubeletExtraArgs": {
+                        "k:{\"name\":\"eviction-hard\",\"value\":\"nodefs.available\\u003c0%,nodefs.inodesFree\\u003c0%,imagefs.available\\u003c0%\"}": {
+                          ".": {},
+                          "f:name": {},
+                          "f:value": {}
+                        }
+                      }
+                    }
+                  }
+                },
+                "f:machineTemplate": {
+                  "f:metadata": {
+                    "f:labels": {
+                      "f:cluster.x-k8s.io/cluster-name": {},
+                      "f:topology.cluster.x-k8s.io/owned": {}
+                    }
+                  },
+                  "f:spec": {
+                    "f:infrastructureRef": {
+                      "f:apiGroup": {},
+                      "f:kind": {},
+                      "f:name": {}
+                    }
+                  }
+                },
+                "f:replicas": {},
+                "f:version": {}
+              }
+            },
+            "manager": "capi-topology",
+            "operation": "Apply",
+            "time": "2026-09-11T10:08:51Z"
+          },
+          {
+            "apiVersion": "controlplane.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:finalizers": {
+                  ".": {},
+                  "v:\"kubeadm.controlplane.cluster.x-k8s.io\"": {}
+                },
+                "f:ownerReferences": {
+                  "k:{\"uid\":\"9c0060cc-ff0c-42da-b578-e3067b793c01\"}": {}
+                }
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "time": "2026-09-11T10:08:53Z"
+          },
+          {
+            "apiVersion": "controlplane.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                ".": {},
+                "f:availableReplicas": {},
+                "f:conditions": {
+                  ".": {},
+                  "k:{\"type\":\"Available\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"ControlPlaneComponentsHealthy\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Deleting\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"EtcdClusterHealthy\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Initialized\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"MachinesReady\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"MachinesUpToDate\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Paused\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Remediating\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"RollingOut\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"ScalingDown\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"ScalingUp\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  }
+                },
+                "f:deprecated": {
+                  ".": {},
+                  "f:v1beta1": {
+                    ".": {},
+                    "f:conditions": {},
+                    "f:readyReplicas": {},
+                    "f:unavailableReplicas": {},
+                    "f:updatedReplicas": {}
+                  }
+                },
+                "f:readyReplicas": {},
+                "f:replicas": {},
+                "f:selector": {},
+                "f:upToDateReplicas": {}
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "subresource": "status",
+            "time": "2026-09-11T10:08:55Z"
+          }
+        ],
+        "name": "inmem-happy-rec-rz9lb",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Cluster",
+            "name": "inmem-happy-rec",
+            "uid": "9c0060cc-ff0c-42da-b578-e3067b793c01"
+          }
+        ],
+        "resourceVersion": "38936",
+        "uid": "f818a854-b2b1-4021-8de7-9b925b90e19c"
+      },
+      "spec": {
+        "kubeadmConfigSpec": {
+          "clusterConfiguration": {
+            "apiServer": {
+              "certSANs": [
+                "localhost",
+                "host.docker.internal",
+                "::",
+                "::1",
+                "127.0.0.1",
+                "0.0.0.0"
+              ]
+            }
+          },
+          "initConfiguration": {
+            "nodeRegistration": {
+              "kubeletExtraArgs": [
+                {
+                  "name": "eviction-hard",
+                  "value": "nodefs.available\u003c0%,nodefs.inodesFree\u003c0%,imagefs.available\u003c0%"
+                }
+              ]
+            }
+          },
+          "joinConfiguration": {
+            "nodeRegistration": {
+              "kubeletExtraArgs": [
+                {
+                  "name": "eviction-hard",
+                  "value": "nodefs.available\u003c0%,nodefs.inodesFree\u003c0%,imagefs.available\u003c0%"
+                }
+              ]
+            }
+          }
+        },
+        "machineTemplate": {
+          "metadata": {
+            "labels": {
+              "cluster.x-k8s.io/cluster-name": "inmem-happy-rec",
+              "topology.cluster.x-k8s.io/owned": ""
+            }
+          },
+          "spec": {
+            "infrastructureRef": {
+              "apiGroup": "infrastructure.cluster.x-k8s.io",
+              "kind": "DevMachineTemplate",
+              "name": "inmem-happy-rec-2dk79"
+            }
+          }
+        },
+        "replicas": 1,
+        "rollout": {
+          "strategy": {
+            "rollingUpdate": {
+              "maxSurge": 1
+            },
+            "type": "RollingUpdate"
+          }
+        },
+        "version": "v1.34.11"
+      },
+      "status": {
+        "availableReplicas": 0,
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-11T10:08:55Z",
+            "message": "Control plane not yet initialized",
+            "observedGeneration": 1,
+            "reason": "NotAvailable",
+            "status": "False",
+            "type": "Available"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T10:08:55Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotInitialized",
+            "status": "False",
+            "type": "Initialized"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T10:08:55Z",
+            "message": "Waiting for Cluster status.infrastructureReady to be true",
+            "observedGeneration": 1,
+            "reason": "InspectionFailed",
+            "status": "Unknown",
+            "type": "EtcdClusterHealthy"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T10:08:55Z",
+            "message": "Waiting for Cluster status.infrastructureReady to be true",
+            "observedGeneration": 1,
+            "reason": "InspectionFailed",
+            "status": "Unknown",
+            "type": "ControlPlaneComponentsHealthy"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T10:08:55Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotRollingOut",
+            "status": "False",
+            "type": "RollingOut"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T10:08:55Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotRemediating",
+            "status": "False",
+            "type": "Remediating"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T10:08:55Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotScalingDown",
+            "status": "False",
+            "type": "ScalingDown"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T10:08:55Z",
+            "message": "Scaling up from 0 to 1 replicas",
+            "observedGeneration": 1,
+            "reason": "ScalingUp",
+            "status": "True",
+            "type": "ScalingUp"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T10:08:55Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NoReplicas",
+            "status": "True",
+            "type": "MachinesReady"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T10:08:55Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NoReplicas",
+            "status": "True",
+            "type": "MachinesUpToDate"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T10:08:54Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotPaused",
+            "status": "False",
+            "type": "Paused"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T10:08:55Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotDeleting",
+            "status": "False",
+            "type": "Deleting"
+          }
+        ],
+        "deprecated": {
+          "v1beta1": {
+            "conditions": [
+              {
+                "lastTransitionTime": "2026-09-11T10:08:55Z",
+                "message": "Scaling up control plane to 1 replicas (actual 0)",
+                "reason": "ScalingUp",
+                "severity": "Warning",
+                "status": "False",
+                "type": "Ready"
+              },
+              {
+                "lastTransitionTime": "2026-09-11T10:08:55Z",
+                "message": "Scaling up control plane to 1 replicas (actual 0)",
+                "reason": "ScalingUp",
+                "severity": "Warning",
+                "status": "False",
+                "type": "Resized"
+              }
+            ],
+            "readyReplicas": 0,
+            "unavailableReplicas": 0,
+            "updatedReplicas": 0
+          }
+        },
+        "readyReplicas": 0,
+        "replicas": 0,
+        "selector": "cluster.x-k8s.io/cluster-name=inmem-happy-rec,cluster.x-k8s.io/control-plane",
+        "upToDateReplicas": 0
+      }
+    },
+    {
+      "apiVersion": "cluster.x-k8s.io/v1beta2",
+      "kind": "MachineDeployment",
+      "metadata": {
+        "annotations": {
+          "machinedeployment.clusters.x-k8s.io/revision": "1"
+        },
+        "creationTimestamp": "2026-09-11T10:08:51Z",
+        "finalizers": [
+          "cluster.x-k8s.io/machinedeployment",
+          "machinedeployment.topology.cluster.x-k8s.io"
+        ],
+        "generation": 1,
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "inmem-happy-rec",
+          "topology.cluster.x-k8s.io/deployment-name": "default",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "managedFields": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:labels": {
+                  "f:cluster.x-k8s.io/cluster-name": {},
+                  "f:topology.cluster.x-k8s.io/deployment-name": {},
+                  "f:topology.cluster.x-k8s.io/owned": {}
+                }
+              },
+              "f:spec": {
+                "f:clusterName": {},
+                "f:replicas": {},
+                "f:selector": {},
+                "f:template": {
+                  "f:metadata": {
+                    "f:labels": {
+                      "f:cluster.x-k8s.io/cluster-name": {},
+                      "f:topology.cluster.x-k8s.io/deployment-name": {},
+                      "f:topology.cluster.x-k8s.io/owned": {}
+                    }
+                  },
+                  "f:spec": {
+                    "f:bootstrap": {
+                      "f:configRef": {
+                        "f:apiGroup": {},
+                        "f:kind": {},
+                        "f:name": {}
+                      }
+                    },
+                    "f:clusterName": {},
+                    "f:infrastructureRef": {
+                      "f:apiGroup": {},
+                      "f:kind": {},
+                      "f:name": {}
+                    },
+                    "f:version": {}
+                  }
+                }
+              }
+            },
+            "manager": "capi-topology",
+            "operation": "Apply",
+            "time": "2026-09-11T10:08:51Z"
+          },
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:annotations": {
+                  ".": {},
+                  "f:machinedeployment.clusters.x-k8s.io/revision": {}
+                },
+                "f:finalizers": {
+                  ".": {},
+                  "v:\"cluster.x-k8s.io/machinedeployment\"": {},
+                  "v:\"machinedeployment.topology.cluster.x-k8s.io\"": {}
+                },
+                "f:ownerReferences": {
+                  ".": {},
+                  "k:{\"uid\":\"9c0060cc-ff0c-42da-b578-e3067b793c01\"}": {}
+                }
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "time": "2026-09-11T10:08:53Z"
+          },
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                ".": {},
+                "f:availableReplicas": {},
+                "f:conditions": {
+                  ".": {},
+                  "k:{\"type\":\"Available\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Deleting\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"MachinesReady\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"MachinesUpToDate\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Paused\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Remediating\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"RollingOut\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"ScalingDown\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"ScalingUp\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  }
+                },
+                "f:deprecated": {
+                  ".": {},
+                  "f:v1beta1": {
+                    ".": {},
+                    "f:availableReplicas": {},
+                    "f:conditions": {},
+                    "f:readyReplicas": {},
+                    "f:unavailableReplicas": {},
+                    "f:updatedReplicas": {}
+                  }
+                },
+                "f:observedGeneration": {},
+                "f:phase": {},
+                "f:readyReplicas": {},
+                "f:replicas": {},
+                "f:selector": {},
+                "f:upToDateReplicas": {}
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "subresource": "status",
+            "time": "2026-09-11T10:08:56Z"
+          }
+        ],
+        "name": "inmem-happy-rec-default-4lvwf",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "kind": "Cluster",
+            "name": "inmem-happy-rec",
+            "uid": "9c0060cc-ff0c-42da-b578-e3067b793c01"
+          }
+        ],
+        "resourceVersion": "38949",
+        "uid": "036665d4-dcc7-4580-a55b-a7b80f680981"
+      },
+      "spec": {
+        "clusterName": "inmem-happy-rec",
+        "replicas": 2,
+        "rollout": {
+          "strategy": {
+            "rollingUpdate": {
+              "maxSurge": 1,
+              "maxUnavailable": 0
+            },
+            "type": "RollingUpdate"
+          }
+        },
+        "selector": {
+          "matchLabels": {
+            "cluster.x-k8s.io/cluster-name": "inmem-happy-rec",
+            "topology.cluster.x-k8s.io/deployment-name": "default",
+            "topology.cluster.x-k8s.io/owned": ""
+          }
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "cluster.x-k8s.io/cluster-name": "inmem-happy-rec",
+              "topology.cluster.x-k8s.io/deployment-name": "default",
+              "topology.cluster.x-k8s.io/owned": ""
+            }
+          },
+          "spec": {
+            "bootstrap": {
+              "configRef": {
+                "apiGroup": "bootstrap.cluster.x-k8s.io",
+                "kind": "KubeadmConfigTemplate",
+                "name": "inmem-happy-rec-default-jpzpg"
+              }
+            },
+            "clusterName": "inmem-happy-rec",
+            "infrastructureRef": {
+              "apiGroup": "infrastructure.cluster.x-k8s.io",
+              "kind": "DevMachineTemplate",
+              "name": "inmem-happy-rec-default-lmlfl"
+            },
+            "version": "v1.34.11"
+          }
+        }
+      },
+      "status": {
+        "availableReplicas": 0,
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-11T10:08:56Z",
+            "message": "0 available replicas, at least 2 required (spec.strategy.rollout.maxUnavailable is 0, spec.replicas is 2)",
+            "observedGeneration": 1,
+            "reason": "NotAvailable",
+            "status": "False",
+            "type": "Available"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T10:08:53Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotRollingOut",
+            "status": "False",
+            "type": "RollingOut"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T10:08:53Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotRemediating",
+            "status": "False",
+            "type": "Remediating"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T10:08:53Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotScalingDown",
+            "status": "False",
+            "type": "ScalingDown"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T10:08:53Z",
+            "message": "Scaling up from 0 to 2 replicas",
+            "observedGeneration": 1,
+            "reason": "ScalingUp",
+            "status": "True",
+            "type": "ScalingUp"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T10:08:53Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NoReplicas",
+            "status": "True",
+            "type": "MachinesReady"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T10:08:53Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NoReplicas",
+            "status": "True",
+            "type": "MachinesUpToDate"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T10:08:52Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotPaused",
+            "status": "False",
+            "type": "Paused"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T10:08:53Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotDeleting",
+            "status": "False",
+            "type": "Deleting"
+          }
+        ],
+        "deprecated": {
+          "v1beta1": {
+            "availableReplicas": 0,
+            "conditions": [
+              {
+                "lastTransitionTime": "2026-09-11T10:08:53Z",
+                "message": "Minimum availability requires 2 replicas, current 0 available",
+                "reason": "WaitingForAvailableMachines",
+                "severity": "Warning",
+                "status": "False",
+                "type": "Ready"
+              },
+              {
+                "lastTransitionTime": "2026-09-11T10:08:53Z",
+                "message": "Minimum availability requires 2 replicas, current 0 available",
+                "reason": "WaitingForAvailableMachines",
+                "severity": "Warning",
+                "status": "False",
+                "type": "Available"
+              },
+              {
+                "lastTransitionTime": "2026-09-11T10:08:56Z",
+                "message": "KubeadmControlPlane default/inmem-happy-rec-rz9lb is provisioning (\"ControlPlaneIsStable\" preflight check failed)",
+                "reason": "PreflightCheckFailed",
+                "severity": "Error",
+                "status": "False",
+                "type": "MachineSetReady"
+              }
+            ],
+            "readyReplicas": 0,
+            "unavailableReplicas": 2,
+            "updatedReplicas": 0
+          }
+        },
+        "observedGeneration": 1,
+        "phase": "ScalingUp",
+        "readyReplicas": 0,
+        "replicas": 0,
+        "selector": "cluster.x-k8s.io/cluster-name=inmem-happy-rec,topology.cluster.x-k8s.io/deployment-name=default,topology.cluster.x-k8s.io/owned=",
+        "upToDateReplicas": 0
+      }
+    },
+    {
+      "apiVersion": "cluster.x-k8s.io/v1beta2",
+      "kind": "MachineSet",
+      "metadata": {
+        "annotations": {
+          "cluster.x-k8s.io/disable-machine-create": "false",
+          "machinedeployment.clusters.x-k8s.io/desired-replicas": "2",
+          "machinedeployment.clusters.x-k8s.io/max-replicas": "3",
+          "machinedeployment.clusters.x-k8s.io/revision": "1"
+        },
+        "creationTimestamp": "2026-09-11T10:08:53Z",
+        "finalizers": [
+          "cluster.x-k8s.io/machineset",
+          "machineset.topology.cluster.x-k8s.io"
+        ],
+        "generation": 1,
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "inmem-happy-rec",
+          "cluster.x-k8s.io/deployment-name": "inmem-happy-rec-default-4lvwf",
+          "machine-template-hash": "3255969856-hh2rv",
+          "topology.cluster.x-k8s.io/deployment-name": "default",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "managedFields": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:annotations": {
+                  "f:cluster.x-k8s.io/disable-machine-create": {},
+                  "f:machinedeployment.clusters.x-k8s.io/desired-replicas": {},
+                  "f:machinedeployment.clusters.x-k8s.io/max-replicas": {},
+                  "f:machinedeployment.clusters.x-k8s.io/revision": {}
+                },
+                "f:finalizers": {
+                  "v:\"cluster.x-k8s.io/machineset\"": {},
+                  "v:\"machineset.topology.cluster.x-k8s.io\"": {}
+                },
+                "f:labels": {
+                  "f:cluster.x-k8s.io/cluster-name": {},
+                  "f:cluster.x-k8s.io/deployment-name": {},
+                  "f:machine-template-hash": {},
+                  "f:topology.cluster.x-k8s.io/deployment-name": {},
+                  "f:topology.cluster.x-k8s.io/owned": {}
+                },
+                "f:ownerReferences": {
+                  "k:{\"uid\":\"036665d4-dcc7-4580-a55b-a7b80f680981\"}": {}
+                }
+              },
+              "f:spec": {
+                "f:clusterName": {},
+                "f:replicas": {},
+                "f:selector": {},
+                "f:template": {
+                  "f:metadata": {
+                    "f:labels": {
+                      "f:cluster.x-k8s.io/cluster-name": {},
+                      "f:machine-template-hash": {},
+                      "f:topology.cluster.x-k8s.io/deployment-name": {},
+                      "f:topology.cluster.x-k8s.io/owned": {}
+                    }
+                  },
+                  "f:spec": {
+                    "f:bootstrap": {
+                      "f:configRef": {
+                        "f:apiGroup": {},
+                        "f:kind": {},
+                        "f:name": {}
+                      }
+                    },
+                    "f:clusterName": {},
+                    "f:infrastructureRef": {
+                      "f:apiGroup": {},
+                      "f:kind": {},
+                      "f:name": {}
+                    },
+                    "f:version": {}
+                  }
+                }
+              }
+            },
+            "manager": "capi-machinedeployment",
+            "operation": "Apply",
+            "time": "2026-09-11T10:08:53Z"
+          },
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:finalizers": {
+                  ".": {},
+                  "v:\"cluster.x-k8s.io/machineset\"": {},
+                  "v:\"machineset.topology.cluster.x-k8s.io\"": {}
+                }
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "time": "2026-09-11T10:08:54Z"
+          },
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                ".": {},
+                "f:availableReplicas": {},
+                "f:conditions": {
+                  ".": {},
+                  "k:{\"type\":\"Deleting\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"MachinesReady\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"MachinesUpToDate\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Paused\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Remediating\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"ScalingDown\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"ScalingUp\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  }
+                },
+                "f:deprecated": {
+                  ".": {},
+                  "f:v1beta1": {
+                    ".": {},
+                    "f:availableReplicas": {},
+                    "f:conditions": {},
+                    "f:fullyLabeledReplicas": {},
+                    "f:readyReplicas": {}
+                  }
+                },
+                "f:observedGeneration": {},
+                "f:readyReplicas": {},
+                "f:replicas": {},
+                "f:selector": {},
+                "f:upToDateReplicas": {}
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "subresource": "status",
+            "time": "2026-09-11T10:08:55Z"
+          }
+        ],
+        "name": "inmem-happy-rec-default-4lvwf-hh2rv",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "MachineDeployment",
+            "name": "inmem-happy-rec-default-4lvwf",
+            "uid": "036665d4-dcc7-4580-a55b-a7b80f680981"
+          }
+        ],
+        "resourceVersion": "38939",
+        "uid": "87ac7bd9-765b-463f-a669-e11a308dd849"
+      },
+      "spec": {
+        "clusterName": "inmem-happy-rec",
+        "replicas": 2,
+        "selector": {
+          "matchLabels": {
+            "cluster.x-k8s.io/cluster-name": "inmem-happy-rec",
+            "machine-template-hash": "3255969856-hh2rv",
+            "topology.cluster.x-k8s.io/deployment-name": "default",
+            "topology.cluster.x-k8s.io/owned": ""
+          }
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "cluster.x-k8s.io/cluster-name": "inmem-happy-rec",
+              "machine-template-hash": "3255969856-hh2rv",
+              "topology.cluster.x-k8s.io/deployment-name": "default",
+              "topology.cluster.x-k8s.io/owned": ""
+            }
+          },
+          "spec": {
+            "bootstrap": {
+              "configRef": {
+                "apiGroup": "bootstrap.cluster.x-k8s.io",
+                "kind": "KubeadmConfigTemplate",
+                "name": "inmem-happy-rec-default-jpzpg"
+              }
+            },
+            "clusterName": "inmem-happy-rec",
+            "infrastructureRef": {
+              "apiGroup": "infrastructure.cluster.x-k8s.io",
+              "kind": "DevMachineTemplate",
+              "name": "inmem-happy-rec-default-lmlfl"
+            },
+            "version": "v1.34.11"
+          }
+        }
+      },
+      "status": {
+        "availableReplicas": 0,
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-11T10:08:55Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotRemediating",
+            "status": "False",
+            "type": "Remediating"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T10:08:55Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotScalingDown",
+            "status": "False",
+            "type": "ScalingDown"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T10:08:55Z",
+            "message": "Scaling up from 0 to 2 replicas is blocked because:\n* KubeadmControlPlane default/inmem-happy-rec-rz9lb is provisioning (\"ControlPlaneIsStable\" preflight check failed)",
+            "observedGeneration": 1,
+            "reason": "ScalingUp",
+            "status": "True",
+            "type": "ScalingUp"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T10:08:55Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NoReplicas",
+            "status": "True",
+            "type": "MachinesReady"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T10:08:55Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NoReplicas",
+            "status": "True",
+            "type": "MachinesUpToDate"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T10:08:54Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotPaused",
+            "status": "False",
+            "type": "Paused"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T10:08:55Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotDeleting",
+            "status": "False",
+            "type": "Deleting"
+          }
+        ],
+        "deprecated": {
+          "v1beta1": {
+            "availableReplicas": 0,
+            "conditions": [
+              {
+                "lastTransitionTime": "2026-09-11T10:08:55Z",
+                "message": "KubeadmControlPlane default/inmem-happy-rec-rz9lb is provisioning (\"ControlPlaneIsStable\" preflight check failed)",
+                "reason": "PreflightCheckFailed",
+                "severity": "Error",
+                "status": "False",
+                "type": "Ready"
+              },
+              {
+                "lastTransitionTime": "2026-09-11T10:08:55Z",
+                "message": "KubeadmControlPlane default/inmem-happy-rec-rz9lb is provisioning (\"ControlPlaneIsStable\" preflight check failed)",
+                "reason": "PreflightCheckFailed",
+                "severity": "Error",
+                "status": "False",
+                "type": "MachinesCreated"
+              },
+              {
+                "lastTransitionTime": "2026-09-11T10:08:55Z",
+                "status": "True",
+                "type": "MachinesReady"
+              },
+              {
+                "lastTransitionTime": "2026-09-11T10:08:55Z",
+                "message": "Scaling up MachineSet to 2 replicas (actual 0)",
+                "reason": "ScalingUp",
+                "severity": "Warning",
+                "status": "False",
+                "type": "Resized"
+              }
+            ],
+            "fullyLabeledReplicas": 0,
+            "readyReplicas": 0
+          }
+        },
+        "observedGeneration": 1,
+        "readyReplicas": 0,
+        "replicas": 0,
+        "selector": "cluster.x-k8s.io/cluster-name=inmem-happy-rec,machine-template-hash=3255969856-hh2rv,topology.cluster.x-k8s.io/deployment-name=default,topology.cluster.x-k8s.io/owned=",
+        "upToDateReplicas": 0
+      }
+    }
+  ]
+}

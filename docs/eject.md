@@ -118,12 +118,19 @@ YAML with no ClusterClass and no topology:
 cluster render my-cluster > my-cluster.yaml
 ```
 
-The output is what the topology controller computed, with `spec.topology` removed and every
-generated reference resolved to a concrete object. It re-applies with an empty diff:
+The output is every object the topology controller produced, as it stands, with every
+generated reference resolved to a concrete object. The Cluster keeps its `spec.topology`,
+which is what a later `cluster render` reads.
+
+Check it against what is running:
 
 ```sh
-kubectl apply --dry-run=server -f my-cluster.yaml
+kubectl diff -f my-cluster.yaml && echo "no diff"
 ```
+
+`kubectl diff` exits 0 when the file matches. Applying the file is a different matter while
+the policy is on: most of these objects are managed kinds, so the writes are denied. Remove
+the bindings first, as above, and then the file applies.
 
 From there you own the objects directly. Delete the ClusterClass and the policy, keep
 upstream Cluster API and the providers exactly as `clusterctl` installed them, and edit the

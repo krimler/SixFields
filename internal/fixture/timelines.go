@@ -13,7 +13,7 @@ func stdDockerHappy() Timeline {
 
 	snap(s, &tl, 0)
 
-	cpM := s.controlPlaneMachine("dev-1", "dev-1-cp", "dev-1-cp-abcde", at(45))
+	cpM := s.controlPlaneMachine(at(45))
 	objs["cluster"].status("controlPlane", map[string]any{"desiredReplicas": int64(1), "replicas": int64(1), "readyReplicas": int64(0)})
 	snap(s, &tl, 60)
 
@@ -54,7 +54,7 @@ func stallBadVersion() Timeline {
 	snap(s, &tl, 0)
 
 	infraReady(objs, at(60))
-	cpM := s.controlPlaneMachine("dev-1", "dev-1-cp", "dev-1-cp-abcde", at(70))
+	cpM := s.controlPlaneMachine(at(70))
 	cpM["devmachine"].condition("ContainerProvisioned", "False", "ImagePullFailure",
 		"failed to pull kindest/node:v1.99.0: manifest unknown", at(90))
 	cpM["machine"].condition("InfrastructureReady", "False", "ImagePullFailure",
@@ -77,7 +77,7 @@ func stallCPKilled() Timeline {
 		placement: "self", backend: "docker", cpReplicas: 1, workerCount: 2})
 	tl := Timeline{Name: s.name, Note: note}
 
-	cpM := s.controlPlaneMachine("dev-1", "dev-1-cp", "dev-1-cp-abcde", at(45))
+	cpM := s.controlPlaneMachine(at(45))
 	infraReady(objs, at(60))
 	machineReady(cpM, at(120))
 	controlPlaneUp(objs, at(130))
@@ -132,7 +132,7 @@ func scaleUp() Timeline {
 		placement: "self", backend: "docker", cpReplicas: 1, workerCount: 2})
 	tl := Timeline{Name: s.name, Note: note}
 
-	cpM := s.controlPlaneMachine("dev-1", "dev-1-cp", "dev-1-cp-abcde", at(45))
+	cpM := s.controlPlaneMachine(at(45))
 	infraReady(objs, at(60))
 	machineReady(cpM, at(120))
 	controlPlaneUp(objs, at(130))
