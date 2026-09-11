@@ -14,6 +14,12 @@ import (
 	"sixfields/internal/why"
 )
 
+// DefaultLocalURL is where the local runtime is expected when CLUSTER_AI_URL is
+// unset. It has to match CLUSTER_AI_URL in versions.env, which is what
+// `make doctor-ai` writes and what the scripts export;
+// TestUX_DefaultLocalURLMatchesVersionsEnv holds the two together.
+const DefaultLocalURL = "http://127.0.0.1:11434/v1"
+
 // aiOptions are the cost and privacy knobs from docs/ai.md.
 type aiOptions struct {
 	enabled   bool
@@ -39,11 +45,14 @@ func backend() (explain.Explainer, string, error) {
 	case "cassette":
 		return explain.Cassette{Dir: cassetteDir()}, "cassette", nil
 	case "anthropic":
-		return explain.Anthropic{Model: os.Getenv("CLUSTER_AI_MODEL")}, "anthropic", nil
+		// A separate variable on purpose. CLUSTER_AI_MODEL names the local model
+		// (versions.env pins it), and sending that id to Anthropic asks for a model
+		// that does not exist there.
+		return explain.Anthropic{Model: os.Getenv("ANTHROPIC_MODEL")}, "anthropic", nil
 	default:
 		url := os.Getenv("CLUSTER_AI_URL")
 		if url == "" {
-			url = "http://127.0.0.1:1234/v1"
+			url = DefaultLocalURL
 		}
 		return explain.Local{URL: url, Model: os.Getenv("CLUSTER_AI_MODEL")}, "local", nil
 	}

@@ -222,7 +222,7 @@ You can work on the display without any cluster at all. SixFields records real
 runs and replays them:
 
 ```sh
-make replay F=inmem-stall-etcd
+make replay F=inmem-stall-vm
 ```
 
 `docs/api-snapshot.md` is generated from the exact Cluster API version this repo

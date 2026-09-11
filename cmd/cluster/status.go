@@ -17,7 +17,7 @@ func newStatusCmd(g *globals) *cobra.Command {
 			"phases once and exits. --watch keeps it open.",
 		Example: "  cluster status dev-1\n" +
 			"  cluster status dev-1 --json | jq .status.phases\n" +
-			"  cluster status --replay testdata/fixtures/inmem-stall-etcd --speed 20",
+			"  cluster status --replay testdata/fixtures/inmem-stall-vm --speed 20",
 		Args: cobra.MaximumNArgs(1),
 	}
 	var watch bool

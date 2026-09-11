@@ -48,7 +48,11 @@ func (r *replaySource) Snapshots(ctx context.Context) (<-chan snapshot.Envelope,
 				case <-time.After(wait):
 				}
 			}
-			*r.clock = fixture.T0.Add(time.Duration(env.Meta.TPlusS) * time.Second)
+			// The epoch is the cluster's own creation time, not a constant: a
+			// synthetic timeline starts at fixture.T0 and a recorded one starts
+			// whenever it was recorded. Using the constant for both made every
+			// recorded fixture replay with a negative elapsed time.
+			*r.clock = fixture.NowFor(env)
 			select {
 			case <-ctx.Done():
 				return

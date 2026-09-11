@@ -85,7 +85,10 @@ func run(ctx context.Context, src source, opt streamOptions) error {
 				return nil
 			}
 			if !opt.blocking {
-				return nil
+				// A one-shot view that is showing a stall still exits 2. The
+				// documented contract is about what was seen, not about whether
+				// the command waited.
+				return finish(last, opt)
 			}
 		}
 	}

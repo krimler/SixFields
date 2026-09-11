@@ -48,7 +48,7 @@ func rank(t *testing.T, scenario string) why.Stall {
 func TestWhy_EveryStallFixtureMatchesItsGolden(t *testing.T) {
 	for _, scenario := range []string{
 		"stall-bad-version", "stall-cp-killed", "stall-bad-variable",
-		"inmem-stall-etcd", "inmem-stall-node", "hosted-stall-pod", "two-stalls",
+		"inmem-stall-vm", "hosted-stall-pod", "two-stalls",
 	} {
 		t.Run(scenario, func(t *testing.T) {
 			golden.JSON(t, filepath.Join(goldenDir, scenario+".json"), rank(t, scenario))
@@ -68,10 +68,10 @@ func TestUX_StallLineNamesTheRightObject(t *testing.T) {
 		{"stall-bad-version", "DevMachine", msg.VersionUnavailable},
 		{"stall-cp-killed", "DevMachine", msg.ControlPlaneMachine},
 		{"stall-bad-variable", "Cluster", msg.TopologyFailed},
-		{"inmem-stall-etcd", "DevMachine", msg.EtcdNotHealthy},
-		// A node that never became ready is the same problem, and the same runbook,
-		// whether it is a control-plane node or a worker.
-		{"inmem-stall-node", "DevMachine", msg.NodeNotJoining},
+		// The in-memory backend holds every later component behind VMProvisioned,
+		// so a VM that never starts is what a real stall on this substrate looks
+		// like. The etcd and node durations do not produce one; see DECISIONS.md.
+		{"inmem-stall-vm", "DevMachine", msg.ControlPlaneMachine},
 		{"hosted-stall-pod", "K0smotronControlPlane", msg.ControlPlaneNotInit},
 	} {
 		t.Run(tc.scenario, func(t *testing.T) {
@@ -112,7 +112,7 @@ func TestUX_RankingPrefersTheMoreSpecificObject(t *testing.T) {
 func TestUX_StallLineContract(t *testing.T) {
 	for _, scenario := range []string{
 		"stall-bad-version", "stall-cp-killed", "stall-bad-variable",
-		"inmem-stall-etcd", "inmem-stall-node", "hosted-stall-pod", "two-stalls",
+		"inmem-stall-vm", "hosted-stall-pod", "two-stalls",
 	} {
 		t.Run(scenario, func(t *testing.T) {
 			stall := rank(t, scenario)
@@ -131,7 +131,7 @@ func TestUX_StallLineContract(t *testing.T) {
 // Long upstream messages are truncated at a word boundary and the full text is
 // kept for --verbose.
 func TestWhy_LongMessagesAreTruncatedAndKept(t *testing.T) {
-	env := lastEnvelope(t, "inmem-stall-etcd")
+	env := lastEnvelope(t, "inmem-stall-vm")
 	for _, o := range env.Objects {
 		if o.Kind() != "DevMachine" {
 			continue
@@ -139,7 +139,7 @@ func TestWhy_LongMessagesAreTruncatedAndKept(t *testing.T) {
 		conds, _ := o.Slice("status", "conditions")
 		for _, c := range conds {
 			m := c.(map[string]any)
-			if m["type"] == "EtcdProvisioned" {
+			if m["type"] == "VMProvisioned" {
 				m["message"] = strings.Repeat("etcd is still starting up and has not reported healthy ", 4)
 			}
 		}
@@ -168,7 +168,7 @@ func TestWhy_ReadyClusterRanksNothing(t *testing.T) {
 func TestUX_EveryStallCodeHasARunbook(t *testing.T) {
 	for _, scenario := range []string{
 		"stall-bad-version", "stall-cp-killed", "stall-bad-variable",
-		"inmem-stall-etcd", "inmem-stall-node", "hosted-stall-pod", "two-stalls",
+		"inmem-stall-vm", "hosted-stall-pod", "two-stalls",
 	} {
 		stall := rank(t, scenario)
 		_, ok := msg.Longform(stall.Code)
@@ -251,7 +251,8 @@ func conditionValues(t *testing.T) map[string]bool {
 // failure is how the first live run named "Paused=False" as the blocking
 // condition on a machine whose node had genuinely not come up.
 func TestUX_ActivityConditionsAreNotFailures(t *testing.T) {
-	env := lastEnvelope(t, "inmem-stall-etcd")
+	env := lastEnvelope(t, "inmem-stall-vm")
+	newer := fixture.NowFor(env).Add(time.Hour).Format(time.RFC3339)
 	for _, o := range env.Objects {
 		if o.Kind() != "DevMachine" {
 			continue
@@ -261,7 +262,7 @@ func TestUX_ActivityConditionsAreNotFailures(t *testing.T) {
 			conditions = append(conditions, map[string]any{
 				"type": name, "status": "False", "reason": "Not" + name,
 				// More recent than the real fault, so it would win on recency.
-				"lastTransitionTime": fixture.T0.Add(time.Hour).Format(time.RFC3339),
+				"lastTransitionTime": newer,
 			})
 		}
 		o["status"].(map[string]any)["conditions"] = conditions
@@ -271,7 +272,7 @@ func TestUX_ActivityConditionsAreNotFailures(t *testing.T) {
 	res := fold.Fold(env, fold.Options{Now: now})
 	stall, ok := why.Rank(env, res, why.Options{Now: now})
 	require.True(t, ok)
-	require.Equal(t, "EtcdProvisioned", stall.ConditionType,
+	require.Equal(t, "VMProvisioned", stall.ConditionType,
 		"an activity condition outranked the real fault")
 	for _, c := range stall.Candidates {
 		require.NotContains(t, []string{"Paused", "Deleting", "ScalingUp", "Updating"}, c.Condition.Type,
@@ -283,7 +284,7 @@ func TestUX_ActivityConditionsAreNotFailures(t *testing.T) {
 // restates what a specific condition already said. The line a user reads must
 // name the specific one.
 func TestUX_SummaryConditionsRankBelowSpecificOnes(t *testing.T) {
-	env := lastEnvelope(t, "inmem-stall-node")
+	env := lastEnvelope(t, "inmem-stall-vm")
 	for _, o := range env.Objects {
 		if o.Kind() != "DevMachine" {
 			continue
@@ -291,7 +292,7 @@ func TestUX_SummaryConditionsRankBelowSpecificOnes(t *testing.T) {
 		conditions, _ := o.Slice("status", "conditions")
 		conditions = append(conditions, map[string]any{
 			"type": "Ready", "status": "False", "reason": "NotReady",
-			"lastTransitionTime": fixture.T0.Add(time.Hour).Format(time.RFC3339),
+			"lastTransitionTime": fixture.NowFor(env).Add(time.Hour).Format(time.RFC3339),
 		})
 		o["status"].(map[string]any)["conditions"] = conditions
 	}
@@ -314,4 +315,25 @@ func TestUX_SummaryConditionsRankBelowSpecificOnes(t *testing.T) {
 	}
 	require.NotNil(t, summary)
 	require.Equal(t, "summary condition", summary.LostTo)
+}
+
+// A provider that says "WaitingForVMProvisioned" has named its own blocker. The
+// three conditions shadowing a stuck VM must not outrank the VM, or the line
+// points at a symptom and the runbook sends the reader to the wrong place.
+func TestUX_CausesOutrankTheConditionsWaitingOnThem(t *testing.T) {
+	stall := rank(t, "inmem-stall-vm")
+	require.Equal(t, "VMProvisioned", stall.ConditionType)
+
+	waiting := 0
+	for _, c := range stall.Candidates {
+		if c.Object != stall.Object || c.LostTo == "" {
+			continue
+		}
+		if strings.HasPrefix(c.LostTo, "waiting on ") {
+			require.Equal(t, "waiting on VMProvisioned", c.LostTo)
+			waiting++
+		}
+	}
+	require.Equal(t, 3, waiting,
+		"the API server, etcd and node conditions all wait on the VM")
 }

@@ -1,0 +1,9 @@
+t+26s   infrastructure  done     ready
+t+26s   control plane   running  0/1 nodes
+t+26s   workers         running  0/2 nodes
+t+26s   addons          running  waiting
+t+3m33s control plane   stalled  0/1 nodes
+DevMachine/mem-vmstall-k4ssg-rt7mf — a control-plane machine is stuck provisioning (3m20s)
+raw: kubectl get devmachine.infrastructure.cluster.x-k8s.io mem-vmstall-k4ssg-rt7mf -n default -o yaml
+typical: p50 1m15s · p95 2m00s
+next: cluster docs CAPI-CP-002

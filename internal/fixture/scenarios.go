@@ -26,8 +26,6 @@ func All() []Timeline {
 		stallBadVariable(),
 		scaleUp(),
 		inmemHappy(),
-		inmemStallEtcd(),
-		inmemStallNode(),
 		hostedDockerHappy(),
 		hostedStallPod(),
 		twoStalls(),

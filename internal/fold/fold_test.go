@@ -84,8 +84,7 @@ func TestFold_StallFixturesStall(t *testing.T) {
 	stalls := map[string]fold.PhaseName{
 		"stall-bad-version":  fold.ControlPlane,
 		"stall-cp-killed":    fold.ControlPlane,
-		"inmem-stall-etcd":   fold.ControlPlane,
-		"inmem-stall-node":   fold.ControlPlane,
+		"inmem-stall-vm":     fold.ControlPlane,
 		"hosted-stall-pod":   fold.ControlPlane,
 		"stall-bad-variable": fold.Infrastructure,
 	}
@@ -117,8 +116,8 @@ func TestFold_HappyPathNeverStalls(t *testing.T) {
 // Stall detection latency: the stall line must appear within stallAfter + 10s of
 // the last transition (D2.8).
 func TestUX_StallDetectionLatency(t *testing.T) {
-	env := lastEnvelope(t, "inmem-stall-etcd")
-	res := fold.Fold(env, fold.Options{Now: fixture.T0.Add(time.Hour), StallAfter: time.Minute})
+	env := lastEnvelope(t, "inmem-stall-vm")
+	res := fold.Fold(env, fold.Options{Now: fixture.NowFor(env).Add(time.Hour), StallAfter: time.Minute})
 	stalled, ok := res.Stalled()
 	require.True(t, ok)
 

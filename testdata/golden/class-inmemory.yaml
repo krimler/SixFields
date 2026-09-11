@@ -1,36 +1,40 @@
-apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
-kind: K0sWorkerConfigTemplate
+apiVersion: bootstrap.cluster.x-k8s.io/v1beta2
+kind: KubeadmConfigTemplate
 metadata:
   labels:
     sixfields.io/break-glass: "true"
-  name: std-default-bootstrap
+  name: std-kubeadm-default-bootstrap
 spec:
   template:
     spec:
-      version: v1.34.11+k0s.0
+      joinConfiguration:
+        nodeRegistration:
+          kubeletExtraArgs:
+          - name: eviction-hard
+            value: nodefs.available<0%,nodefs.inodesFree<0%,imagefs.available<0%
 ---
 apiVersion: cluster.x-k8s.io/v1beta2
 kind: ClusterClass
 metadata:
   labels:
     sixfields.io/break-glass: "true"
-  name: std
+  name: std-inmemory
 spec:
   controlPlane:
     machineInfrastructure:
       templateRef:
         apiVersion: infrastructure.cluster.x-k8s.io/v1beta2
         kind: DevMachineTemplate
-        name: std-control-plane-machine
+        name: std-inmemory-control-plane-machine
     templateRef:
-      apiVersion: controlplane.cluster.x-k8s.io/v1beta1
-      kind: K0sControlPlaneTemplate
-      name: std-control-plane
+      apiVersion: controlplane.cluster.x-k8s.io/v1beta2
+      kind: KubeadmControlPlaneTemplate
+      name: std-kubeadm-control-plane
   infrastructure:
     templateRef:
       apiVersion: infrastructure.cluster.x-k8s.io/v1beta2
       kind: DevClusterTemplate
-      name: std-cluster
+      name: std-inmemory-cluster
   variables:
   - name: size
     required: true
@@ -56,50 +60,52 @@ spec:
     machineDeployments:
     - bootstrap:
         templateRef:
-          apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
-          kind: K0sWorkerConfigTemplate
-          name: std-default-bootstrap
+          apiVersion: bootstrap.cluster.x-k8s.io/v1beta2
+          kind: KubeadmConfigTemplate
+          name: std-kubeadm-default-bootstrap
       class: default
       infrastructure:
         templateRef:
           apiVersion: infrastructure.cluster.x-k8s.io/v1beta2
           kind: DevMachineTemplate
-          name: std-default-machine
-      metadata:
-        annotations:
-          machineset.cluster.x-k8s.io/skip-preflight-checks: ControlPlaneIsStable
+          name: std-inmemory-default-machine
 ---
-apiVersion: controlplane.cluster.x-k8s.io/v1beta1
-kind: K0sControlPlaneTemplate
+apiVersion: controlplane.cluster.x-k8s.io/v1beta2
+kind: KubeadmControlPlaneTemplate
 metadata:
   labels:
     sixfields.io/break-glass: "true"
-  name: std-control-plane
+  name: std-kubeadm-control-plane
 spec:
   template:
     spec:
-      k0sConfigSpec:
-        args:
-        - --enable-worker=true
-        k0s:
-          apiVersion: k0s.k0sproject.io/v1beta1
-          kind: ClusterConfig
-          metadata:
-            name: k0s
-          spec:
-            api:
-              extraArgs:
-                anonymous-auth: "true"
-            telemetry:
-              enabled: false
-      version: v1.34.11+k0s.0
+      kubeadmConfigSpec:
+        clusterConfiguration:
+          apiServer:
+            certSANs:
+            - localhost
+            - host.docker.internal
+            - '::'
+            - ::1
+            - 127.0.0.1
+            - 0.0.0.0
+        initConfiguration:
+          nodeRegistration:
+            kubeletExtraArgs:
+            - name: eviction-hard
+              value: nodefs.available<0%,nodefs.inodesFree<0%,imagefs.available<0%
+        joinConfiguration:
+          nodeRegistration:
+            kubeletExtraArgs:
+            - name: eviction-hard
+              value: nodefs.available<0%,nodefs.inodesFree<0%,imagefs.available<0%
 ---
 apiVersion: infrastructure.cluster.x-k8s.io/v1beta2
 kind: DevClusterTemplate
 metadata:
   labels:
     sixfields.io/break-glass: "true"
-  name: std-cluster
+  name: std-inmemory-cluster
 spec:
   template:
     spec:
@@ -111,7 +117,7 @@ kind: DevMachineTemplate
 metadata:
   labels:
     sixfields.io/break-glass: "true"
-  name: std-control-plane-machine
+  name: std-inmemory-control-plane-machine
 spec:
   template:
     spec:
@@ -139,7 +145,7 @@ kind: DevMachineTemplate
 metadata:
   labels:
     sixfields.io/break-glass: "true"
-  name: std-default-machine
+  name: std-inmemory-default-machine
 spec:
   template:
     spec:

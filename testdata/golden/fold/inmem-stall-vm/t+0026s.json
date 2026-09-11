@@ -1,11 +1,11 @@
 {
   "cluster": {
     "kind": "Cluster",
-    "name": "inmem-1",
+    "name": "mem-vmstall",
     "namespace": "default",
     "group": "cluster.x-k8s.io"
   },
-  "class": "std",
+  "class": "std-inmemory-vmstall",
   "version": "v1.34.11",
   "placement": "self",
   "phases": [
@@ -13,13 +13,13 @@
       "name": "infrastructure",
       "state": "done",
       "detail": "ready",
-      "elapsed_ns": 3000000000,
-      "last_transition": "2026-09-10T12:00:03Z",
-      "started_at": "2026-09-10T12:00:00Z",
+      "elapsed_ns": 5000000000,
+      "last_transition": "2026-09-11T08:24:57Z",
+      "started_at": "2026-09-11T08:24:52Z",
       "contributors": [
         {
           "kind": "DevCluster",
-          "name": "inmem-1",
+          "name": "mem-vmstall-wrqzx",
           "namespace": "default",
           "group": "infrastructure.cluster.x-k8s.io"
         }
@@ -27,21 +27,21 @@
     },
     {
       "name": "control plane",
-      "state": "stalled",
+      "state": "running",
       "detail": "0/1 nodes",
-      "elapsed_ns": 397000000000,
-      "last_transition": "2026-09-10T12:00:10Z",
-      "started_at": "2026-09-10T12:00:03Z",
+      "elapsed_ns": 21000000000,
+      "last_transition": "2026-09-11T08:25:05Z",
+      "started_at": "2026-09-11T08:24:57Z",
       "contributors": [
         {
           "kind": "KubeadmControlPlane",
-          "name": "inmem-1-cp",
+          "name": "mem-vmstall-k4ssg",
           "namespace": "default",
           "group": "controlplane.cluster.x-k8s.io"
         },
         {
           "kind": "Machine",
-          "name": "inmem-1-cp-abcde",
+          "name": "mem-vmstall-k4ssg-rt7mf",
           "namespace": "default",
           "group": "cluster.x-k8s.io"
         }
@@ -51,13 +51,13 @@
       "name": "workers",
       "state": "running",
       "detail": "0/2 nodes",
-      "elapsed_ns": 397000000000,
-      "last_transition": "2026-09-10T12:00:00Z",
-      "started_at": "2026-09-10T12:00:03Z",
+      "elapsed_ns": 21000000000,
+      "last_transition": "2026-09-11T08:25:18Z",
+      "started_at": "2026-09-11T08:24:57Z",
       "contributors": [
         {
           "kind": "MachineDeployment",
-          "name": "inmem-1-md-0",
+          "name": "mem-vmstall-default-cl8xj",
           "namespace": "default",
           "group": "cluster.x-k8s.io"
         }
@@ -65,14 +65,21 @@
     },
     {
       "name": "addons",
-      "state": "done",
-      "detail": "none",
-      "elapsed_ns": 397000000000,
-      "started_at": "2026-09-10T12:00:03Z",
-      "contributors": null
+      "state": "running",
+      "detail": "waiting",
+      "elapsed_ns": 21000000000,
+      "started_at": "2026-09-11T08:24:57Z",
+      "contributors": [
+        {
+          "kind": "ClusterResourceSetBinding",
+          "name": "mem-vmstall",
+          "namespace": "default",
+          "group": "addons.cluster.x-k8s.io"
+        }
+      ]
     }
   ],
   "ready": false,
-  "at": "2026-09-10T12:06:40Z",
-  "elapsed_ns": 400000000000
+  "at": "2026-09-11T08:25:18Z",
+  "elapsed_ns": 26000000000
 }

@@ -1,4 +1,8 @@
-t+0s    infrastructure  done     ready
-t+0s    control plane   running  0/1 nodes
-t+0s    workers         running  0/2 nodes
-t+0s    addons          running  waiting
+t+1m07s infrastructure  done     ready
+t+1m07s control plane   stalled  0/1 nodes
+t+1m07s workers         running  0/2 nodes
+t+1m07s addons          running  waiting
+Cluster/std-1 — control plane is not initializing (1m1s)
+raw: kubectl get cluster.cluster.x-k8s.io std-1 -n default -o yaml
+typical: p50 34m13s · p95 34m13s
+next: cluster docs CAPI-CP-001

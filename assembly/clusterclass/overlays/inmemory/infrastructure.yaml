@@ -1,8 +1,12 @@
 ---
+# Distinct names from the docker overlay's templates on purpose:
+# Dev*Template.spec.template.spec is immutable, so two classes that want two
+# backends need two objects. Installing both under one name fails with
+# "spec.template.spec field is immutable".
 apiVersion: infrastructure.cluster.x-k8s.io/v1beta2
 kind: DevClusterTemplate
 metadata:
-  name: std-cluster
+  name: std-inmemory-cluster
 spec:
   template:
     spec:
@@ -14,7 +18,7 @@ spec:
 apiVersion: infrastructure.cluster.x-k8s.io/v1beta2
 kind: DevMachineTemplate
 metadata:
-  name: std-control-plane-machine
+  name: std-inmemory-control-plane-machine
 spec:
   template:
     spec:
@@ -45,7 +49,7 @@ spec:
 apiVersion: infrastructure.cluster.x-k8s.io/v1beta2
 kind: DevMachineTemplate
 metadata:
-  name: std-default-machine
+  name: std-inmemory-default-machine
 spec:
   template:
     spec:

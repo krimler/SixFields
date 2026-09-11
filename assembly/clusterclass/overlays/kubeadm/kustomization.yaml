@@ -4,8 +4,7 @@ kind: Kustomization
 resources:
 - ../../backends/docker
 - clusterclass.yaml
-- control-plane-template.yaml
-- bootstrap-template.yaml
+- ../../bootstrap/kubeadm
 
 # See the docker overlay: installing the assembly is the operator break-glass case.
 labels:

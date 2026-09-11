@@ -1,0 +1,9 @@
+{
+  "code": "CAPI-CP-002",
+  "lines": [
+    "DevMachine/mem-vmstall-k4ssg-rt7mf is stalled.",
+    "Reason: WaitingForStartupTimeout during infrastructure provisioning.",
+    "Increase startupDuration in DevMachineTemplate to match stall threshold."
+  ],
+  "next_command": "kubectl get devmachinetemplate.infrastructure.cluster.x-k8s.io -n default"
+}

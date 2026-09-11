@@ -17,7 +17,7 @@ func newWhyCmd(g *globals) *cobra.Command {
 			"long it has been that way, and the kubectl command behind it.",
 		Example: "  cluster why dev-1\n" +
 			"  cluster why dev-1 --explain-ranking\n" +
-			"  cluster why --replay testdata/fixtures/inmem-stall-etcd",
+			"  cluster why --replay testdata/fixtures/inmem-stall-vm",
 		Args: cobra.MaximumNArgs(1),
 	}
 	var explainRanking bool

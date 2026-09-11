@@ -33,6 +33,25 @@ var negativePolarity = map[string]bool{
 	"Updating":    true,
 }
 
+// waitsFor reports whether this candidate is waiting on another candidate that is
+// also failing. Providers say so in the reason: the in-memory backend reports
+// APIServerProvisioned=False with reason WaitingForVMProvisioned while
+// VMProvisioned is itself False. The one being waited on is the cause and the
+// other three are its shadow, so the cause is what gets named.
+func waitsFor(c Candidate, all []Candidate) bool {
+	const prefix = "WaitingFor"
+	if !strings.HasPrefix(c.Condition.Reason, prefix) {
+		return false
+	}
+	named := strings.TrimPrefix(c.Condition.Reason, prefix)
+	for _, other := range all {
+		if other.Object == c.Object && other.Condition.Type == named {
+			return true
+		}
+	}
+	return false
+}
+
 // summaryConditions aggregate other conditions on the same object. They are true
 // less often and say less: "Ready=False reason=NotReady" restates what a specific
 // condition already reported. They still rank, but below anything specific on the
@@ -157,6 +176,9 @@ func Rank(env snapshot.Envelope, res fold.Result, opt Options) (Stall, bool) {
 		if summaryConditions[a.Condition.Type] != summaryConditions[b.Condition.Type] {
 			return !summaryConditions[a.Condition.Type]
 		}
+		if aWaits, bWaits := waitsFor(a, candidates), waitsFor(b, candidates); aWaits != bWaits {
+			return !aWaits
+		}
 		if !a.Condition.LastTransitionTime.Equal(b.Condition.LastTransitionTime) {
 			return a.Condition.LastTransitionTime.After(b.Condition.LastTransitionTime)
 		}
@@ -258,6 +280,8 @@ func explainLosses(candidates []Candidate) {
 			c.LostTo = "less specific object"
 		case summaryConditions[c.Condition.Type] && !summaryConditions[win.Condition.Type]:
 			c.LostTo = "summary condition"
+		case waitsFor(*c, candidates) && !waitsFor(win, candidates):
+			c.LostTo = "waiting on " + strings.TrimPrefix(c.Condition.Reason, "WaitingFor")
 		case c.Condition.LastTransitionTime.Before(win.Condition.LastTransitionTime):
 			c.LostTo = "older transition"
 		case severityRank(c.Condition.Severity) < severityRank(win.Condition.Severity):

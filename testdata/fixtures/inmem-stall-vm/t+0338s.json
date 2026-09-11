@@ -1,0 +1,4984 @@
+{
+  "_meta": {
+    "scenario": "inmem-stall-vm",
+    "t_plus_s": 338,
+    "capi": "cluster.x-k8s.io/v1beta2",
+    "note": "recorded from cluster mem-vmstall on 2026-09-11T08:25:17Z",
+    "recorded_at": "2026-09-11T08:30:29Z"
+  },
+  "objects": [
+    {
+      "apiVersion": "cluster.x-k8s.io/v1beta2",
+      "kind": "Cluster",
+      "metadata": {
+        "annotations": {
+          "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"cluster.x-k8s.io/v1beta2\",\"kind\":\"Cluster\",\"metadata\":{\"annotations\":{},\"name\":\"mem-vmstall\",\"namespace\":\"default\"},\"spec\":{\"topology\":{\"classRef\":{\"name\":\"std-inmemory-vmstall\"},\"version\":\"v1.34.11\",\"workers\":{\"machineDeployments\":[{\"class\":\"default\",\"name\":\"default\",\"replicas\":2}]}}}}\n"
+        },
+        "creationTimestamp": "2026-09-11T08:24:52Z",
+        "finalizers": [
+          "cluster.cluster.x-k8s.io"
+        ],
+        "generation": 3,
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "mem-vmstall",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "managedFields": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:annotations": {
+                  ".": {},
+                  "f:kubectl.kubernetes.io/last-applied-configuration": {}
+                }
+              },
+              "f:spec": {
+                ".": {},
+                "f:topology": {
+                  ".": {},
+                  "f:classRef": {
+                    ".": {},
+                    "f:name": {}
+                  },
+                  "f:version": {},
+                  "f:workers": {
+                    ".": {},
+                    "f:machineDeployments": {
+                      ".": {},
+                      "k:{\"name\":\"default\"}": {
+                        ".": {},
+                        "f:class": {},
+                        "f:name": {},
+                        "f:replicas": {}
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "manager": "kubectl-client-side-apply",
+            "operation": "Update",
+            "time": "2026-09-11T08:24:52Z"
+          },
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:finalizers": {
+                  ".": {},
+                  "v:\"cluster.cluster.x-k8s.io\"": {}
+                },
+                "f:labels": {
+                  ".": {},
+                  "f:cluster.x-k8s.io/cluster-name": {},
+                  "f:topology.cluster.x-k8s.io/owned": {}
+                }
+              },
+              "f:spec": {
+                "f:controlPlaneEndpoint": {
+                  ".": {},
+                  "f:host": {},
+                  "f:port": {}
+                },
+                "f:controlPlaneRef": {
+                  ".": {},
+                  "f:apiGroup": {},
+                  "f:kind": {},
+                  "f:name": {}
+                },
+                "f:infrastructureRef": {
+                  ".": {},
+                  "f:apiGroup": {},
+                  "f:kind": {},
+                  "f:name": {}
+                }
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "time": "2026-09-11T08:24:57Z"
+          },
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                ".": {},
+                "f:conditions": {
+                  ".": {},
+                  "k:{\"type\":\"Available\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"ControlPlaneAvailable\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"ControlPlaneInitialized\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"ControlPlaneMachinesReady\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"ControlPlaneMachinesUpToDate\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Deleting\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"InfrastructureReady\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Paused\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Remediating\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"RemoteConnectionProbe\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"RollingOut\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"ScalingDown\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"ScalingUp\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"TopologyReconciled\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"WorkerMachinesReady\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"WorkerMachinesUpToDate\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"WorkersAvailable\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  }
+                },
+                "f:controlPlane": {
+                  ".": {},
+                  "f:availableReplicas": {},
+                  "f:desiredReplicas": {},
+                  "f:readyReplicas": {},
+                  "f:replicas": {},
+                  "f:upToDateReplicas": {},
+                  "f:versions": {}
+                },
+                "f:deprecated": {
+                  ".": {},
+                  "f:v1beta1": {
+                    ".": {},
+                    "f:conditions": {}
+                  }
+                },
+                "f:initialization": {
+                  ".": {},
+                  "f:infrastructureProvisioned": {}
+                },
+                "f:observedGeneration": {},
+                "f:phase": {},
+                "f:workers": {
+                  ".": {},
+                  "f:availableReplicas": {},
+                  "f:desiredReplicas": {},
+                  "f:readyReplicas": {},
+                  "f:replicas": {},
+                  "f:upToDateReplicas": {},
+                  "f:versions": {}
+                }
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "subresource": "status",
+            "time": "2026-09-11T08:25:19Z"
+          }
+        ],
+        "name": "mem-vmstall",
+        "namespace": "default",
+        "resourceVersion": "7056",
+        "uid": "530946b7-7abe-4ddf-b6a1-ea563488c839"
+      },
+      "spec": {
+        "controlPlaneEndpoint": {
+          "host": "10.244.0.11",
+          "port": 20003
+        },
+        "controlPlaneRef": {
+          "apiGroup": "controlplane.cluster.x-k8s.io",
+          "kind": "KubeadmControlPlane",
+          "name": "mem-vmstall-k4ssg"
+        },
+        "infrastructureRef": {
+          "apiGroup": "infrastructure.cluster.x-k8s.io",
+          "kind": "DevCluster",
+          "name": "mem-vmstall-wrqzx"
+        },
+        "topology": {
+          "classRef": {
+            "name": "std-inmemory-vmstall"
+          },
+          "variables": [
+            {
+              "name": "placement",
+              "value": "self"
+            },
+            {
+              "name": "size",
+              "value": "dev"
+            }
+          ],
+          "version": "v1.34.11",
+          "workers": {
+            "machineDeployments": [
+              {
+                "class": "default",
+                "name": "default",
+                "replicas": 2
+              }
+            ]
+          }
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-11T08:24:54Z",
+            "message": "* RemoteConnectionProbe: Remote connection not established yet\n* ControlPlaneAvailable: Control plane not yet initialized\n* WorkersAvailable:\n  * MachineDeployment mem-vmstall-default-cl8xj: 0 available replicas, at least 2 required (spec.strategy.rollout.maxUnavailable is 0, spec.replicas is 2)",
+            "observedGeneration": 3,
+            "reason": "NotAvailable",
+            "status": "False",
+            "type": "Available"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:24:54Z",
+            "message": "Remote connection not established yet",
+            "observedGeneration": 2,
+            "reason": "ProbeFailed",
+            "status": "False",
+            "type": "RemoteConnectionProbe"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:24:57Z",
+            "message": "",
+            "observedGeneration": 3,
+            "reason": "Ready",
+            "status": "True",
+            "type": "InfrastructureReady"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:24:54Z",
+            "message": "Control plane not yet initialized",
+            "observedGeneration": 3,
+            "reason": "NotInitialized",
+            "status": "False",
+            "type": "ControlPlaneInitialized"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:24:54Z",
+            "message": "Control plane not yet initialized",
+            "observedGeneration": 3,
+            "reason": "NotAvailable",
+            "status": "False",
+            "type": "ControlPlaneAvailable"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:24:59Z",
+            "message": "* MachineDeployment mem-vmstall-default-cl8xj: 0 available replicas, at least 2 required (spec.strategy.rollout.maxUnavailable is 0, spec.replicas is 2)",
+            "observedGeneration": 3,
+            "reason": "NotAvailable",
+            "status": "False",
+            "type": "WorkersAvailable"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:24:52Z",
+            "message": "",
+            "observedGeneration": 3,
+            "reason": "ReconcileSucceeded",
+            "status": "True",
+            "type": "TopologyReconciled"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:24:55Z",
+            "message": "",
+            "observedGeneration": 3,
+            "reason": "NotRollingOut",
+            "status": "False",
+            "type": "RollingOut"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:24:54Z",
+            "message": "",
+            "observedGeneration": 3,
+            "reason": "NotRemediating",
+            "status": "False",
+            "type": "Remediating"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:24:55Z",
+            "message": "",
+            "observedGeneration": 3,
+            "reason": "NotScalingDown",
+            "status": "False",
+            "type": "ScalingDown"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:17Z",
+            "message": "",
+            "observedGeneration": 3,
+            "reason": "NotScalingUp",
+            "status": "False",
+            "type": "ScalingUp"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:03Z",
+            "message": "* Machine mem-vmstall-k4ssg-rt7mf:\n  * InfrastructureReady:\n    * VMProvisioned: WaitingForStartupTimeout\n    * NodeProvisioned: WaitingForVMProvisioned\n    * EtcdProvisioned: WaitingForVMProvisioned\n    * APIServerProvisioned: WaitingForVMProvisioned\n  * NodeHealthy: Waiting for Cluster control plane to be initialized\n  * NodeKubeadmLabelsAndTaintsSet: Waiting for Cluster control plane to be initialized\n  * Control plane components: Waiting for Cluster control plane to be initialized\n  * EtcdMemberHealthy: Waiting for Cluster control plane to be initialized",
+            "observedGeneration": 3,
+            "reason": "NotReady",
+            "status": "False",
+            "type": "ControlPlaneMachinesReady"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:17Z",
+            "message": "* Machines mem-vmstall-default-cl8xj-qmrp6-5nr97, mem-vmstall-default-cl8xj-qmrp6-7l4tr:\n  * BootstrapConfigReady:\n    * DataSecretAvailable: Waiting for Cluster control plane to be initialized\n    * CertificatesAvailable: Condition not yet reported\n  * InfrastructureReady:\n    * VMProvisioned: WaitingForControlPlaneInitialized\n    * NodeProvisioned: WaitingForVMProvisioned\n  * NodeHealthy: Waiting for Cluster control plane to be initialized",
+            "observedGeneration": 3,
+            "reason": "NotReady",
+            "status": "False",
+            "type": "WorkerMachinesReady"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:24:54Z",
+            "message": "",
+            "observedGeneration": 3,
+            "reason": "UpToDate",
+            "status": "True",
+            "type": "ControlPlaneMachinesUpToDate"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:24:54Z",
+            "message": "",
+            "observedGeneration": 3,
+            "reason": "UpToDate",
+            "status": "True",
+            "type": "WorkerMachinesUpToDate"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:24:53Z",
+            "message": "",
+            "observedGeneration": 3,
+            "reason": "NotPaused",
+            "status": "False",
+            "type": "Paused"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:24:54Z",
+            "message": "",
+            "observedGeneration": 3,
+            "reason": "NotDeleting",
+            "status": "False",
+            "type": "Deleting"
+          }
+        ],
+        "controlPlane": {
+          "availableReplicas": 0,
+          "desiredReplicas": 1,
+          "readyReplicas": 0,
+          "replicas": 1,
+          "upToDateReplicas": 1,
+          "versions": [
+            {
+              "replicas": 1,
+              "version": "v1.34.11"
+            }
+          ]
+        },
+        "deprecated": {
+          "v1beta1": {
+            "conditions": [
+              {
+                "lastTransitionTime": "2026-09-11T08:24:57Z",
+                "message": "Scaling up control plane to 1 replicas (actual 0)",
+                "reason": "ScalingUp",
+                "severity": "Warning",
+                "status": "False",
+                "type": "Ready"
+              },
+              {
+                "lastTransitionTime": "2026-09-11T08:24:54Z",
+                "message": "Waiting for control plane provider to indicate the control plane has been initialized",
+                "reason": "WaitingForControlPlaneProviderInitialized",
+                "severity": "Info",
+                "status": "False",
+                "type": "ControlPlaneInitialized"
+              },
+              {
+                "lastTransitionTime": "2026-09-11T08:24:57Z",
+                "message": "Scaling up control plane to 1 replicas (actual 0)",
+                "reason": "ScalingUp",
+                "severity": "Warning",
+                "status": "False",
+                "type": "ControlPlaneReady"
+              },
+              {
+                "lastTransitionTime": "2026-09-11T08:24:57Z",
+                "status": "True",
+                "type": "InfrastructureReady"
+              },
+              {
+                "lastTransitionTime": "2026-09-11T08:24:52Z",
+                "status": "True",
+                "type": "TopologyReconciled"
+              }
+            ]
+          }
+        },
+        "initialization": {
+          "infrastructureProvisioned": true
+        },
+        "observedGeneration": 3,
+        "phase": "Provisioned",
+        "workers": {
+          "availableReplicas": 0,
+          "desiredReplicas": 2,
+          "readyReplicas": 0,
+          "replicas": 2,
+          "upToDateReplicas": 2,
+          "versions": [
+            {
+              "replicas": 2,
+              "version": "v1.34.11"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "apiVersion": "addons.cluster.x-k8s.io/v1beta2",
+      "kind": "ClusterResourceSetBinding",
+      "metadata": {
+        "creationTimestamp": "2026-09-11T08:24:52Z",
+        "generation": 2,
+        "managedFields": [
+          {
+            "apiVersion": "addons.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:ownerReferences": {
+                  ".": {},
+                  "k:{\"uid\":\"7c1ea051-9d36-4e76-b66a-2afa2fcbcd64\"}": {}
+                }
+              },
+              "f:spec": {
+                ".": {},
+                "f:bindings": {},
+                "f:clusterName": {}
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "time": "2026-09-11T08:24:52Z"
+          }
+        ],
+        "name": "mem-vmstall",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "addons.cluster.x-k8s.io/v1beta2",
+            "kind": "ClusterResourceSet",
+            "name": "calico",
+            "uid": "7c1ea051-9d36-4e76-b66a-2afa2fcbcd64"
+          }
+        ],
+        "resourceVersion": "6770",
+        "uid": "1bccc90c-b91b-4673-9c54-35bda1f764b2"
+      },
+      "spec": {
+        "bindings": [
+          {
+            "clusterResourceSetName": "calico"
+          }
+        ],
+        "clusterName": "mem-vmstall"
+      }
+    },
+    {
+      "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+      "kind": "DevCluster",
+      "metadata": {
+        "annotations": {
+          "cluster.x-k8s.io/cloned-from-groupkind": "DevClusterTemplate.infrastructure.cluster.x-k8s.io",
+          "cluster.x-k8s.io/cloned-from-name": "sf-vmstall-cluster",
+          "inmemorycluster.infrastructure.cluster.x-k8s.io/listener": "default/mem-vmstall"
+        },
+        "creationTimestamp": "2026-09-11T08:24:52Z",
+        "finalizers": [
+          "dockercluster.infrastructure.cluster.x-k8s.io"
+        ],
+        "generation": 2,
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "mem-vmstall",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "managedFields": [
+          {
+            "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:annotations": {
+                  "f:cluster.x-k8s.io/cloned-from-groupkind": {},
+                  "f:cluster.x-k8s.io/cloned-from-name": {}
+                },
+                "f:labels": {
+                  "f:cluster.x-k8s.io/cluster-name": {},
+                  "f:topology.cluster.x-k8s.io/owned": {}
+                }
+              },
+              "f:spec": {
+                "f:backend": {
+                  "f:inMemory": {}
+                }
+              }
+            },
+            "manager": "capi-topology",
+            "operation": "Apply",
+            "time": "2026-09-11T08:24:52Z"
+          },
+          {
+            "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:annotations": {
+                  "f:inmemorycluster.infrastructure.cluster.x-k8s.io/listener": {}
+                },
+                "f:finalizers": {
+                  ".": {},
+                  "v:\"dockercluster.infrastructure.cluster.x-k8s.io\"": {}
+                },
+                "f:ownerReferences": {
+                  "k:{\"uid\":\"530946b7-7abe-4ddf-b6a1-ea563488c839\"}": {}
+                }
+              },
+              "f:spec": {
+                "f:controlPlaneEndpoint": {
+                  ".": {},
+                  "f:host": {},
+                  "f:port": {}
+                }
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "time": "2026-09-11T08:24:56Z"
+          },
+          {
+            "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                ".": {},
+                "f:conditions": {
+                  ".": {},
+                  "k:{\"type\":\"Paused\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  }
+                },
+                "f:initialization": {
+                  ".": {},
+                  "f:provisioned": {}
+                }
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "subresource": "status",
+            "time": "2026-09-11T08:24:57Z"
+          }
+        ],
+        "name": "mem-vmstall-wrqzx",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Cluster",
+            "name": "mem-vmstall",
+            "uid": "530946b7-7abe-4ddf-b6a1-ea563488c839"
+          }
+        ],
+        "resourceVersion": "6838",
+        "uid": "c416c5d2-a4a2-4b9e-a38e-8ce0e23bb8b5"
+      },
+      "spec": {
+        "backend": {
+          "inMemory": {}
+        },
+        "controlPlaneEndpoint": {
+          "host": "10.244.0.11",
+          "port": 20003
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-11T08:24:55Z",
+            "message": "",
+            "observedGeneration": 2,
+            "reason": "NotPaused",
+            "status": "False",
+            "type": "Paused"
+          }
+        ],
+        "initialization": {
+          "provisioned": true
+        }
+      }
+    },
+    {
+      "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+      "kind": "DevMachine",
+      "metadata": {
+        "annotations": {
+          "cluster.x-k8s.io/cloned-from-groupkind": "DevMachineTemplate.infrastructure.cluster.x-k8s.io",
+          "cluster.x-k8s.io/cloned-from-name": "mem-vmstall-default-5fkpf"
+        },
+        "creationTimestamp": "2026-09-11T08:25:14Z",
+        "finalizers": [
+          "dockermachine.infrastructure.cluster.x-k8s.io"
+        ],
+        "generation": 1,
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "mem-vmstall",
+          "cluster.x-k8s.io/deployment-name": "mem-vmstall-default-cl8xj",
+          "cluster.x-k8s.io/set-name": "mem-vmstall-default-cl8xj-qmrp6",
+          "machine-template-hash": "4256700818-qmrp6",
+          "topology.cluster.x-k8s.io/deployment-name": "default",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "managedFields": [
+          {
+            "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:annotations": {},
+                "f:labels": {
+                  "f:cluster.x-k8s.io/cluster-name": {},
+                  "f:cluster.x-k8s.io/deployment-name": {},
+                  "f:cluster.x-k8s.io/set-name": {},
+                  "f:machine-template-hash": {},
+                  "f:topology.cluster.x-k8s.io/deployment-name": {},
+                  "f:topology.cluster.x-k8s.io/owned": {}
+                }
+              }
+            },
+            "manager": "capi-machineset-metadata",
+            "operation": "Apply"
+          },
+          {
+            "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:spec": {
+                "f:backend": {
+                  "f:inMemory": {
+                    "f:node": {
+                      "f:provisioning": {
+                        "f:startupDuration": {},
+                        "f:startupJitter": {}
+                      }
+                    },
+                    "f:vm": {
+                      "f:provisioning": {
+                        "f:startupDuration": {},
+                        "f:startupJitter": {}
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "manager": "capi-machineset",
+            "operation": "Apply",
+            "time": "2026-09-11T08:25:14Z"
+          },
+          {
+            "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:finalizers": {
+                  ".": {},
+                  "v:\"dockermachine.infrastructure.cluster.x-k8s.io\"": {}
+                },
+                "f:ownerReferences": {
+                  "k:{\"uid\":\"b4d211f2-60a8-454d-b199-3fe4809ef8e0\"}": {}
+                }
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "time": "2026-09-11T08:25:17Z"
+          },
+          {
+            "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                ".": {},
+                "f:conditions": {
+                  ".": {},
+                  "k:{\"type\":\"NodeProvisioned\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Paused\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Ready\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"VMProvisioned\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  }
+                },
+                "f:deprecated": {
+                  ".": {},
+                  "f:v1beta1": {
+                    ".": {},
+                    "f:conditions": {}
+                  }
+                }
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "subresource": "status",
+            "time": "2026-09-11T08:25:19Z"
+          }
+        ],
+        "name": "mem-vmstall-default-cl8xj-qmrp6-5nr97",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Machine",
+            "name": "mem-vmstall-default-cl8xj-qmrp6-5nr97",
+            "uid": "b4d211f2-60a8-454d-b199-3fe4809ef8e0"
+          }
+        ],
+        "resourceVersion": "7046",
+        "uid": "ab07c6c2-a23f-4dca-878d-01cc288e5dba"
+      },
+      "spec": {
+        "backend": {
+          "inMemory": {
+            "node": {
+              "provisioning": {
+                "startupDuration": "1s",
+                "startupJitter": "0.2"
+              }
+            },
+            "vm": {
+              "provisioning": {
+                "startupDuration": "30m",
+                "startupJitter": "0.2"
+              }
+            }
+          }
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-11T08:25:19Z",
+            "message": "* VMProvisioned: WaitingForControlPlaneInitialized\n* NodeProvisioned: WaitingForVMProvisioned",
+            "observedGeneration": 1,
+            "reason": "NotReady",
+            "status": "False",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:19Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "WaitingForVMProvisioned",
+            "status": "False",
+            "type": "NodeProvisioned"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:19Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "WaitingForControlPlaneInitialized",
+            "status": "False",
+            "type": "VMProvisioned"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:18Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotPaused",
+            "status": "False",
+            "type": "Paused"
+          }
+        ],
+        "deprecated": {
+          "v1beta1": {
+            "conditions": [
+              {
+                "lastTransitionTime": "2026-09-11T08:25:19Z",
+                "message": "0 of 2 completed",
+                "reason": "WaitingControlPlaneInitialized",
+                "severity": "Info",
+                "status": "False",
+                "type": "Ready"
+              },
+              {
+                "lastTransitionTime": "2026-09-11T08:25:19Z",
+                "reason": "WaitingControlPlaneInitialized",
+                "severity": "Info",
+                "status": "False",
+                "type": "VMProvisioned"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+      "kind": "DevMachine",
+      "metadata": {
+        "annotations": {
+          "cluster.x-k8s.io/cloned-from-groupkind": "DevMachineTemplate.infrastructure.cluster.x-k8s.io",
+          "cluster.x-k8s.io/cloned-from-name": "mem-vmstall-default-5fkpf"
+        },
+        "creationTimestamp": "2026-09-11T08:25:14Z",
+        "finalizers": [
+          "dockermachine.infrastructure.cluster.x-k8s.io"
+        ],
+        "generation": 1,
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "mem-vmstall",
+          "cluster.x-k8s.io/deployment-name": "mem-vmstall-default-cl8xj",
+          "cluster.x-k8s.io/set-name": "mem-vmstall-default-cl8xj-qmrp6",
+          "machine-template-hash": "4256700818-qmrp6",
+          "topology.cluster.x-k8s.io/deployment-name": "default",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "managedFields": [
+          {
+            "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:annotations": {},
+                "f:labels": {
+                  "f:cluster.x-k8s.io/cluster-name": {},
+                  "f:cluster.x-k8s.io/deployment-name": {},
+                  "f:cluster.x-k8s.io/set-name": {},
+                  "f:machine-template-hash": {},
+                  "f:topology.cluster.x-k8s.io/deployment-name": {},
+                  "f:topology.cluster.x-k8s.io/owned": {}
+                }
+              }
+            },
+            "manager": "capi-machineset-metadata",
+            "operation": "Apply"
+          },
+          {
+            "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:spec": {
+                "f:backend": {
+                  "f:inMemory": {
+                    "f:node": {
+                      "f:provisioning": {
+                        "f:startupDuration": {},
+                        "f:startupJitter": {}
+                      }
+                    },
+                    "f:vm": {
+                      "f:provisioning": {
+                        "f:startupDuration": {},
+                        "f:startupJitter": {}
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "manager": "capi-machineset",
+            "operation": "Apply",
+            "time": "2026-09-11T08:25:14Z"
+          },
+          {
+            "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:finalizers": {
+                  ".": {},
+                  "v:\"dockermachine.infrastructure.cluster.x-k8s.io\"": {}
+                },
+                "f:ownerReferences": {
+                  "k:{\"uid\":\"bd375989-2320-4f1c-a6e9-6a9b19a91d6c\"}": {}
+                }
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "time": "2026-09-11T08:25:16Z"
+          },
+          {
+            "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                ".": {},
+                "f:conditions": {
+                  ".": {},
+                  "k:{\"type\":\"NodeProvisioned\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Paused\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Ready\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"VMProvisioned\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  }
+                },
+                "f:deprecated": {
+                  ".": {},
+                  "f:v1beta1": {
+                    ".": {},
+                    "f:conditions": {}
+                  }
+                }
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "subresource": "status",
+            "time": "2026-09-11T08:25:18Z"
+          }
+        ],
+        "name": "mem-vmstall-default-cl8xj-qmrp6-7l4tr",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Machine",
+            "name": "mem-vmstall-default-cl8xj-qmrp6-7l4tr",
+            "uid": "bd375989-2320-4f1c-a6e9-6a9b19a91d6c"
+          }
+        ],
+        "resourceVersion": "7043",
+        "uid": "2c429f36-343a-4be2-94fb-daeaa9b7a0c2"
+      },
+      "spec": {
+        "backend": {
+          "inMemory": {
+            "node": {
+              "provisioning": {
+                "startupDuration": "1s",
+                "startupJitter": "0.2"
+              }
+            },
+            "vm": {
+              "provisioning": {
+                "startupDuration": "30m",
+                "startupJitter": "0.2"
+              }
+            }
+          }
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-11T08:25:18Z",
+            "message": "* VMProvisioned: WaitingForControlPlaneInitialized\n* NodeProvisioned: WaitingForVMProvisioned",
+            "observedGeneration": 1,
+            "reason": "NotReady",
+            "status": "False",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:18Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "WaitingForVMProvisioned",
+            "status": "False",
+            "type": "NodeProvisioned"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:18Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "WaitingForControlPlaneInitialized",
+            "status": "False",
+            "type": "VMProvisioned"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:17Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotPaused",
+            "status": "False",
+            "type": "Paused"
+          }
+        ],
+        "deprecated": {
+          "v1beta1": {
+            "conditions": [
+              {
+                "lastTransitionTime": "2026-09-11T08:25:18Z",
+                "message": "0 of 2 completed",
+                "reason": "WaitingControlPlaneInitialized",
+                "severity": "Info",
+                "status": "False",
+                "type": "Ready"
+              },
+              {
+                "lastTransitionTime": "2026-09-11T08:25:18Z",
+                "reason": "WaitingControlPlaneInitialized",
+                "severity": "Info",
+                "status": "False",
+                "type": "VMProvisioned"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+      "kind": "DevMachine",
+      "metadata": {
+        "annotations": {
+          "cluster.x-k8s.io/cloned-from-groupkind": "DevMachineTemplate.infrastructure.cluster.x-k8s.io",
+          "cluster.x-k8s.io/cloned-from-name": "mem-vmstall-wwl27"
+        },
+        "creationTimestamp": "2026-09-11T08:25:00Z",
+        "finalizers": [
+          "dockermachine.infrastructure.cluster.x-k8s.io"
+        ],
+        "generation": 1,
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "mem-vmstall",
+          "cluster.x-k8s.io/control-plane": "",
+          "cluster.x-k8s.io/control-plane-name": "mem-vmstall-k4ssg",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "managedFields": [
+          {
+            "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:annotations": {},
+                "f:labels": {
+                  "f:cluster.x-k8s.io/cluster-name": {},
+                  "f:cluster.x-k8s.io/control-plane": {},
+                  "f:cluster.x-k8s.io/control-plane-name": {},
+                  "f:topology.cluster.x-k8s.io/owned": {}
+                }
+              }
+            },
+            "manager": "capi-kubeadmcontrolplane-metadata",
+            "operation": "Apply"
+          },
+          {
+            "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:spec": {
+                "f:backend": {
+                  "f:inMemory": {
+                    "f:apiServer": {
+                      "f:provisioning": {
+                        "f:startupDuration": {},
+                        "f:startupJitter": {}
+                      }
+                    },
+                    "f:etcd": {
+                      "f:provisioning": {
+                        "f:startupDuration": {},
+                        "f:startupJitter": {}
+                      }
+                    },
+                    "f:node": {
+                      "f:provisioning": {
+                        "f:startupDuration": {},
+                        "f:startupJitter": {}
+                      }
+                    },
+                    "f:vm": {
+                      "f:provisioning": {
+                        "f:startupDuration": {},
+                        "f:startupJitter": {}
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "manager": "capi-kubeadmcontrolplane",
+            "operation": "Apply",
+            "time": "2026-09-11T08:25:00Z"
+          },
+          {
+            "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:finalizers": {
+                  ".": {},
+                  "v:\"dockermachine.infrastructure.cluster.x-k8s.io\"": {}
+                },
+                "f:ownerReferences": {
+                  "k:{\"uid\":\"8a55115a-6de6-46b0-aa22-9f413ec9bb98\"}": {}
+                }
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "time": "2026-09-11T08:25:03Z"
+          },
+          {
+            "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                ".": {},
+                "f:conditions": {
+                  ".": {},
+                  "k:{\"type\":\"APIServerProvisioned\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"EtcdProvisioned\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"NodeProvisioned\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Paused\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Ready\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"VMProvisioned\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  }
+                },
+                "f:deprecated": {
+                  ".": {},
+                  "f:v1beta1": {
+                    ".": {},
+                    "f:conditions": {}
+                  }
+                }
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "subresource": "status",
+            "time": "2026-09-11T08:25:06Z"
+          }
+        ],
+        "name": "mem-vmstall-k4ssg-rt7mf",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Machine",
+            "name": "mem-vmstall-k4ssg-rt7mf",
+            "uid": "8a55115a-6de6-46b0-aa22-9f413ec9bb98"
+          }
+        ],
+        "resourceVersion": "6936",
+        "uid": "1e67acaf-d708-40e8-b70e-e9408eee1336"
+      },
+      "spec": {
+        "backend": {
+          "inMemory": {
+            "apiServer": {
+              "provisioning": {
+                "startupDuration": "1s",
+                "startupJitter": "0.2"
+              }
+            },
+            "etcd": {
+              "provisioning": {
+                "startupDuration": "1s",
+                "startupJitter": "0.2"
+              }
+            },
+            "node": {
+              "provisioning": {
+                "startupDuration": "1s",
+                "startupJitter": "0.2"
+              }
+            },
+            "vm": {
+              "provisioning": {
+                "startupDuration": "30m",
+                "startupJitter": "0.2"
+              }
+            }
+          }
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-11T08:25:05Z",
+            "message": "* VMProvisioned: WaitingForStartupTimeout\n* NodeProvisioned: WaitingForVMProvisioned\n* EtcdProvisioned: WaitingForVMProvisioned\n* APIServerProvisioned: WaitingForVMProvisioned",
+            "observedGeneration": 1,
+            "reason": "NotReady",
+            "status": "False",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:05Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "WaitingForVMProvisioned",
+            "status": "False",
+            "type": "APIServerProvisioned"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:05Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "WaitingForVMProvisioned",
+            "status": "False",
+            "type": "EtcdProvisioned"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:05Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "WaitingForVMProvisioned",
+            "status": "False",
+            "type": "NodeProvisioned"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:05Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "WaitingForStartupTimeout",
+            "status": "False",
+            "type": "VMProvisioned"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:04Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotPaused",
+            "status": "False",
+            "type": "Paused"
+          }
+        ],
+        "deprecated": {
+          "v1beta1": {
+            "conditions": [
+              {
+                "lastTransitionTime": "2026-09-11T08:25:06Z",
+                "message": "0 of 4 completed",
+                "reason": "WaitingForStartupTimeout",
+                "severity": "Info",
+                "status": "False",
+                "type": "Ready"
+              },
+              {
+                "lastTransitionTime": "2026-09-11T08:25:06Z",
+                "reason": "WaitingForStartupTimeout",
+                "severity": "Info",
+                "status": "False",
+                "type": "VMProvisioned"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+      "kind": "DevMachineTemplate",
+      "metadata": {
+        "annotations": {
+          "cluster.x-k8s.io/cloned-from-groupkind": "DevMachineTemplate.infrastructure.cluster.x-k8s.io",
+          "cluster.x-k8s.io/cloned-from-name": "sf-vmstall-default-machine"
+        },
+        "creationTimestamp": "2026-09-11T08:24:52Z",
+        "generation": 1,
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "mem-vmstall",
+          "sixfields.io/break-glass": "true",
+          "topology.cluster.x-k8s.io/deployment-name": "default",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "managedFields": [
+          {
+            "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:annotations": {
+                  "f:cluster.x-k8s.io/cloned-from-groupkind": {},
+                  "f:cluster.x-k8s.io/cloned-from-name": {}
+                },
+                "f:labels": {
+                  "f:cluster.x-k8s.io/cluster-name": {},
+                  "f:sixfields.io/break-glass": {},
+                  "f:topology.cluster.x-k8s.io/deployment-name": {},
+                  "f:topology.cluster.x-k8s.io/owned": {}
+                },
+                "f:ownerReferences": {
+                  "k:{\"uid\":\"530946b7-7abe-4ddf-b6a1-ea563488c839\"}": {}
+                }
+              },
+              "f:spec": {
+                "f:template": {
+                  "f:spec": {
+                    "f:backend": {
+                      "f:inMemory": {
+                        "f:node": {
+                          "f:provisioning": {
+                            "f:startupDuration": {},
+                            "f:startupJitter": {}
+                          }
+                        },
+                        "f:vm": {
+                          "f:provisioning": {
+                            "f:startupDuration": {},
+                            "f:startupJitter": {}
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "manager": "capi-topology",
+            "operation": "Apply",
+            "time": "2026-09-11T08:24:52Z"
+          },
+          {
+            "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                ".": {},
+                "f:capacity": {
+                  ".": {},
+                  "f:cpu": {},
+                  "f:memory": {}
+                }
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "subresource": "status",
+            "time": "2026-09-11T08:24:52Z"
+          }
+        ],
+        "name": "mem-vmstall-default-5fkpf",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "kind": "Cluster",
+            "name": "mem-vmstall",
+            "uid": "530946b7-7abe-4ddf-b6a1-ea563488c839"
+          }
+        ],
+        "resourceVersion": "6772",
+        "uid": "a6ca3af9-2d89-43f1-a300-81afe00bc0c0"
+      },
+      "spec": {
+        "template": {
+          "spec": {
+            "backend": {
+              "inMemory": {
+                "node": {
+                  "provisioning": {
+                    "startupDuration": "1s",
+                    "startupJitter": "0.2"
+                  }
+                },
+                "vm": {
+                  "provisioning": {
+                    "startupDuration": "30m",
+                    "startupJitter": "0.2"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "status": {
+        "capacity": {
+          "cpu": "2",
+          "memory": "8125552Ki"
+        }
+      }
+    },
+    {
+      "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+      "kind": "DevMachineTemplate",
+      "metadata": {
+        "annotations": {
+          "cluster.x-k8s.io/cloned-from-groupkind": "DevMachineTemplate.infrastructure.cluster.x-k8s.io",
+          "cluster.x-k8s.io/cloned-from-name": "sf-vmstall-cp-machine"
+        },
+        "creationTimestamp": "2026-09-11T08:24:52Z",
+        "generation": 1,
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "mem-vmstall",
+          "sixfields.io/break-glass": "true",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "managedFields": [
+          {
+            "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:annotations": {
+                  "f:cluster.x-k8s.io/cloned-from-groupkind": {},
+                  "f:cluster.x-k8s.io/cloned-from-name": {}
+                },
+                "f:labels": {
+                  "f:cluster.x-k8s.io/cluster-name": {},
+                  "f:sixfields.io/break-glass": {},
+                  "f:topology.cluster.x-k8s.io/owned": {}
+                },
+                "f:ownerReferences": {
+                  "k:{\"uid\":\"530946b7-7abe-4ddf-b6a1-ea563488c839\"}": {}
+                }
+              },
+              "f:spec": {
+                "f:template": {
+                  "f:spec": {
+                    "f:backend": {
+                      "f:inMemory": {
+                        "f:apiServer": {
+                          "f:provisioning": {
+                            "f:startupDuration": {},
+                            "f:startupJitter": {}
+                          }
+                        },
+                        "f:etcd": {
+                          "f:provisioning": {
+                            "f:startupDuration": {},
+                            "f:startupJitter": {}
+                          }
+                        },
+                        "f:node": {
+                          "f:provisioning": {
+                            "f:startupDuration": {},
+                            "f:startupJitter": {}
+                          }
+                        },
+                        "f:vm": {
+                          "f:provisioning": {
+                            "f:startupDuration": {},
+                            "f:startupJitter": {}
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "manager": "capi-topology",
+            "operation": "Apply",
+            "time": "2026-09-11T08:24:52Z"
+          },
+          {
+            "apiVersion": "infrastructure.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                ".": {},
+                "f:capacity": {
+                  ".": {},
+                  "f:cpu": {},
+                  "f:memory": {}
+                }
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "subresource": "status",
+            "time": "2026-09-11T08:24:52Z"
+          }
+        ],
+        "name": "mem-vmstall-wwl27",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "kind": "Cluster",
+            "name": "mem-vmstall",
+            "uid": "530946b7-7abe-4ddf-b6a1-ea563488c839"
+          }
+        ],
+        "resourceVersion": "6773",
+        "uid": "34b327fa-03ac-465a-917a-6ed55197d0db"
+      },
+      "spec": {
+        "template": {
+          "spec": {
+            "backend": {
+              "inMemory": {
+                "apiServer": {
+                  "provisioning": {
+                    "startupDuration": "1s",
+                    "startupJitter": "0.2"
+                  }
+                },
+                "etcd": {
+                  "provisioning": {
+                    "startupDuration": "1s",
+                    "startupJitter": "0.2"
+                  }
+                },
+                "node": {
+                  "provisioning": {
+                    "startupDuration": "1s",
+                    "startupJitter": "0.2"
+                  }
+                },
+                "vm": {
+                  "provisioning": {
+                    "startupDuration": "30m",
+                    "startupJitter": "0.2"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "status": {
+        "capacity": {
+          "cpu": "2",
+          "memory": "8125552Ki"
+        }
+      }
+    },
+    {
+      "apiVersion": "bootstrap.cluster.x-k8s.io/v1beta2",
+      "kind": "KubeadmConfig",
+      "metadata": {
+        "annotations": {
+          "cluster.x-k8s.io/cloned-from-groupkind": "KubeadmConfigTemplate.bootstrap.cluster.x-k8s.io",
+          "cluster.x-k8s.io/cloned-from-name": "mem-vmstall-default-4kj4p"
+        },
+        "creationTimestamp": "2026-09-11T08:25:14Z",
+        "generation": 1,
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "mem-vmstall",
+          "cluster.x-k8s.io/deployment-name": "mem-vmstall-default-cl8xj",
+          "cluster.x-k8s.io/set-name": "mem-vmstall-default-cl8xj-qmrp6",
+          "machine-template-hash": "4256700818-qmrp6",
+          "topology.cluster.x-k8s.io/deployment-name": "default",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "managedFields": [
+          {
+            "apiVersion": "bootstrap.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:annotations": {},
+                "f:labels": {
+                  "f:cluster.x-k8s.io/cluster-name": {},
+                  "f:cluster.x-k8s.io/deployment-name": {},
+                  "f:cluster.x-k8s.io/set-name": {},
+                  "f:machine-template-hash": {},
+                  "f:topology.cluster.x-k8s.io/deployment-name": {},
+                  "f:topology.cluster.x-k8s.io/owned": {}
+                }
+              }
+            },
+            "manager": "capi-machineset-metadata",
+            "operation": "Apply"
+          },
+          {
+            "apiVersion": "bootstrap.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:spec": {
+                "f:joinConfiguration": {
+                  "f:nodeRegistration": {
+                    "f:kubeletExtraArgs": {
+                      "k:{\"name\":\"eviction-hard\",\"value\":\"nodefs.available\\u003c0%,nodefs.inodesFree\\u003c0%,imagefs.available\\u003c0%\"}": {
+                        ".": {},
+                        "f:name": {},
+                        "f:value": {}
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "manager": "capi-machineset",
+            "operation": "Apply",
+            "time": "2026-09-11T08:25:14Z"
+          },
+          {
+            "apiVersion": "bootstrap.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:ownerReferences": {
+                  "k:{\"uid\":\"b4d211f2-60a8-454d-b199-3fe4809ef8e0\"}": {}
+                }
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "time": "2026-09-11T08:25:16Z"
+          },
+          {
+            "apiVersion": "bootstrap.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                ".": {},
+                "f:conditions": {
+                  ".": {},
+                  "k:{\"type\":\"DataSecretAvailable\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Paused\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Ready\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  }
+                },
+                "f:deprecated": {
+                  ".": {},
+                  "f:v1beta1": {
+                    ".": {},
+                    "f:conditions": {}
+                  }
+                },
+                "f:observedGeneration": {}
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "subresource": "status",
+            "time": "2026-09-11T08:25:17Z"
+          }
+        ],
+        "name": "mem-vmstall-default-cl8xj-qmrp6-5nr97",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Machine",
+            "name": "mem-vmstall-default-cl8xj-qmrp6-5nr97",
+            "uid": "b4d211f2-60a8-454d-b199-3fe4809ef8e0"
+          }
+        ],
+        "resourceVersion": "7036",
+        "uid": "e352ab1f-2844-4445-94ff-e59f1ffa05f5"
+      },
+      "spec": {
+        "joinConfiguration": {
+          "nodeRegistration": {
+            "kubeletExtraArgs": [
+              {
+                "name": "eviction-hard",
+                "value": "nodefs.available\u003c0%,nodefs.inodesFree\u003c0%,imagefs.available\u003c0%"
+              }
+            ]
+          }
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-11T08:25:17Z",
+            "message": "* DataSecretAvailable: Waiting for Cluster control plane to be initialized\n* CertificatesAvailable: Condition not yet reported",
+            "observedGeneration": 1,
+            "reason": "NotReady",
+            "status": "False",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:17Z",
+            "message": "Waiting for Cluster control plane to be initialized",
+            "observedGeneration": 1,
+            "reason": "NotAvailable",
+            "status": "False",
+            "type": "DataSecretAvailable"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:16Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotPaused",
+            "status": "False",
+            "type": "Paused"
+          }
+        ],
+        "deprecated": {
+          "v1beta1": {
+            "conditions": [
+              {
+                "lastTransitionTime": "2026-09-11T08:25:17Z",
+                "reason": "WaitingForControlPlaneAvailable",
+                "severity": "Info",
+                "status": "False",
+                "type": "Ready"
+              },
+              {
+                "lastTransitionTime": "2026-09-11T08:25:17Z",
+                "reason": "WaitingForControlPlaneAvailable",
+                "severity": "Info",
+                "status": "False",
+                "type": "DataSecretAvailable"
+              }
+            ]
+          }
+        },
+        "observedGeneration": 1
+      }
+    },
+    {
+      "apiVersion": "bootstrap.cluster.x-k8s.io/v1beta2",
+      "kind": "KubeadmConfig",
+      "metadata": {
+        "annotations": {
+          "cluster.x-k8s.io/cloned-from-groupkind": "KubeadmConfigTemplate.bootstrap.cluster.x-k8s.io",
+          "cluster.x-k8s.io/cloned-from-name": "mem-vmstall-default-4kj4p"
+        },
+        "creationTimestamp": "2026-09-11T08:25:14Z",
+        "generation": 1,
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "mem-vmstall",
+          "cluster.x-k8s.io/deployment-name": "mem-vmstall-default-cl8xj",
+          "cluster.x-k8s.io/set-name": "mem-vmstall-default-cl8xj-qmrp6",
+          "machine-template-hash": "4256700818-qmrp6",
+          "topology.cluster.x-k8s.io/deployment-name": "default",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "managedFields": [
+          {
+            "apiVersion": "bootstrap.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:annotations": {},
+                "f:labels": {
+                  "f:cluster.x-k8s.io/cluster-name": {},
+                  "f:cluster.x-k8s.io/deployment-name": {},
+                  "f:cluster.x-k8s.io/set-name": {},
+                  "f:machine-template-hash": {},
+                  "f:topology.cluster.x-k8s.io/deployment-name": {},
+                  "f:topology.cluster.x-k8s.io/owned": {}
+                }
+              }
+            },
+            "manager": "capi-machineset-metadata",
+            "operation": "Apply"
+          },
+          {
+            "apiVersion": "bootstrap.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:spec": {
+                "f:joinConfiguration": {
+                  "f:nodeRegistration": {
+                    "f:kubeletExtraArgs": {
+                      "k:{\"name\":\"eviction-hard\",\"value\":\"nodefs.available\\u003c0%,nodefs.inodesFree\\u003c0%,imagefs.available\\u003c0%\"}": {
+                        ".": {},
+                        "f:name": {},
+                        "f:value": {}
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "manager": "capi-machineset",
+            "operation": "Apply",
+            "time": "2026-09-11T08:25:14Z"
+          },
+          {
+            "apiVersion": "bootstrap.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:ownerReferences": {
+                  "k:{\"uid\":\"bd375989-2320-4f1c-a6e9-6a9b19a91d6c\"}": {}
+                }
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "time": "2026-09-11T08:25:16Z"
+          },
+          {
+            "apiVersion": "bootstrap.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                ".": {},
+                "f:conditions": {
+                  ".": {},
+                  "k:{\"type\":\"DataSecretAvailable\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Paused\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Ready\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  }
+                },
+                "f:deprecated": {
+                  ".": {},
+                  "f:v1beta1": {
+                    ".": {},
+                    "f:conditions": {}
+                  }
+                },
+                "f:observedGeneration": {}
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "subresource": "status",
+            "time": "2026-09-11T08:25:17Z"
+          }
+        ],
+        "name": "mem-vmstall-default-cl8xj-qmrp6-7l4tr",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Machine",
+            "name": "mem-vmstall-default-cl8xj-qmrp6-7l4tr",
+            "uid": "bd375989-2320-4f1c-a6e9-6a9b19a91d6c"
+          }
+        ],
+        "resourceVersion": "7033",
+        "uid": "5df21796-42e7-419a-a37e-44da245b6935"
+      },
+      "spec": {
+        "joinConfiguration": {
+          "nodeRegistration": {
+            "kubeletExtraArgs": [
+              {
+                "name": "eviction-hard",
+                "value": "nodefs.available\u003c0%,nodefs.inodesFree\u003c0%,imagefs.available\u003c0%"
+              }
+            ]
+          }
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-11T08:25:17Z",
+            "message": "* DataSecretAvailable: Waiting for Cluster control plane to be initialized\n* CertificatesAvailable: Condition not yet reported",
+            "observedGeneration": 1,
+            "reason": "NotReady",
+            "status": "False",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:17Z",
+            "message": "Waiting for Cluster control plane to be initialized",
+            "observedGeneration": 1,
+            "reason": "NotAvailable",
+            "status": "False",
+            "type": "DataSecretAvailable"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:16Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotPaused",
+            "status": "False",
+            "type": "Paused"
+          }
+        ],
+        "deprecated": {
+          "v1beta1": {
+            "conditions": [
+              {
+                "lastTransitionTime": "2026-09-11T08:25:17Z",
+                "reason": "WaitingForControlPlaneAvailable",
+                "severity": "Info",
+                "status": "False",
+                "type": "Ready"
+              },
+              {
+                "lastTransitionTime": "2026-09-11T08:25:17Z",
+                "reason": "WaitingForControlPlaneAvailable",
+                "severity": "Info",
+                "status": "False",
+                "type": "DataSecretAvailable"
+              }
+            ]
+          }
+        },
+        "observedGeneration": 1
+      }
+    },
+    {
+      "apiVersion": "bootstrap.cluster.x-k8s.io/v1beta2",
+      "kind": "KubeadmConfig",
+      "metadata": {
+        "creationTimestamp": "2026-09-11T08:25:00Z",
+        "generation": 2,
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "mem-vmstall",
+          "cluster.x-k8s.io/control-plane": "",
+          "cluster.x-k8s.io/control-plane-name": "mem-vmstall-k4ssg",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "managedFields": [
+          {
+            "apiVersion": "bootstrap.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:spec": {
+                "f:clusterConfiguration": {
+                  "f:apiServer": {
+                    "f:certSANs": {}
+                  },
+                  "f:featureGates": {
+                    "f:ControlPlaneKubeletLocalMode": {}
+                  }
+                },
+                "f:initConfiguration": {
+                  "f:nodeRegistration": {
+                    "f:kubeletExtraArgs": {
+                      "k:{\"name\":\"eviction-hard\",\"value\":\"nodefs.available\\u003c0%,nodefs.inodesFree\\u003c0%,imagefs.available\\u003c0%\"}": {
+                        ".": {},
+                        "f:name": {},
+                        "f:value": {}
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "manager": "capi-kubeadmcontrolplane",
+            "operation": "Apply",
+            "time": "2026-09-11T08:25:00Z"
+          },
+          {
+            "apiVersion": "bootstrap.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:annotations": {},
+                "f:labels": {
+                  "f:cluster.x-k8s.io/cluster-name": {},
+                  "f:cluster.x-k8s.io/control-plane": {},
+                  "f:cluster.x-k8s.io/control-plane-name": {},
+                  "f:topology.cluster.x-k8s.io/owned": {}
+                }
+              }
+            },
+            "manager": "capi-kubeadmcontrolplane-metadata",
+            "operation": "Apply",
+            "time": "2026-09-11T08:25:05Z"
+          },
+          {
+            "apiVersion": "bootstrap.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:ownerReferences": {
+                  "k:{\"uid\":\"8a55115a-6de6-46b0-aa22-9f413ec9bb98\"}": {}
+                }
+              },
+              "f:spec": {
+                "f:clusterConfiguration": {
+                  "f:controlPlaneEndpoint": {}
+                }
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "time": "2026-09-11T08:25:04Z"
+          },
+          {
+            "apiVersion": "bootstrap.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                ".": {},
+                "f:conditions": {
+                  ".": {},
+                  "k:{\"type\":\"CertificatesAvailable\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"DataSecretAvailable\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Paused\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Ready\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  }
+                },
+                "f:dataSecretName": {},
+                "f:deprecated": {
+                  ".": {},
+                  "f:v1beta1": {
+                    ".": {},
+                    "f:conditions": {}
+                  }
+                },
+                "f:initialization": {
+                  ".": {},
+                  "f:dataSecretCreated": {}
+                },
+                "f:observedGeneration": {}
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "subresource": "status",
+            "time": "2026-09-11T08:25:05Z"
+          }
+        ],
+        "name": "mem-vmstall-k4ssg-rt7mf",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Machine",
+            "name": "mem-vmstall-k4ssg-rt7mf",
+            "uid": "8a55115a-6de6-46b0-aa22-9f413ec9bb98"
+          }
+        ],
+        "resourceVersion": "6932",
+        "uid": "91ee9184-5e19-4a2d-950f-fb0934e1a8d8"
+      },
+      "spec": {
+        "clusterConfiguration": {
+          "apiServer": {
+            "certSANs": [
+              "localhost",
+              "host.docker.internal",
+              "::",
+              "::1",
+              "127.0.0.1",
+              "0.0.0.0"
+            ]
+          },
+          "controlPlaneEndpoint": "10.244.0.11:20003",
+          "featureGates": {
+            "ControlPlaneKubeletLocalMode": true
+          }
+        },
+        "initConfiguration": {
+          "nodeRegistration": {
+            "kubeletExtraArgs": [
+              {
+                "name": "eviction-hard",
+                "value": "nodefs.available\u003c0%,nodefs.inodesFree\u003c0%,imagefs.available\u003c0%"
+              }
+            ]
+          }
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-11T08:25:04Z",
+            "message": "",
+            "observedGeneration": 2,
+            "reason": "Ready",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:04Z",
+            "message": "",
+            "observedGeneration": 2,
+            "reason": "Available",
+            "status": "True",
+            "type": "CertificatesAvailable"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:04Z",
+            "message": "",
+            "observedGeneration": 2,
+            "reason": "Available",
+            "status": "True",
+            "type": "DataSecretAvailable"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:03Z",
+            "message": "",
+            "observedGeneration": 2,
+            "reason": "NotPaused",
+            "status": "False",
+            "type": "Paused"
+          }
+        ],
+        "dataSecretName": "mem-vmstall-k4ssg-rt7mf",
+        "deprecated": {
+          "v1beta1": {
+            "conditions": [
+              {
+                "lastTransitionTime": "2026-09-11T08:25:04Z",
+                "status": "True",
+                "type": "Ready"
+              },
+              {
+                "lastTransitionTime": "2026-09-11T08:25:04Z",
+                "status": "True",
+                "type": "CertificatesAvailable"
+              },
+              {
+                "lastTransitionTime": "2026-09-11T08:25:04Z",
+                "status": "True",
+                "type": "DataSecretAvailable"
+              }
+            ]
+          }
+        },
+        "initialization": {
+          "dataSecretCreated": true
+        },
+        "observedGeneration": 2
+      }
+    },
+    {
+      "apiVersion": "bootstrap.cluster.x-k8s.io/v1beta2",
+      "kind": "KubeadmConfigTemplate",
+      "metadata": {
+        "annotations": {
+          "cluster.x-k8s.io/cloned-from-groupkind": "KubeadmConfigTemplate.bootstrap.cluster.x-k8s.io",
+          "cluster.x-k8s.io/cloned-from-name": "std-kubeadm-default-bootstrap"
+        },
+        "creationTimestamp": "2026-09-11T08:24:52Z",
+        "generation": 1,
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "mem-vmstall",
+          "sixfields.io/break-glass": "true",
+          "topology.cluster.x-k8s.io/deployment-name": "default",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "managedFields": [
+          {
+            "apiVersion": "bootstrap.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:annotations": {
+                  "f:cluster.x-k8s.io/cloned-from-groupkind": {},
+                  "f:cluster.x-k8s.io/cloned-from-name": {}
+                },
+                "f:labels": {
+                  "f:cluster.x-k8s.io/cluster-name": {},
+                  "f:sixfields.io/break-glass": {},
+                  "f:topology.cluster.x-k8s.io/deployment-name": {},
+                  "f:topology.cluster.x-k8s.io/owned": {}
+                },
+                "f:ownerReferences": {
+                  "k:{\"uid\":\"530946b7-7abe-4ddf-b6a1-ea563488c839\"}": {}
+                }
+              },
+              "f:spec": {
+                "f:template": {
+                  "f:spec": {
+                    "f:joinConfiguration": {
+                      "f:nodeRegistration": {
+                        "f:kubeletExtraArgs": {
+                          "k:{\"name\":\"eviction-hard\",\"value\":\"nodefs.available\\u003c0%,nodefs.inodesFree\\u003c0%,imagefs.available\\u003c0%\"}": {
+                            ".": {},
+                            "f:name": {},
+                            "f:value": {}
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "manager": "capi-topology",
+            "operation": "Apply",
+            "time": "2026-09-11T08:24:52Z"
+          }
+        ],
+        "name": "mem-vmstall-default-4kj4p",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "kind": "Cluster",
+            "name": "mem-vmstall",
+            "uid": "530946b7-7abe-4ddf-b6a1-ea563488c839"
+          }
+        ],
+        "resourceVersion": "6774",
+        "uid": "0d148ad3-767b-4f29-b5e6-08ad3e4773ef"
+      },
+      "spec": {
+        "template": {
+          "spec": {
+            "joinConfiguration": {
+              "nodeRegistration": {
+                "kubeletExtraArgs": [
+                  {
+                    "name": "eviction-hard",
+                    "value": "nodefs.available\u003c0%,nodefs.inodesFree\u003c0%,imagefs.available\u003c0%"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "controlplane.cluster.x-k8s.io/v1beta2",
+      "kind": "KubeadmControlPlane",
+      "metadata": {
+        "annotations": {
+          "cluster.x-k8s.io/cloned-from-groupkind": "KubeadmControlPlaneTemplate.controlplane.cluster.x-k8s.io",
+          "cluster.x-k8s.io/cloned-from-name": "std-kubeadm-control-plane"
+        },
+        "creationTimestamp": "2026-09-11T08:24:52Z",
+        "finalizers": [
+          "kubeadm.controlplane.cluster.x-k8s.io"
+        ],
+        "generation": 1,
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "mem-vmstall",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "managedFields": [
+          {
+            "apiVersion": "controlplane.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:annotations": {
+                  "f:cluster.x-k8s.io/cloned-from-groupkind": {},
+                  "f:cluster.x-k8s.io/cloned-from-name": {}
+                },
+                "f:labels": {
+                  "f:cluster.x-k8s.io/cluster-name": {},
+                  "f:topology.cluster.x-k8s.io/owned": {}
+                }
+              },
+              "f:spec": {
+                "f:kubeadmConfigSpec": {
+                  "f:clusterConfiguration": {
+                    "f:apiServer": {
+                      "f:certSANs": {}
+                    }
+                  },
+                  "f:initConfiguration": {
+                    "f:nodeRegistration": {
+                      "f:kubeletExtraArgs": {
+                        "k:{\"name\":\"eviction-hard\",\"value\":\"nodefs.available\\u003c0%,nodefs.inodesFree\\u003c0%,imagefs.available\\u003c0%\"}": {
+                          ".": {},
+                          "f:name": {},
+                          "f:value": {}
+                        }
+                      }
+                    }
+                  },
+                  "f:joinConfiguration": {
+                    "f:nodeRegistration": {
+                      "f:kubeletExtraArgs": {
+                        "k:{\"name\":\"eviction-hard\",\"value\":\"nodefs.available\\u003c0%,nodefs.inodesFree\\u003c0%,imagefs.available\\u003c0%\"}": {
+                          ".": {},
+                          "f:name": {},
+                          "f:value": {}
+                        }
+                      }
+                    }
+                  }
+                },
+                "f:machineTemplate": {
+                  "f:metadata": {
+                    "f:labels": {
+                      "f:cluster.x-k8s.io/cluster-name": {},
+                      "f:topology.cluster.x-k8s.io/owned": {}
+                    }
+                  },
+                  "f:spec": {
+                    "f:infrastructureRef": {
+                      "f:apiGroup": {},
+                      "f:kind": {},
+                      "f:name": {}
+                    }
+                  }
+                },
+                "f:version": {}
+              }
+            },
+            "manager": "capi-topology",
+            "operation": "Apply",
+            "time": "2026-09-11T08:24:52Z"
+          },
+          {
+            "apiVersion": "controlplane.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:finalizers": {
+                  ".": {},
+                  "v:\"kubeadm.controlplane.cluster.x-k8s.io\"": {}
+                },
+                "f:ownerReferences": {
+                  "k:{\"uid\":\"530946b7-7abe-4ddf-b6a1-ea563488c839\"}": {}
+                }
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "time": "2026-09-11T08:24:54Z"
+          },
+          {
+            "apiVersion": "controlplane.cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                ".": {},
+                "f:availableReplicas": {},
+                "f:conditions": {
+                  ".": {},
+                  "k:{\"type\":\"Available\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"CertificatesAvailable\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"ControlPlaneComponentsHealthy\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Deleting\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"EtcdClusterHealthy\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Initialized\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"MachinesReady\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"MachinesUpToDate\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Paused\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Remediating\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"RollingOut\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"ScalingDown\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"ScalingUp\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  }
+                },
+                "f:deprecated": {
+                  ".": {},
+                  "f:v1beta1": {
+                    ".": {},
+                    "f:conditions": {},
+                    "f:readyReplicas": {},
+                    "f:unavailableReplicas": {},
+                    "f:updatedReplicas": {}
+                  }
+                },
+                "f:readyReplicas": {},
+                "f:replicas": {},
+                "f:selector": {},
+                "f:upToDateReplicas": {},
+                "f:version": {},
+                "f:versions": {
+                  ".": {},
+                  "k:{\"version\":\"v1.34.11\"}": {
+                    ".": {},
+                    "f:replicas": {},
+                    "f:version": {}
+                  }
+                }
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "subresource": "status",
+            "time": "2026-09-11T08:25:06Z"
+          }
+        ],
+        "name": "mem-vmstall-k4ssg",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Cluster",
+            "name": "mem-vmstall",
+            "uid": "530946b7-7abe-4ddf-b6a1-ea563488c839"
+          }
+        ],
+        "resourceVersion": "6940",
+        "uid": "3d895456-6251-4de3-b0f6-af1834e402af"
+      },
+      "spec": {
+        "kubeadmConfigSpec": {
+          "clusterConfiguration": {
+            "apiServer": {
+              "certSANs": [
+                "localhost",
+                "host.docker.internal",
+                "::",
+                "::1",
+                "127.0.0.1",
+                "0.0.0.0"
+              ]
+            }
+          },
+          "initConfiguration": {
+            "nodeRegistration": {
+              "kubeletExtraArgs": [
+                {
+                  "name": "eviction-hard",
+                  "value": "nodefs.available\u003c0%,nodefs.inodesFree\u003c0%,imagefs.available\u003c0%"
+                }
+              ]
+            }
+          },
+          "joinConfiguration": {
+            "nodeRegistration": {
+              "kubeletExtraArgs": [
+                {
+                  "name": "eviction-hard",
+                  "value": "nodefs.available\u003c0%,nodefs.inodesFree\u003c0%,imagefs.available\u003c0%"
+                }
+              ]
+            }
+          }
+        },
+        "machineTemplate": {
+          "metadata": {
+            "labels": {
+              "cluster.x-k8s.io/cluster-name": "mem-vmstall",
+              "topology.cluster.x-k8s.io/owned": ""
+            }
+          },
+          "spec": {
+            "infrastructureRef": {
+              "apiGroup": "infrastructure.cluster.x-k8s.io",
+              "kind": "DevMachineTemplate",
+              "name": "mem-vmstall-wwl27"
+            }
+          }
+        },
+        "replicas": 1,
+        "rollout": {
+          "strategy": {
+            "rollingUpdate": {
+              "maxSurge": 1
+            },
+            "type": "RollingUpdate"
+          }
+        },
+        "version": "v1.34.11"
+      },
+      "status": {
+        "availableReplicas": 0,
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-11T08:24:56Z",
+            "message": "Control plane not yet initialized",
+            "observedGeneration": 1,
+            "reason": "NotAvailable",
+            "status": "False",
+            "type": "Available"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:24:59Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "Available",
+            "status": "True",
+            "type": "CertificatesAvailable"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:24:56Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotInitialized",
+            "status": "False",
+            "type": "Initialized"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:24:56Z",
+            "message": "Waiting for Cluster control plane to be initialized",
+            "observedGeneration": 1,
+            "reason": "InspectionFailed",
+            "status": "Unknown",
+            "type": "EtcdClusterHealthy"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:24:56Z",
+            "message": "Waiting for Cluster control plane to be initialized",
+            "observedGeneration": 1,
+            "reason": "InspectionFailed",
+            "status": "Unknown",
+            "type": "ControlPlaneComponentsHealthy"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:24:56Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotRollingOut",
+            "status": "False",
+            "type": "RollingOut"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:24:56Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotRemediating",
+            "status": "False",
+            "type": "Remediating"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:24:56Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotScalingDown",
+            "status": "False",
+            "type": "ScalingDown"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:00Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotScalingUp",
+            "status": "False",
+            "type": "ScalingUp"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:02Z",
+            "message": "* Machine mem-vmstall-k4ssg-rt7mf:\n  * InfrastructureReady:\n    * VMProvisioned: WaitingForStartupTimeout\n    * NodeProvisioned: WaitingForVMProvisioned\n    * EtcdProvisioned: WaitingForVMProvisioned\n    * APIServerProvisioned: WaitingForVMProvisioned\n  * NodeHealthy: Waiting for Cluster control plane to be initialized\n  * NodeKubeadmLabelsAndTaintsSet: Waiting for Cluster control plane to be initialized\n  * Control plane components: Waiting for Cluster control plane to be initialized\n  * EtcdMemberHealthy: Waiting for Cluster control plane to be initialized",
+            "observedGeneration": 1,
+            "reason": "NotReady",
+            "status": "False",
+            "type": "MachinesReady"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:24:56Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "UpToDate",
+            "status": "True",
+            "type": "MachinesUpToDate"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:24:55Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotPaused",
+            "status": "False",
+            "type": "Paused"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:24:56Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotDeleting",
+            "status": "False",
+            "type": "Deleting"
+          }
+        ],
+        "deprecated": {
+          "v1beta1": {
+            "conditions": [
+              {
+                "lastTransitionTime": "2026-09-11T08:24:56Z",
+                "message": "Scaling up control plane to 1 replicas (actual 0)",
+                "reason": "ScalingUp",
+                "severity": "Warning",
+                "status": "False",
+                "type": "Ready"
+              },
+              {
+                "lastTransitionTime": "2026-09-11T08:25:00Z",
+                "reason": "WaitingForKubeadmInit",
+                "severity": "Info",
+                "status": "False",
+                "type": "Available"
+              },
+              {
+                "lastTransitionTime": "2026-09-11T08:24:59Z",
+                "status": "True",
+                "type": "CertificatesAvailable"
+              },
+              {
+                "lastTransitionTime": "2026-09-11T08:25:00Z",
+                "status": "True",
+                "type": "MachinesCreated"
+              },
+              {
+                "lastTransitionTime": "2026-09-11T08:25:06Z",
+                "message": "0 of 1 completed",
+                "reason": "WaitingForStartupTimeout @ Machine/mem-vmstall-k4ssg-rt7mf",
+                "severity": "Info",
+                "status": "False",
+                "type": "MachinesReady"
+              },
+              {
+                "lastTransitionTime": "2026-09-11T08:24:56Z",
+                "message": "Scaling up control plane to 1 replicas (actual 0)",
+                "reason": "ScalingUp",
+                "severity": "Warning",
+                "status": "False",
+                "type": "Resized"
+              }
+            ],
+            "readyReplicas": 0,
+            "unavailableReplicas": 1,
+            "updatedReplicas": 1
+          }
+        },
+        "readyReplicas": 0,
+        "replicas": 1,
+        "selector": "cluster.x-k8s.io/cluster-name=mem-vmstall,cluster.x-k8s.io/control-plane",
+        "upToDateReplicas": 1,
+        "version": "v1.34.11",
+        "versions": [
+          {
+            "replicas": 1,
+            "version": "v1.34.11"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "cluster.x-k8s.io/v1beta2",
+      "kind": "Machine",
+      "metadata": {
+        "creationTimestamp": "2026-09-11T08:25:14Z",
+        "finalizers": [
+          "machine.cluster.x-k8s.io"
+        ],
+        "generation": 1,
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "mem-vmstall",
+          "cluster.x-k8s.io/deployment-name": "mem-vmstall-default-cl8xj",
+          "cluster.x-k8s.io/set-name": "mem-vmstall-default-cl8xj-qmrp6",
+          "machine-template-hash": "4256700818-qmrp6",
+          "topology.cluster.x-k8s.io/deployment-name": "default",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "managedFields": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:finalizers": {
+                  "v:\"machine.cluster.x-k8s.io\"": {}
+                },
+                "f:labels": {
+                  "f:cluster.x-k8s.io/cluster-name": {},
+                  "f:cluster.x-k8s.io/deployment-name": {},
+                  "f:cluster.x-k8s.io/set-name": {},
+                  "f:machine-template-hash": {},
+                  "f:topology.cluster.x-k8s.io/deployment-name": {},
+                  "f:topology.cluster.x-k8s.io/owned": {}
+                },
+                "f:ownerReferences": {
+                  "k:{\"uid\":\"5e561844-9381-4baa-9e23-ece289fac968\"}": {}
+                }
+              },
+              "f:spec": {
+                "f:bootstrap": {
+                  "f:configRef": {
+                    "f:apiGroup": {},
+                    "f:kind": {},
+                    "f:name": {}
+                  }
+                },
+                "f:clusterName": {},
+                "f:infrastructureRef": {
+                  "f:apiGroup": {},
+                  "f:kind": {},
+                  "f:name": {}
+                },
+                "f:version": {}
+              }
+            },
+            "manager": "capi-machineset",
+            "operation": "Apply",
+            "time": "2026-09-11T08:25:14Z"
+          },
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                ".": {},
+                "f:conditions": {
+                  ".": {},
+                  "k:{\"type\":\"Available\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"BootstrapConfigReady\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Deleting\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"InfrastructureReady\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"NodeHealthy\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"NodeReady\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Paused\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Ready\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"UpToDate\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Updating\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  }
+                },
+                "f:deprecated": {
+                  ".": {},
+                  "f:v1beta1": {
+                    ".": {},
+                    "f:conditions": {}
+                  }
+                },
+                "f:lastUpdated": {},
+                "f:observedGeneration": {},
+                "f:phase": {}
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "subresource": "status",
+            "time": "2026-09-11T08:25:19Z"
+          }
+        ],
+        "name": "mem-vmstall-default-cl8xj-qmrp6-5nr97",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "MachineSet",
+            "name": "mem-vmstall-default-cl8xj-qmrp6",
+            "uid": "5e561844-9381-4baa-9e23-ece289fac968"
+          }
+        ],
+        "resourceVersion": "7047",
+        "uid": "b4d211f2-60a8-454d-b199-3fe4809ef8e0"
+      },
+      "spec": {
+        "bootstrap": {
+          "configRef": {
+            "apiGroup": "bootstrap.cluster.x-k8s.io",
+            "kind": "KubeadmConfig",
+            "name": "mem-vmstall-default-cl8xj-qmrp6-5nr97"
+          }
+        },
+        "clusterName": "mem-vmstall",
+        "deletion": {
+          "nodeDeletionTimeoutSeconds": 10
+        },
+        "infrastructureRef": {
+          "apiGroup": "infrastructure.cluster.x-k8s.io",
+          "kind": "DevMachine",
+          "name": "mem-vmstall-default-cl8xj-qmrp6-5nr97"
+        },
+        "version": "v1.34.11"
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-11T08:25:16Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotReady",
+            "status": "False",
+            "type": "Available"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:16Z",
+            "message": "* BootstrapConfigReady:\n  * DataSecretAvailable: Waiting for Cluster control plane to be initialized\n  * CertificatesAvailable: Condition not yet reported\n* InfrastructureReady:\n  * VMProvisioned: WaitingForControlPlaneInitialized\n  * NodeProvisioned: WaitingForVMProvisioned\n* NodeHealthy: Waiting for Cluster control plane to be initialized",
+            "observedGeneration": 1,
+            "reason": "NotReady",
+            "status": "False",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:16Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "UpToDate",
+            "status": "True",
+            "type": "UpToDate"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:16Z",
+            "message": "* DataSecretAvailable: Waiting for Cluster control plane to be initialized\n* CertificatesAvailable: Condition not yet reported",
+            "observedGeneration": 1,
+            "reason": "NotReady",
+            "status": "False",
+            "type": "BootstrapConfigReady"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:16Z",
+            "message": "* VMProvisioned: WaitingForControlPlaneInitialized\n* NodeProvisioned: WaitingForVMProvisioned",
+            "observedGeneration": 1,
+            "reason": "NotReady",
+            "status": "False",
+            "type": "InfrastructureReady"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:16Z",
+            "message": "Waiting for Cluster control plane to be initialized",
+            "observedGeneration": 1,
+            "reason": "InspectionFailed",
+            "status": "Unknown",
+            "type": "NodeHealthy"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:16Z",
+            "message": "Waiting for Cluster control plane to be initialized",
+            "observedGeneration": 1,
+            "reason": "InspectionFailed",
+            "status": "Unknown",
+            "type": "NodeReady"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:16Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotUpdating",
+            "status": "False",
+            "type": "Updating"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:14Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotPaused",
+            "status": "False",
+            "type": "Paused"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:16Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotDeleting",
+            "status": "False",
+            "type": "Deleting"
+          }
+        ],
+        "deprecated": {
+          "v1beta1": {
+            "conditions": [
+              {
+                "lastTransitionTime": "2026-09-11T08:25:19Z",
+                "message": "0 of 2 completed",
+                "reason": "WaitingControlPlaneInitialized",
+                "severity": "Info",
+                "status": "False",
+                "type": "Ready"
+              },
+              {
+                "lastTransitionTime": "2026-09-11T08:25:18Z",
+                "reason": "WaitingForControlPlaneAvailable",
+                "severity": "Info",
+                "status": "False",
+                "type": "BootstrapReady"
+              },
+              {
+                "lastTransitionTime": "2026-09-11T08:25:19Z",
+                "message": "0 of 2 completed",
+                "reason": "WaitingControlPlaneInitialized",
+                "severity": "Info",
+                "status": "False",
+                "type": "InfrastructureReady"
+              },
+              {
+                "lastTransitionTime": "2026-09-11T08:25:16Z",
+                "reason": "WaitingForNodeRef",
+                "severity": "Info",
+                "status": "False",
+                "type": "NodeHealthy"
+              }
+            ]
+          }
+        },
+        "lastUpdated": "2026-09-11T08:25:16Z",
+        "observedGeneration": 1,
+        "phase": "Pending"
+      }
+    },
+    {
+      "apiVersion": "cluster.x-k8s.io/v1beta2",
+      "kind": "Machine",
+      "metadata": {
+        "creationTimestamp": "2026-09-11T08:25:14Z",
+        "finalizers": [
+          "machine.cluster.x-k8s.io"
+        ],
+        "generation": 1,
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "mem-vmstall",
+          "cluster.x-k8s.io/deployment-name": "mem-vmstall-default-cl8xj",
+          "cluster.x-k8s.io/set-name": "mem-vmstall-default-cl8xj-qmrp6",
+          "machine-template-hash": "4256700818-qmrp6",
+          "topology.cluster.x-k8s.io/deployment-name": "default",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "managedFields": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:finalizers": {
+                  "v:\"machine.cluster.x-k8s.io\"": {}
+                },
+                "f:labels": {
+                  "f:cluster.x-k8s.io/cluster-name": {},
+                  "f:cluster.x-k8s.io/deployment-name": {},
+                  "f:cluster.x-k8s.io/set-name": {},
+                  "f:machine-template-hash": {},
+                  "f:topology.cluster.x-k8s.io/deployment-name": {},
+                  "f:topology.cluster.x-k8s.io/owned": {}
+                },
+                "f:ownerReferences": {
+                  "k:{\"uid\":\"5e561844-9381-4baa-9e23-ece289fac968\"}": {}
+                }
+              },
+              "f:spec": {
+                "f:bootstrap": {
+                  "f:configRef": {
+                    "f:apiGroup": {},
+                    "f:kind": {},
+                    "f:name": {}
+                  }
+                },
+                "f:clusterName": {},
+                "f:infrastructureRef": {
+                  "f:apiGroup": {},
+                  "f:kind": {},
+                  "f:name": {}
+                },
+                "f:version": {}
+              }
+            },
+            "manager": "capi-machineset",
+            "operation": "Apply",
+            "time": "2026-09-11T08:25:14Z"
+          },
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                ".": {},
+                "f:conditions": {
+                  ".": {},
+                  "k:{\"type\":\"Available\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"BootstrapConfigReady\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Deleting\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"InfrastructureReady\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"NodeHealthy\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"NodeReady\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Paused\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Ready\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"UpToDate\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Updating\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  }
+                },
+                "f:deprecated": {
+                  ".": {},
+                  "f:v1beta1": {
+                    ".": {},
+                    "f:conditions": {}
+                  }
+                },
+                "f:lastUpdated": {},
+                "f:observedGeneration": {},
+                "f:phase": {}
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "subresource": "status",
+            "time": "2026-09-11T08:25:18Z"
+          }
+        ],
+        "name": "mem-vmstall-default-cl8xj-qmrp6-7l4tr",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "MachineSet",
+            "name": "mem-vmstall-default-cl8xj-qmrp6",
+            "uid": "5e561844-9381-4baa-9e23-ece289fac968"
+          }
+        ],
+        "resourceVersion": "7045",
+        "uid": "bd375989-2320-4f1c-a6e9-6a9b19a91d6c"
+      },
+      "spec": {
+        "bootstrap": {
+          "configRef": {
+            "apiGroup": "bootstrap.cluster.x-k8s.io",
+            "kind": "KubeadmConfig",
+            "name": "mem-vmstall-default-cl8xj-qmrp6-7l4tr"
+          }
+        },
+        "clusterName": "mem-vmstall",
+        "deletion": {
+          "nodeDeletionTimeoutSeconds": 10
+        },
+        "infrastructureRef": {
+          "apiGroup": "infrastructure.cluster.x-k8s.io",
+          "kind": "DevMachine",
+          "name": "mem-vmstall-default-cl8xj-qmrp6-7l4tr"
+        },
+        "version": "v1.34.11"
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-11T08:25:16Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotReady",
+            "status": "False",
+            "type": "Available"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:16Z",
+            "message": "* BootstrapConfigReady:\n  * DataSecretAvailable: Waiting for Cluster control plane to be initialized\n  * CertificatesAvailable: Condition not yet reported\n* InfrastructureReady:\n  * VMProvisioned: WaitingForControlPlaneInitialized\n  * NodeProvisioned: WaitingForVMProvisioned\n* NodeHealthy: Waiting for Cluster control plane to be initialized",
+            "observedGeneration": 1,
+            "reason": "NotReady",
+            "status": "False",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:16Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "UpToDate",
+            "status": "True",
+            "type": "UpToDate"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:16Z",
+            "message": "* DataSecretAvailable: Waiting for Cluster control plane to be initialized\n* CertificatesAvailable: Condition not yet reported",
+            "observedGeneration": 1,
+            "reason": "NotReady",
+            "status": "False",
+            "type": "BootstrapConfigReady"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:16Z",
+            "message": "* VMProvisioned: WaitingForControlPlaneInitialized\n* NodeProvisioned: WaitingForVMProvisioned",
+            "observedGeneration": 1,
+            "reason": "NotReady",
+            "status": "False",
+            "type": "InfrastructureReady"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:16Z",
+            "message": "Waiting for Cluster control plane to be initialized",
+            "observedGeneration": 1,
+            "reason": "InspectionFailed",
+            "status": "Unknown",
+            "type": "NodeHealthy"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:16Z",
+            "message": "Waiting for Cluster control plane to be initialized",
+            "observedGeneration": 1,
+            "reason": "InspectionFailed",
+            "status": "Unknown",
+            "type": "NodeReady"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:16Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotUpdating",
+            "status": "False",
+            "type": "Updating"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:14Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotPaused",
+            "status": "False",
+            "type": "Paused"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:16Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotDeleting",
+            "status": "False",
+            "type": "Deleting"
+          }
+        ],
+        "deprecated": {
+          "v1beta1": {
+            "conditions": [
+              {
+                "lastTransitionTime": "2026-09-11T08:25:18Z",
+                "message": "0 of 2 completed",
+                "reason": "WaitingControlPlaneInitialized",
+                "severity": "Info",
+                "status": "False",
+                "type": "Ready"
+              },
+              {
+                "lastTransitionTime": "2026-09-11T08:25:17Z",
+                "reason": "WaitingForControlPlaneAvailable",
+                "severity": "Info",
+                "status": "False",
+                "type": "BootstrapReady"
+              },
+              {
+                "lastTransitionTime": "2026-09-11T08:25:18Z",
+                "message": "0 of 2 completed",
+                "reason": "WaitingControlPlaneInitialized",
+                "severity": "Info",
+                "status": "False",
+                "type": "InfrastructureReady"
+              },
+              {
+                "lastTransitionTime": "2026-09-11T08:25:16Z",
+                "reason": "WaitingForNodeRef",
+                "severity": "Info",
+                "status": "False",
+                "type": "NodeHealthy"
+              }
+            ]
+          }
+        },
+        "lastUpdated": "2026-09-11T08:25:16Z",
+        "observedGeneration": 1,
+        "phase": "Pending"
+      }
+    },
+    {
+      "apiVersion": "cluster.x-k8s.io/v1beta2",
+      "kind": "Machine",
+      "metadata": {
+        "annotations": {
+          "pre-terminate.delete.hook.machine.cluster.x-k8s.io/kcp-cleanup": ""
+        },
+        "creationTimestamp": "2026-09-11T08:25:00Z",
+        "finalizers": [
+          "machine.cluster.x-k8s.io"
+        ],
+        "generation": 2,
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "mem-vmstall",
+          "cluster.x-k8s.io/control-plane": "",
+          "cluster.x-k8s.io/control-plane-name": "mem-vmstall-k4ssg",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "managedFields": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:annotations": {
+                  "f:pre-terminate.delete.hook.machine.cluster.x-k8s.io/kcp-cleanup": {}
+                },
+                "f:labels": {
+                  "f:cluster.x-k8s.io/cluster-name": {},
+                  "f:cluster.x-k8s.io/control-plane": {},
+                  "f:cluster.x-k8s.io/control-plane-name": {},
+                  "f:topology.cluster.x-k8s.io/owned": {}
+                },
+                "f:ownerReferences": {
+                  "k:{\"uid\":\"3d895456-6251-4de3-b0f6-af1834e402af\"}": {}
+                }
+              },
+              "f:spec": {
+                "f:bootstrap": {
+                  "f:configRef": {
+                    "f:apiGroup": {},
+                    "f:kind": {},
+                    "f:name": {}
+                  }
+                },
+                "f:clusterName": {},
+                "f:infrastructureRef": {
+                  "f:apiGroup": {},
+                  "f:kind": {},
+                  "f:name": {}
+                },
+                "f:readinessGates": {
+                  "k:{\"conditionType\":\"APIServerPodHealthy\"}": {
+                    ".": {},
+                    "f:conditionType": {}
+                  },
+                  "k:{\"conditionType\":\"ControllerManagerPodHealthy\"}": {
+                    ".": {},
+                    "f:conditionType": {}
+                  },
+                  "k:{\"conditionType\":\"EtcdMemberHealthy\"}": {
+                    ".": {},
+                    "f:conditionType": {}
+                  },
+                  "k:{\"conditionType\":\"EtcdPodHealthy\"}": {
+                    ".": {},
+                    "f:conditionType": {}
+                  },
+                  "k:{\"conditionType\":\"NodeKubeadmLabelsAndTaintsSet\"}": {
+                    ".": {},
+                    "f:conditionType": {}
+                  },
+                  "k:{\"conditionType\":\"SchedulerPodHealthy\"}": {
+                    ".": {},
+                    "f:conditionType": {}
+                  }
+                },
+                "f:version": {}
+              }
+            },
+            "manager": "capi-kubeadmcontrolplane",
+            "operation": "Apply",
+            "time": "2026-09-11T08:25:00Z"
+          },
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:finalizers": {
+                  ".": {},
+                  "v:\"machine.cluster.x-k8s.io\"": {}
+                }
+              },
+              "f:spec": {
+                "f:bootstrap": {
+                  "f:dataSecretName": {}
+                }
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "time": "2026-09-11T08:25:05Z"
+          },
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                ".": {},
+                "f:conditions": {
+                  ".": {},
+                  "k:{\"type\":\"APIServerPodHealthy\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Available\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"BootstrapConfigReady\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"ControllerManagerPodHealthy\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Deleting\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"EtcdMemberHealthy\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"EtcdPodHealthy\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"InfrastructureReady\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"NodeHealthy\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"NodeKubeadmLabelsAndTaintsSet\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"NodeReady\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Paused\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Ready\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"SchedulerPodHealthy\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"UpToDate\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Updating\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  }
+                },
+                "f:deprecated": {
+                  ".": {},
+                  "f:v1beta1": {
+                    ".": {},
+                    "f:conditions": {}
+                  }
+                },
+                "f:initialization": {
+                  ".": {},
+                  "f:bootstrapDataSecretCreated": {}
+                },
+                "f:lastUpdated": {},
+                "f:observedGeneration": {},
+                "f:phase": {}
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "subresource": "status",
+            "time": "2026-09-11T08:25:06Z"
+          }
+        ],
+        "name": "mem-vmstall-k4ssg-rt7mf",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "controlplane.cluster.x-k8s.io/v1beta2",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "KubeadmControlPlane",
+            "name": "mem-vmstall-k4ssg",
+            "uid": "3d895456-6251-4de3-b0f6-af1834e402af"
+          }
+        ],
+        "resourceVersion": "6939",
+        "uid": "8a55115a-6de6-46b0-aa22-9f413ec9bb98"
+      },
+      "spec": {
+        "bootstrap": {
+          "configRef": {
+            "apiGroup": "bootstrap.cluster.x-k8s.io",
+            "kind": "KubeadmConfig",
+            "name": "mem-vmstall-k4ssg-rt7mf"
+          },
+          "dataSecretName": "mem-vmstall-k4ssg-rt7mf"
+        },
+        "clusterName": "mem-vmstall",
+        "deletion": {
+          "nodeDeletionTimeoutSeconds": 10
+        },
+        "infrastructureRef": {
+          "apiGroup": "infrastructure.cluster.x-k8s.io",
+          "kind": "DevMachine",
+          "name": "mem-vmstall-k4ssg-rt7mf"
+        },
+        "readinessGates": [
+          {
+            "conditionType": "NodeKubeadmLabelsAndTaintsSet"
+          },
+          {
+            "conditionType": "APIServerPodHealthy"
+          },
+          {
+            "conditionType": "ControllerManagerPodHealthy"
+          },
+          {
+            "conditionType": "SchedulerPodHealthy"
+          },
+          {
+            "conditionType": "EtcdPodHealthy"
+          },
+          {
+            "conditionType": "EtcdMemberHealthy"
+          }
+        ],
+        "version": "v1.34.11"
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-11T08:25:02Z",
+            "message": "",
+            "observedGeneration": 2,
+            "reason": "NotReady",
+            "status": "False",
+            "type": "Available"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:02Z",
+            "message": "* InfrastructureReady:\n  * VMProvisioned: WaitingForStartupTimeout\n  * NodeProvisioned: WaitingForVMProvisioned\n  * EtcdProvisioned: WaitingForVMProvisioned\n  * APIServerProvisioned: WaitingForVMProvisioned\n* NodeHealthy: Waiting for Cluster control plane to be initialized\n* NodeKubeadmLabelsAndTaintsSet: Waiting for Cluster control plane to be initialized\n* Control plane components: Waiting for Cluster control plane to be initialized\n* EtcdMemberHealthy: Waiting for Cluster control plane to be initialized",
+            "observedGeneration": 2,
+            "reason": "NotReady",
+            "status": "False",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:00Z",
+            "message": "",
+            "observedGeneration": 2,
+            "reason": "UpToDate",
+            "status": "True",
+            "type": "UpToDate"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:04Z",
+            "message": "",
+            "observedGeneration": 2,
+            "reason": "Ready",
+            "status": "True",
+            "type": "BootstrapConfigReady"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:02Z",
+            "message": "* VMProvisioned: WaitingForStartupTimeout\n* NodeProvisioned: WaitingForVMProvisioned\n* EtcdProvisioned: WaitingForVMProvisioned\n* APIServerProvisioned: WaitingForVMProvisioned",
+            "observedGeneration": 2,
+            "reason": "NotReady",
+            "status": "False",
+            "type": "InfrastructureReady"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:02Z",
+            "message": "Waiting for Cluster control plane to be initialized",
+            "observedGeneration": 2,
+            "reason": "InspectionFailed",
+            "status": "Unknown",
+            "type": "NodeHealthy"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:02Z",
+            "message": "Waiting for Cluster control plane to be initialized",
+            "observedGeneration": 2,
+            "reason": "InspectionFailed",
+            "status": "Unknown",
+            "type": "NodeReady"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:00Z",
+            "message": "Waiting for Cluster control plane to be initialized",
+            "observedGeneration": 2,
+            "reason": "InspectionFailed",
+            "status": "Unknown",
+            "type": "NodeKubeadmLabelsAndTaintsSet"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:00Z",
+            "message": "Waiting for Cluster control plane to be initialized",
+            "observedGeneration": 2,
+            "reason": "InspectionFailed",
+            "status": "Unknown",
+            "type": "EtcdPodHealthy"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:00Z",
+            "message": "Waiting for Cluster control plane to be initialized",
+            "observedGeneration": 2,
+            "reason": "InspectionFailed",
+            "status": "Unknown",
+            "type": "EtcdMemberHealthy"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:00Z",
+            "message": "Waiting for Cluster control plane to be initialized",
+            "observedGeneration": 2,
+            "reason": "InspectionFailed",
+            "status": "Unknown",
+            "type": "APIServerPodHealthy"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:00Z",
+            "message": "Waiting for Cluster control plane to be initialized",
+            "observedGeneration": 2,
+            "reason": "InspectionFailed",
+            "status": "Unknown",
+            "type": "ControllerManagerPodHealthy"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:00Z",
+            "message": "Waiting for Cluster control plane to be initialized",
+            "observedGeneration": 2,
+            "reason": "InspectionFailed",
+            "status": "Unknown",
+            "type": "SchedulerPodHealthy"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:02Z",
+            "message": "",
+            "observedGeneration": 2,
+            "reason": "NotUpdating",
+            "status": "False",
+            "type": "Updating"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:01Z",
+            "message": "",
+            "observedGeneration": 2,
+            "reason": "NotPaused",
+            "status": "False",
+            "type": "Paused"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:02Z",
+            "message": "",
+            "observedGeneration": 2,
+            "reason": "NotDeleting",
+            "status": "False",
+            "type": "Deleting"
+          }
+        ],
+        "deprecated": {
+          "v1beta1": {
+            "conditions": [
+              {
+                "lastTransitionTime": "2026-09-11T08:25:06Z",
+                "message": "1 of 2 completed",
+                "reason": "WaitingForStartupTimeout",
+                "severity": "Info",
+                "status": "False",
+                "type": "Ready"
+              },
+              {
+                "lastTransitionTime": "2026-09-11T08:25:04Z",
+                "status": "True",
+                "type": "BootstrapReady"
+              },
+              {
+                "lastTransitionTime": "2026-09-11T08:25:06Z",
+                "message": "0 of 4 completed",
+                "reason": "WaitingForStartupTimeout",
+                "severity": "Info",
+                "status": "False",
+                "type": "InfrastructureReady"
+              },
+              {
+                "lastTransitionTime": "2026-09-11T08:25:02Z",
+                "reason": "WaitingForNodeRef",
+                "severity": "Info",
+                "status": "False",
+                "type": "NodeHealthy"
+              }
+            ]
+          }
+        },
+        "initialization": {
+          "bootstrapDataSecretCreated": true
+        },
+        "lastUpdated": "2026-09-11T08:25:05Z",
+        "observedGeneration": 2,
+        "phase": "Provisioning"
+      }
+    },
+    {
+      "apiVersion": "cluster.x-k8s.io/v1beta2",
+      "kind": "MachineDeployment",
+      "metadata": {
+        "annotations": {
+          "machinedeployment.clusters.x-k8s.io/revision": "1"
+        },
+        "creationTimestamp": "2026-09-11T08:24:52Z",
+        "finalizers": [
+          "cluster.x-k8s.io/machinedeployment",
+          "machinedeployment.topology.cluster.x-k8s.io"
+        ],
+        "generation": 1,
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "mem-vmstall",
+          "topology.cluster.x-k8s.io/deployment-name": "default",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "managedFields": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:labels": {
+                  "f:cluster.x-k8s.io/cluster-name": {},
+                  "f:topology.cluster.x-k8s.io/deployment-name": {},
+                  "f:topology.cluster.x-k8s.io/owned": {}
+                }
+              },
+              "f:spec": {
+                "f:clusterName": {},
+                "f:replicas": {},
+                "f:selector": {},
+                "f:template": {
+                  "f:metadata": {
+                    "f:labels": {
+                      "f:cluster.x-k8s.io/cluster-name": {},
+                      "f:topology.cluster.x-k8s.io/deployment-name": {},
+                      "f:topology.cluster.x-k8s.io/owned": {}
+                    }
+                  },
+                  "f:spec": {
+                    "f:bootstrap": {
+                      "f:configRef": {
+                        "f:apiGroup": {},
+                        "f:kind": {},
+                        "f:name": {}
+                      }
+                    },
+                    "f:clusterName": {},
+                    "f:infrastructureRef": {
+                      "f:apiGroup": {},
+                      "f:kind": {},
+                      "f:name": {}
+                    },
+                    "f:version": {}
+                  }
+                }
+              }
+            },
+            "manager": "capi-topology",
+            "operation": "Apply",
+            "time": "2026-09-11T08:24:52Z"
+          },
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:annotations": {
+                  ".": {},
+                  "f:machinedeployment.clusters.x-k8s.io/revision": {}
+                },
+                "f:finalizers": {
+                  ".": {},
+                  "v:\"cluster.x-k8s.io/machinedeployment\"": {},
+                  "v:\"machinedeployment.topology.cluster.x-k8s.io\"": {}
+                },
+                "f:ownerReferences": {
+                  ".": {},
+                  "k:{\"uid\":\"530946b7-7abe-4ddf-b6a1-ea563488c839\"}": {}
+                }
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "time": "2026-09-11T08:24:54Z"
+          },
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                ".": {},
+                "f:availableReplicas": {},
+                "f:conditions": {
+                  ".": {},
+                  "k:{\"type\":\"Available\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Deleting\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"MachinesReady\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"MachinesUpToDate\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Paused\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Remediating\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"RollingOut\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"ScalingDown\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"ScalingUp\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  }
+                },
+                "f:deprecated": {
+                  ".": {},
+                  "f:v1beta1": {
+                    ".": {},
+                    "f:availableReplicas": {},
+                    "f:conditions": {},
+                    "f:readyReplicas": {},
+                    "f:unavailableReplicas": {},
+                    "f:updatedReplicas": {}
+                  }
+                },
+                "f:observedGeneration": {},
+                "f:phase": {},
+                "f:readyReplicas": {},
+                "f:replicas": {},
+                "f:selector": {},
+                "f:upToDateReplicas": {},
+                "f:versions": {
+                  ".": {},
+                  "k:{\"version\":\"v1.34.11\"}": {
+                    ".": {},
+                    "f:replicas": {},
+                    "f:version": {}
+                  }
+                }
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "subresource": "status",
+            "time": "2026-09-11T08:25:20Z"
+          }
+        ],
+        "name": "mem-vmstall-default-cl8xj",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "kind": "Cluster",
+            "name": "mem-vmstall",
+            "uid": "530946b7-7abe-4ddf-b6a1-ea563488c839"
+          }
+        ],
+        "resourceVersion": "7059",
+        "uid": "fb362a5e-29e0-4163-baa7-e6b4e3b502ae"
+      },
+      "spec": {
+        "clusterName": "mem-vmstall",
+        "replicas": 2,
+        "rollout": {
+          "strategy": {
+            "rollingUpdate": {
+              "maxSurge": 1,
+              "maxUnavailable": 0
+            },
+            "type": "RollingUpdate"
+          }
+        },
+        "selector": {
+          "matchLabels": {
+            "cluster.x-k8s.io/cluster-name": "mem-vmstall",
+            "topology.cluster.x-k8s.io/deployment-name": "default",
+            "topology.cluster.x-k8s.io/owned": ""
+          }
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "cluster.x-k8s.io/cluster-name": "mem-vmstall",
+              "topology.cluster.x-k8s.io/deployment-name": "default",
+              "topology.cluster.x-k8s.io/owned": ""
+            }
+          },
+          "spec": {
+            "bootstrap": {
+              "configRef": {
+                "apiGroup": "bootstrap.cluster.x-k8s.io",
+                "kind": "KubeadmConfigTemplate",
+                "name": "mem-vmstall-default-4kj4p"
+              }
+            },
+            "clusterName": "mem-vmstall",
+            "infrastructureRef": {
+              "apiGroup": "infrastructure.cluster.x-k8s.io",
+              "kind": "DevMachineTemplate",
+              "name": "mem-vmstall-default-5fkpf"
+            },
+            "version": "v1.34.11"
+          }
+        }
+      },
+      "status": {
+        "availableReplicas": 0,
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-11T08:24:58Z",
+            "message": "0 available replicas, at least 2 required (spec.strategy.rollout.maxUnavailable is 0, spec.replicas is 2)",
+            "observedGeneration": 1,
+            "reason": "NotAvailable",
+            "status": "False",
+            "type": "Available"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:24:54Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotRollingOut",
+            "status": "False",
+            "type": "RollingOut"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:24:54Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotRemediating",
+            "status": "False",
+            "type": "Remediating"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:24:54Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotScalingDown",
+            "status": "False",
+            "type": "ScalingDown"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:17Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotScalingUp",
+            "status": "False",
+            "type": "ScalingUp"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:17Z",
+            "message": "* Machines mem-vmstall-default-cl8xj-qmrp6-5nr97, mem-vmstall-default-cl8xj-qmrp6-7l4tr:\n  * BootstrapConfigReady:\n    * DataSecretAvailable: Waiting for Cluster control plane to be initialized\n    * CertificatesAvailable: Condition not yet reported\n  * InfrastructureReady:\n    * VMProvisioned: WaitingForControlPlaneInitialized\n    * NodeProvisioned: WaitingForVMProvisioned\n  * NodeHealthy: Waiting for Cluster control plane to be initialized",
+            "observedGeneration": 1,
+            "reason": "NotReady",
+            "status": "False",
+            "type": "MachinesReady"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:24:54Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "UpToDate",
+            "status": "True",
+            "type": "MachinesUpToDate"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:24:53Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotPaused",
+            "status": "False",
+            "type": "Paused"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:24:54Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotDeleting",
+            "status": "False",
+            "type": "Deleting"
+          }
+        ],
+        "deprecated": {
+          "v1beta1": {
+            "availableReplicas": 0,
+            "conditions": [
+              {
+                "lastTransitionTime": "2026-09-11T08:24:54Z",
+                "message": "Minimum availability requires 2 replicas, current 0 available",
+                "reason": "WaitingForAvailableMachines",
+                "severity": "Warning",
+                "status": "False",
+                "type": "Ready"
+              },
+              {
+                "lastTransitionTime": "2026-09-11T08:24:54Z",
+                "message": "Minimum availability requires 2 replicas, current 0 available",
+                "reason": "WaitingForAvailableMachines",
+                "severity": "Warning",
+                "status": "False",
+                "type": "Available"
+              },
+              {
+                "lastTransitionTime": "2026-09-11T08:25:17Z",
+                "message": "Scaling up MachineSet to 2 replicas (actual 0)",
+                "reason": "ScalingUp",
+                "severity": "Warning",
+                "status": "False",
+                "type": "MachineSetReady"
+              }
+            ],
+            "readyReplicas": 0,
+            "unavailableReplicas": 2,
+            "updatedReplicas": 2
+          }
+        },
+        "observedGeneration": 1,
+        "phase": "Running",
+        "readyReplicas": 0,
+        "replicas": 2,
+        "selector": "cluster.x-k8s.io/cluster-name=mem-vmstall,topology.cluster.x-k8s.io/deployment-name=default,topology.cluster.x-k8s.io/owned=",
+        "upToDateReplicas": 2,
+        "versions": [
+          {
+            "replicas": 2,
+            "version": "v1.34.11"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "cluster.x-k8s.io/v1beta2",
+      "kind": "MachineSet",
+      "metadata": {
+        "annotations": {
+          "cluster.x-k8s.io/disable-machine-create": "false",
+          "machinedeployment.clusters.x-k8s.io/desired-replicas": "2",
+          "machinedeployment.clusters.x-k8s.io/max-replicas": "3",
+          "machinedeployment.clusters.x-k8s.io/revision": "1"
+        },
+        "creationTimestamp": "2026-09-11T08:24:54Z",
+        "finalizers": [
+          "machineset.topology.cluster.x-k8s.io",
+          "cluster.x-k8s.io/machineset"
+        ],
+        "generation": 1,
+        "labels": {
+          "cluster.x-k8s.io/cluster-name": "mem-vmstall",
+          "cluster.x-k8s.io/deployment-name": "mem-vmstall-default-cl8xj",
+          "machine-template-hash": "4256700818-qmrp6",
+          "topology.cluster.x-k8s.io/deployment-name": "default",
+          "topology.cluster.x-k8s.io/owned": ""
+        },
+        "managedFields": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:annotations": {
+                  "f:cluster.x-k8s.io/disable-machine-create": {},
+                  "f:machinedeployment.clusters.x-k8s.io/desired-replicas": {},
+                  "f:machinedeployment.clusters.x-k8s.io/max-replicas": {},
+                  "f:machinedeployment.clusters.x-k8s.io/revision": {}
+                },
+                "f:finalizers": {
+                  "v:\"cluster.x-k8s.io/machineset\"": {},
+                  "v:\"machineset.topology.cluster.x-k8s.io\"": {}
+                },
+                "f:labels": {
+                  "f:cluster.x-k8s.io/cluster-name": {},
+                  "f:cluster.x-k8s.io/deployment-name": {},
+                  "f:machine-template-hash": {},
+                  "f:topology.cluster.x-k8s.io/deployment-name": {},
+                  "f:topology.cluster.x-k8s.io/owned": {}
+                },
+                "f:ownerReferences": {
+                  "k:{\"uid\":\"fb362a5e-29e0-4163-baa7-e6b4e3b502ae\"}": {}
+                }
+              },
+              "f:spec": {
+                "f:clusterName": {},
+                "f:replicas": {},
+                "f:selector": {},
+                "f:template": {
+                  "f:metadata": {
+                    "f:labels": {
+                      "f:cluster.x-k8s.io/cluster-name": {},
+                      "f:machine-template-hash": {},
+                      "f:topology.cluster.x-k8s.io/deployment-name": {},
+                      "f:topology.cluster.x-k8s.io/owned": {}
+                    }
+                  },
+                  "f:spec": {
+                    "f:bootstrap": {
+                      "f:configRef": {
+                        "f:apiGroup": {},
+                        "f:kind": {},
+                        "f:name": {}
+                      }
+                    },
+                    "f:clusterName": {},
+                    "f:infrastructureRef": {
+                      "f:apiGroup": {},
+                      "f:kind": {},
+                      "f:name": {}
+                    },
+                    "f:version": {}
+                  }
+                }
+              }
+            },
+            "manager": "capi-machinedeployment",
+            "operation": "Apply",
+            "time": "2026-09-11T08:24:54Z"
+          },
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:finalizers": {
+                  ".": {},
+                  "v:\"cluster.x-k8s.io/machineset\"": {},
+                  "v:\"machineset.topology.cluster.x-k8s.io\"": {}
+                }
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "time": "2026-09-11T08:24:55Z"
+          },
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                ".": {},
+                "f:availableReplicas": {},
+                "f:conditions": {
+                  ".": {},
+                  "k:{\"type\":\"Deleting\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"MachinesReady\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"MachinesUpToDate\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Paused\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Remediating\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"ScalingDown\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"ScalingUp\"}": {
+                    ".": {},
+                    "f:lastTransitionTime": {},
+                    "f:message": {},
+                    "f:observedGeneration": {},
+                    "f:reason": {},
+                    "f:status": {},
+                    "f:type": {}
+                  }
+                },
+                "f:deprecated": {
+                  ".": {},
+                  "f:v1beta1": {
+                    ".": {},
+                    "f:availableReplicas": {},
+                    "f:conditions": {},
+                    "f:fullyLabeledReplicas": {},
+                    "f:readyReplicas": {}
+                  }
+                },
+                "f:observedGeneration": {},
+                "f:readyReplicas": {},
+                "f:replicas": {},
+                "f:selector": {},
+                "f:upToDateReplicas": {},
+                "f:versions": {
+                  ".": {},
+                  "k:{\"version\":\"v1.34.11\"}": {
+                    ".": {},
+                    "f:replicas": {},
+                    "f:version": {}
+                  }
+                }
+              }
+            },
+            "manager": "manager",
+            "operation": "Update",
+            "subresource": "status",
+            "time": "2026-09-11T08:25:19Z"
+          }
+        ],
+        "name": "mem-vmstall-default-cl8xj-qmrp6",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "cluster.x-k8s.io/v1beta2",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "MachineDeployment",
+            "name": "mem-vmstall-default-cl8xj",
+            "uid": "fb362a5e-29e0-4163-baa7-e6b4e3b502ae"
+          }
+        ],
+        "resourceVersion": "7057",
+        "uid": "5e561844-9381-4baa-9e23-ece289fac968"
+      },
+      "spec": {
+        "clusterName": "mem-vmstall",
+        "replicas": 2,
+        "selector": {
+          "matchLabels": {
+            "cluster.x-k8s.io/cluster-name": "mem-vmstall",
+            "machine-template-hash": "4256700818-qmrp6",
+            "topology.cluster.x-k8s.io/deployment-name": "default",
+            "topology.cluster.x-k8s.io/owned": ""
+          }
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "cluster.x-k8s.io/cluster-name": "mem-vmstall",
+              "machine-template-hash": "4256700818-qmrp6",
+              "topology.cluster.x-k8s.io/deployment-name": "default",
+              "topology.cluster.x-k8s.io/owned": ""
+            }
+          },
+          "spec": {
+            "bootstrap": {
+              "configRef": {
+                "apiGroup": "bootstrap.cluster.x-k8s.io",
+                "kind": "KubeadmConfigTemplate",
+                "name": "mem-vmstall-default-4kj4p"
+              }
+            },
+            "clusterName": "mem-vmstall",
+            "infrastructureRef": {
+              "apiGroup": "infrastructure.cluster.x-k8s.io",
+              "kind": "DevMachineTemplate",
+              "name": "mem-vmstall-default-5fkpf"
+            },
+            "version": "v1.34.11"
+          }
+        }
+      },
+      "status": {
+        "availableReplicas": 0,
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-11T08:24:57Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotRemediating",
+            "status": "False",
+            "type": "Remediating"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:24:57Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotScalingDown",
+            "status": "False",
+            "type": "ScalingDown"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:15Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotScalingUp",
+            "status": "False",
+            "type": "ScalingUp"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:25:16Z",
+            "message": "* Machines mem-vmstall-default-cl8xj-qmrp6-5nr97, mem-vmstall-default-cl8xj-qmrp6-7l4tr:\n  * BootstrapConfigReady:\n    * DataSecretAvailable: Waiting for Cluster control plane to be initialized\n    * CertificatesAvailable: Condition not yet reported\n  * InfrastructureReady:\n    * VMProvisioned: WaitingForControlPlaneInitialized\n    * NodeProvisioned: WaitingForVMProvisioned\n  * NodeHealthy: Waiting for Cluster control plane to be initialized",
+            "observedGeneration": 1,
+            "reason": "NotReady",
+            "status": "False",
+            "type": "MachinesReady"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:24:57Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "UpToDate",
+            "status": "True",
+            "type": "MachinesUpToDate"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:24:56Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotPaused",
+            "status": "False",
+            "type": "Paused"
+          },
+          {
+            "lastTransitionTime": "2026-09-11T08:24:57Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "NotDeleting",
+            "status": "False",
+            "type": "Deleting"
+          }
+        ],
+        "deprecated": {
+          "v1beta1": {
+            "availableReplicas": 0,
+            "conditions": [
+              {
+                "lastTransitionTime": "2026-09-11T08:25:15Z",
+                "message": "Scaling up MachineSet to 2 replicas (actual 0)",
+                "reason": "ScalingUp",
+                "severity": "Warning",
+                "status": "False",
+                "type": "Ready"
+              },
+              {
+                "lastTransitionTime": "2026-09-11T08:25:15Z",
+                "status": "True",
+                "type": "MachinesCreated"
+              },
+              {
+                "lastTransitionTime": "2026-09-11T08:25:19Z",
+                "message": "0 of 2 completed",
+                "reason": "WaitingControlPlaneInitialized @ Machine/mem-vmstall-default-cl8xj-qmrp6-5nr97",
+                "severity": "Info",
+                "status": "False",
+                "type": "MachinesReady"
+              },
+              {
+                "lastTransitionTime": "2026-09-11T08:24:57Z",
+                "message": "Scaling up MachineSet to 2 replicas (actual 0)",
+                "reason": "ScalingUp",
+                "severity": "Warning",
+                "status": "False",
+                "type": "Resized"
+              }
+            ],
+            "fullyLabeledReplicas": 2,
+            "readyReplicas": 0
+          }
+        },
+        "observedGeneration": 1,
+        "readyReplicas": 0,
+        "replicas": 2,
+        "selector": "cluster.x-k8s.io/cluster-name=mem-vmstall,machine-template-hash=4256700818-qmrp6,topology.cluster.x-k8s.io/deployment-name=default,topology.cluster.x-k8s.io/owned=",
+        "upToDateReplicas": 2,
+        "versions": [
+          {
+            "replicas": 2,
+            "version": "v1.34.11"
+          }
+        ]
+      }
+    }
+  ]
+}

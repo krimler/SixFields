@@ -1,0 +1,85 @@
+{
+  "cluster": {
+    "kind": "Cluster",
+    "name": "mem-vmstall",
+    "namespace": "default",
+    "group": "cluster.x-k8s.io"
+  },
+  "class": "std-inmemory-vmstall",
+  "version": "v1.34.11",
+  "placement": "self",
+  "phases": [
+    {
+      "name": "infrastructure",
+      "state": "done",
+      "detail": "ready",
+      "elapsed_ns": 5000000000,
+      "last_transition": "2026-09-11T08:24:57Z",
+      "started_at": "2026-09-11T08:24:52Z",
+      "contributors": [
+        {
+          "kind": "DevCluster",
+          "name": "mem-vmstall-wrqzx",
+          "namespace": "default",
+          "group": "infrastructure.cluster.x-k8s.io"
+        }
+      ]
+    },
+    {
+      "name": "control plane",
+      "state": "stalled",
+      "detail": "0/1 nodes",
+      "elapsed_ns": 271000000000,
+      "last_transition": "2026-09-11T08:25:05Z",
+      "started_at": "2026-09-11T08:24:57Z",
+      "contributors": [
+        {
+          "kind": "KubeadmControlPlane",
+          "name": "mem-vmstall-k4ssg",
+          "namespace": "default",
+          "group": "controlplane.cluster.x-k8s.io"
+        },
+        {
+          "kind": "Machine",
+          "name": "mem-vmstall-k4ssg-rt7mf",
+          "namespace": "default",
+          "group": "cluster.x-k8s.io"
+        }
+      ]
+    },
+    {
+      "name": "workers",
+      "state": "running",
+      "detail": "0/2 nodes",
+      "elapsed_ns": 271000000000,
+      "last_transition": "2026-09-11T08:25:19Z",
+      "started_at": "2026-09-11T08:24:57Z",
+      "contributors": [
+        {
+          "kind": "MachineDeployment",
+          "name": "mem-vmstall-default-cl8xj",
+          "namespace": "default",
+          "group": "cluster.x-k8s.io"
+        }
+      ]
+    },
+    {
+      "name": "addons",
+      "state": "running",
+      "detail": "waiting",
+      "elapsed_ns": 271000000000,
+      "started_at": "2026-09-11T08:24:57Z",
+      "contributors": [
+        {
+          "kind": "ClusterResourceSetBinding",
+          "name": "mem-vmstall",
+          "namespace": "default",
+          "group": "addons.cluster.x-k8s.io"
+        }
+      ]
+    }
+  ],
+  "ready": false,
+  "at": "2026-09-11T08:29:28Z",
+  "elapsed_ns": 276000000000
+}

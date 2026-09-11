@@ -1,0 +1,70 @@
+---
+# The fast substrate. PLAN.md Phase 3 wants stream, ETA and stall work to run
+# without Docker, and CAPD's in-memory backend provides that: it fakes VM, etcd,
+# API server and node provisioning inside the management cluster, with a startup
+# duration per component. Setting one of those past stallAfter induces a stall on
+# demand.
+#
+# The control plane is kubeadm here. The in-memory backend simulates a kubeadm
+# control plane; a k0s control plane would try to run a binary on a machine that
+# does not exist.
+apiVersion: cluster.x-k8s.io/v1beta2
+kind: ClusterClass
+metadata:
+  name: std-inmemory
+spec:
+  infrastructure:
+    templateRef:
+      apiVersion: infrastructure.cluster.x-k8s.io/v1beta2
+      kind: DevClusterTemplate
+      name: std-inmemory-cluster
+  controlPlane:
+    templateRef:
+      apiVersion: controlplane.cluster.x-k8s.io/v1beta2
+      kind: KubeadmControlPlaneTemplate
+      name: std-kubeadm-control-plane
+    machineInfrastructure:
+      templateRef:
+        apiVersion: infrastructure.cluster.x-k8s.io/v1beta2
+        kind: DevMachineTemplate
+        name: std-inmemory-control-plane-machine
+  workers:
+    machineDeployments:
+    - class: default
+      bootstrap:
+        templateRef:
+          apiVersion: bootstrap.cluster.x-k8s.io/v1beta2
+          kind: KubeadmConfigTemplate
+          name: std-kubeadm-default-bootstrap
+      infrastructure:
+        templateRef:
+          apiVersion: infrastructure.cluster.x-k8s.io/v1beta2
+          kind: DevMachineTemplate
+          name: std-inmemory-default-machine
+  variables:
+  # Control-plane replicas cannot be reached by a ClusterClass patch: the
+  # topology controller preserves spec.replicas on the control plane object when
+  # it applies patched templates
+  # (cluster-api@v1.14.2 core/reconcilers/topology/cluster/patches/patch.go:61-65,
+  # engine.go:635), and KubeadmControlPlaneTemplate has no replicas field
+  # (controlplane/kubeadm/v1beta2/kubeadmcontrolplanetemplate_types.go:89).
+  # size is therefore consumed by the generator, which writes
+  # Cluster.spec.topology.controlPlane.replicas: dev -> 1, ha -> 3.
+  - name: size
+    required: true
+    schema:
+      openAPIV3Schema:
+        type: string
+        enum: ["dev", "ha"]
+        default: dev
+        description: "dev is a single control-plane machine, ha is three."
+  # A ClusterClass has exactly one controlPlane (clusterclass_types.go:114), so
+  # hosted resolves to a second class in Phase 4 rather than to a patch here.
+  - name: placement
+    required: true
+    schema:
+      openAPIV3Schema:
+        type: string
+        enum: ["self", "hosted"]
+        default: self
+        description: "self runs the control plane on machines, hosted runs it as pods."

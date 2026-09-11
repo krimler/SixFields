@@ -131,16 +131,43 @@ func TestAssembly_VariableSchemasRejectAndDefault(t *testing.T) {
 	}
 }
 
-// docker and inmemory are the same class on two substrates: a Cluster written for
-// one applies to the other unchanged.
-func TestAssembly_SubstratesDifferOnlyInTheBackend(t *testing.T) {
-	docker := find(t, render(t, "docker"), "ClusterClass")
-	inmemory := find(t, render(t, "inmemory"), "ClusterClass")
-	require.Equal(t, docker["metadata"], inmemory["metadata"])
-	require.Equal(t, docker["spec"], inmemory["spec"])
+// The in-memory substrate exposes the same six fields and the same variables, so
+// a Cluster written for it differs from a docker one only in the class it names.
+// Its control plane is kubeadm because that is what CAPD's in-memory backend
+// simulates; a k0s control plane would try to run a binary on a machine that does
+// not exist.
+func TestAssembly_InMemorySubstrateTakesTheSameSixFields(t *testing.T) {
+	docker := find(t, render(t, "docker"), "ClusterClass")["spec"].(map[string]any)
+	inmemory := find(t, render(t, "inmemory"), "ClusterClass")["spec"].(map[string]any)
 
+	require.Equal(t, docker["variables"], inmemory["variables"])
+	require.Equal(t, "default", firstPool(t, inmemory)["class"])
+
+	// The templates are separate objects with separate names, because
+	// Dev*Template.spec.template.spec is immutable and the two substrates need
+	// two backends. The kind a user's Cluster names is the same either way.
+	require.Equal(t, templateKind(t, docker, "infrastructure"), templateKind(t, inmemory, "infrastructure"))
+
+	require.Equal(t, "KubeadmControlPlaneTemplate", templateKind(t, inmemory, "controlPlane"))
 	require.Contains(t, backendKeys(t, find(t, render(t, "docker"), "DevMachineTemplate")), "docker")
 	require.Contains(t, backendKeys(t, find(t, render(t, "inmemory"), "DevMachineTemplate")), "inMemory")
+}
+
+// Every component the in-memory backend fakes has a startup duration, and that is
+// what makes a stall inducible without Docker: set one past stallAfter and
+// nothing else changes.
+func TestAssembly_InMemoryComponentsHaveStartupDurations(t *testing.T) {
+	template := find(t, render(t, "inmemory"), "DevMachineTemplate")
+	spec := template["spec"].(map[string]any)["template"].(map[string]any)["spec"].(map[string]any)
+	inMemory, ok := spec["backend"].(map[string]any)["inMemory"].(map[string]any)
+	require.True(t, ok)
+
+	for _, component := range []string{"vm", "node"} {
+		block, ok := inMemory[component].(map[string]any)
+		require.True(t, ok, "%s has no provisioning block", component)
+		provisioning := block["provisioning"].(map[string]any)
+		require.NotEmpty(t, provisioning["startupDuration"], "%s has no startupDuration", component)
+	}
 }
 
 // PLAN.md Phase 5's acceptance: the two placements differ in exactly one class

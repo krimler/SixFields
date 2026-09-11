@@ -1,11 +1,12 @@
 ---
-# Same class name and same variables as the docker overlay, so a Cluster written
-# against one substrate applies unchanged to the other. No nodeImage patch: the
-# inMemory backend boots no image.
+# The fast substrate: same six fields, no containers. It is its own class because
+# the in-memory backend simulates a kubeadm control plane, so it cannot share the
+# k0s control plane the docker overlay uses.
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- ../../base
+- ../../bootstrap/kubeadm
+- clusterclass.yaml
 - infrastructure.yaml
 
 # Installing the assembly means writing kinds the policy manages (*Template). That

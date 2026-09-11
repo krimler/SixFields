@@ -142,3 +142,13 @@ so CI is deterministic and free.
 
 `make doctor-ai` reports which backend is active, which model it resolved, and its
 tokens/s, without sending anything but a fixed benchmark prompt.
+
+## Which variable names which model
+
+`CLUSTER_AI_MODEL` names the local model and is pinned in `versions.env`.
+`ANTHROPIC_MODEL` names the Anthropic one and has no default beyond the model the
+code ships with. They are separate because sending a local model id to Anthropic
+asks for a model that does not exist there.
+
+`CLUSTER_AI_URL` is where the local runtime listens. The binary falls back to the
+same address `versions.env` pins, and a test holds the two together.

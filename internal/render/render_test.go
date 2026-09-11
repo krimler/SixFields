@@ -35,7 +35,7 @@ func load(t *testing.T, scenario string) []snapshot.Envelope {
 func viewAt(env snapshot.Envelope, estimates map[fold.PhaseName]eta.Estimate) render.View {
 	now := fixture.NowFor(env)
 	res := fold.Fold(env, fold.Options{Now: now})
-	v := render.View{Result: res, Estimates: estimates, Elapsed: now.Sub(fixture.T0)}
+	v := render.View{Result: res, Estimates: estimates, Elapsed: res.Elapsed}
 	if stall, ok := why.Rank(env, res, why.Options{Now: now}); ok && res.Phases != nil {
 		if _, stalled := res.Stalled(); stalled {
 			v.Stall = &stall
@@ -55,7 +55,7 @@ func sampleEstimates() map[fold.PhaseName]eta.Estimate {
 // One transcript golden per scenario, in the plain renderer, which is what CI
 // reads and what the e2e assertions grep.
 func TestUX_PlainTranscriptGoldens(t *testing.T) {
-	for _, scenario := range []string{"std-docker-happy", "inmem-happy", "inmem-stall-etcd", "stall-bad-version", "hosted-docker-happy", "scale-up"} {
+	for _, scenario := range []string{"std-docker-happy", "inmem-happy", "inmem-stall-vm", "stall-bad-version", "hosted-docker-happy", "scale-up"} {
 		t.Run(scenario, func(t *testing.T) {
 			var buf bytes.Buffer
 			plain := &render.Plain{}
@@ -73,7 +73,7 @@ func TestUX_PlainTranscriptGoldens(t *testing.T) {
 // The TTY frame at both widths. A frame is a pure function of the view and the
 // width, so these goldens pin the layout without a terminal.
 func TestUX_TTYFrameGoldensAt80And120(t *testing.T) {
-	for _, scenario := range []string{"std-docker-happy", "inmem-stall-etcd"} {
+	for _, scenario := range []string{"std-docker-happy", "inmem-stall-vm"} {
 		envelopes := load(t, scenario)
 		last := envelopes[len(envelopes)-1]
 		for _, width := range []int{80, 120} {
@@ -97,7 +97,7 @@ func TestUX_TTYFrameGoldensAt80And120(t *testing.T) {
 // No meaning by colour alone: strip the ANSI from the coloured frame and it must
 // be identical to the frame rendered with colour off.
 func TestUX_ColorCarriesNoMeaning(t *testing.T) {
-	envelopes := load(t, "inmem-stall-etcd")
+	envelopes := load(t, "inmem-stall-vm")
 	v := viewAt(envelopes[len(envelopes)-1], sampleEstimates())
 
 	colored := (&render.TTY{Theme: render.Theme{Color: true}}).Frame(v, 100)
@@ -109,7 +109,7 @@ func TestUX_ColorCarriesNoMeaning(t *testing.T) {
 // The stall block: the line, then exactly one raw: line immediately after it, and
 // an action to take. This is the contract in D2.2 and D2.4.
 func TestUX_StallBlockShape(t *testing.T) {
-	for _, scenario := range []string{"inmem-stall-etcd", "stall-bad-version", "hosted-stall-pod", "stall-cp-killed"} {
+	for _, scenario := range []string{"inmem-stall-vm", "stall-bad-version", "hosted-stall-pod", "stall-cp-killed"} {
 		t.Run(scenario, func(t *testing.T) {
 			envelopes := load(t, scenario)
 			v := viewAt(envelopes[len(envelopes)-1], sampleEstimates())
@@ -143,7 +143,7 @@ func TestUX_StallBlockShape(t *testing.T) {
 // An estimate next to a stall would be a claim about progress that is not being
 // made. A stalled phase shows what the phase usually takes instead.
 func TestUX_NoETAOnAStalledPhase(t *testing.T) {
-	envelopes := load(t, "inmem-stall-etcd")
+	envelopes := load(t, "inmem-stall-vm")
 	v := viewAt(envelopes[len(envelopes)-1], sampleEstimates())
 	frame := (&render.TTY{}).Frame(v, 100)
 	require.NotContains(t, frame, "left")
@@ -247,7 +247,7 @@ func TestUX_JSONMatchesSchema(t *testing.T) {
 	schema := readSchema(t)
 	require.Equal(t, render.SchemaVersion, schema.Properties.Version.Const)
 
-	for _, scenario := range []string{"std-docker-happy", "inmem-stall-etcd"} {
+	for _, scenario := range []string{"std-docker-happy", "inmem-stall-vm"} {
 		t.Run(scenario, func(t *testing.T) {
 			envelopes := load(t, scenario)
 			out, ok := (&render.JSON{}).Render(viewAt(envelopes[len(envelopes)-1], sampleEstimates()), 80)

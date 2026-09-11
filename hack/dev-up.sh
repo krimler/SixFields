@@ -50,7 +50,7 @@ hack/render.sh
 # this supplies the group. Both halves are required, and the binding records the
 # use in the audit log — which is the point. RBAC still comes from the caller, so
 # system:masters is impersonated alongside.
-for overlay in ${OVERLAYS:-docker hosted}; do
+for overlay in ${OVERLAYS:-docker hosted inmemory}; do
   [[ -f "bin/render/${overlay}.yaml" ]] || continue
   # The hosted class needs k0smotron; skip it rather than fail when it is absent.
   if [[ "$overlay" == "hosted" ]] && ! kubectl get crd k0smotroncontrolplanetemplates.controlplane.cluster.x-k8s.io >/dev/null 2>&1; then

@@ -13,9 +13,11 @@ args=(--core "cluster-api:${CAPI_VERSION}"
       --control-plane "kubeadm:${CAPI_VERSION}"
       --infrastructure "docker:${CAPD_VERSION}")
 
-# k0smotron ships bootstrap, control-plane and infrastructure providers under one
-# name. Phases 4-5 need it; Phases 0-3 do not, so it is opt-in.
-if [[ "${WITH_K0SMOTRON:-false}" == "true" ]]; then
+# k0smotron is required, not optional: the std class bootstraps with k0s and the
+# std-hosted class runs its control plane as k0smotron pods. Set
+# WITH_K0SMOTRON=false to install only the kubeadm providers, which is enough for
+# the std-kubeadm fallback and the std-inmemory substrate.
+if [[ "${WITH_K0SMOTRON:-true}" == "true" ]]; then
   args+=(--bootstrap "k0sproject-k0smotron:${K0SMOTRON_VERSION}"
          --control-plane "k0sproject-k0smotron:${K0SMOTRON_VERSION}")
 fi

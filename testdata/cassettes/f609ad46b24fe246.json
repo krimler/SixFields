@@ -1,0 +1,9 @@
+{
+  "code": "CAPI-CP-002",
+  "lines": [
+    "DevMachine/mem-vmstall-dkwjr-k9qlx is blocking control plane progress.",
+    "Reason reported: WaitingForVMProvisioned, indicating VM provisioning has not completed.",
+    "Check DevMachine status and confirm startupDuration configuration matches expected delay."
+  ],
+  "next_command": "kubectl get devmachine.infrastructure.cluster.x-k8s.io mem-vmstall-dkwjr-k9qlx -n default -o yaml"
+}

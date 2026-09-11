@@ -69,7 +69,7 @@ func TestUX_ExitCodes(t *testing.T) {
 		want int
 	}{
 		{"ready", []string{"why", "--replay", "../../testdata/fixtures/std-docker-happy"}, msg.ExitReady},
-		{"stalled", []string{"why", "--replay", "../../testdata/fixtures/inmem-stall-etcd", "--stall-after", "1m"}, msg.ExitStalled},
+		{"stalled", []string{"why", "--replay", "../../testdata/fixtures/inmem-stall-vm", "--stall-after", "1m"}, msg.ExitStalled},
 		{"rejected", []string{"plan", "-f", "testdata/denied.yaml"}, msg.ExitRejected},
 		{"environment", []string{"explain", "CAPI-NOPE-001"}, msg.ExitEnv},
 	} {
@@ -119,7 +119,7 @@ func TestUX_PlanRejectionsHaveNextActions(t *testing.T) {
 
 // The transcript a person sees when they replay a stall, pinned.
 func TestUX_ReplayTranscriptGoldens(t *testing.T) {
-	for _, scenario := range []string{"inmem-stall-etcd", "std-docker-happy"} {
+	for _, scenario := range []string{"inmem-stall-vm", "std-docker-happy"} {
 		t.Run(scenario, func(t *testing.T) {
 			out, _, _ := runCLI(t, "status", "--replay", "../../testdata/fixtures/"+scenario,
 				"--speed", "0", "--no-tty", "--stall-after", "1m")
@@ -218,4 +218,11 @@ func TestUX_DataGoesToStdout(t *testing.T) {
 			require.Contains(t, stdout, tc.contains, "output went to stderr instead of stdout")
 		})
 	}
+}
+
+// The binary's fallback endpoint and the pinned one in versions.env have to be
+// the same address. They drifted once, and the symptom was a CLI that quietly
+// looked for a runtime on a port nothing was serving.
+func TestUX_DefaultLocalURLMatchesVersionsEnv(t *testing.T) {
+	require.Equal(t, pinned(t, "CLUSTER_AI_URL"), DefaultLocalURL)
 }

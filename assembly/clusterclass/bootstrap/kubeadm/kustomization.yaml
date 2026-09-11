@@ -1,0 +1,10 @@
+---
+# The kubeadm control plane and worker bootstrap. Two classes use them: the
+# documented std-kubeadm fallback, and std-inmemory, because CAPD's in-memory
+# backend simulates a kubeadm control plane and cannot run a k0s binary on a
+# machine that does not exist.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- control-plane-template.yaml
+- bootstrap-template.yaml

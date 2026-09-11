@@ -20,7 +20,7 @@ const fixturesDir = "../../testdata/fixtures"
 
 var stallScenarios = []string{
 	"stall-bad-version", "stall-cp-killed", "stall-bad-variable",
-	"inmem-stall-etcd", "inmem-stall-node", "hosted-stall-pod", "two-stalls",
+	"inmem-stall-vm", "hosted-stall-pod", "two-stalls",
 }
 
 func requestFor(t *testing.T, scenario string) explain.Request {
@@ -66,7 +66,7 @@ func TestExplain_NoopPassesTheSameGatesAsAModel(t *testing.T) {
 // The grounding check is the deterministic half of the AI story: an explanation
 // that names an object the analyzer never saw fails the build, not the user.
 func TestExplain_GroundingRejectsAnInventedName(t *testing.T) {
-	req := requestFor(t, "inmem-stall-etcd")
+	req := requestFor(t, "inmem-stall-vm")
 	invented := explain.Explanation{
 		Code: string(req.Code),
 		Lines: []string{
@@ -83,7 +83,7 @@ func TestExplain_GroundingRejectsAnInventedName(t *testing.T) {
 }
 
 func TestExplain_GroundingRejectsAnInventedNumber(t *testing.T) {
-	req := requestFor(t, "inmem-stall-etcd")
+	req := requestFor(t, "inmem-stall-vm")
 	wrong := explain.Explanation{
 		Code: string(req.Code),
 		Lines: []string{
@@ -146,7 +146,7 @@ func TestExplain_AnonymizeRoundTripsOnEveryFixture(t *testing.T) {
 }
 
 func TestExplain_AnonymizeHidesNamesFromTheRequest(t *testing.T) {
-	req := requestFor(t, "inmem-stall-etcd")
+	req := requestFor(t, "inmem-stall-vm")
 	anon := explain.NewAnonymizer()
 	anon.Learn(req.Names...)
 
@@ -180,7 +180,7 @@ func TestExplain_PromptCarriesOnlyAnalyzerOutput(t *testing.T) {
 // A cassette answers without a network. This is what CI runs.
 func TestExplain_CassetteReplaysWithoutAModel(t *testing.T) {
 	dir := t.TempDir()
-	req := requestFor(t, "inmem-stall-etcd")
+	req := requestFor(t, "inmem-stall-vm")
 
 	recorder := explain.Cassette{Dir: dir, Record: true, Inner: explain.Noop{}}
 	recorded, err := recorder.Explain(context.Background(), req)
@@ -201,8 +201,8 @@ func TestExplain_CassetteReplaysWithoutAModel(t *testing.T) {
 // The cache key is the stall, so an identical stall is answered once and two
 // different stalls never share an answer.
 func TestExplain_KeyIsStable(t *testing.T) {
-	a := requestFor(t, "inmem-stall-etcd")
-	b := requestFor(t, "inmem-stall-node")
+	a := requestFor(t, "inmem-stall-vm")
+	b := requestFor(t, "stall-bad-version")
 	require.Equal(t, explain.Key(a), explain.Key(a))
 	require.NotEqual(t, explain.Key(a), explain.Key(b))
 }

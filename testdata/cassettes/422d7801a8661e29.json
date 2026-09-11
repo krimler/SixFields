@@ -1,0 +1,9 @@
+{
+  "code": "CAPI-CP-002",
+  "lines": [
+    "DevMachine/mem-vmstall-k4ssg-rt7mf is stalled.",
+    "Reason: WaitingForVMProvisioned, indicating VM provisioning has not completed.",
+    "Fix by checking the DevMachine status and logs for more details."
+  ],
+  "next_command": "kubectl get devmachine.infrastructure.cluster.x-k8s.io mem-vmstall-k4ssg-rt7mf -n default -o yaml"
+}

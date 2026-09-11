@@ -1,0 +1,334 @@
+{
+  "object": {
+    "kind": "DevMachine",
+    "name": "mem-vmstall-k4ssg-rt7mf",
+    "namespace": "default",
+    "group": "infrastructure.cluster.x-k8s.io"
+  },
+  "code": "CAPI-CP-002",
+  "phase": "control plane",
+  "reason": "WaitingForStartupTimeout",
+  "message": "",
+  "since_ns": 325000000000,
+  "raw": "kubectl get devmachine.infrastructure.cluster.x-k8s.io mem-vmstall-k4ssg-rt7mf -n default -o yaml",
+  "candidates": [
+    {
+      "object": {
+        "kind": "DevMachine",
+        "name": "mem-vmstall-k4ssg-rt7mf",
+        "namespace": "default",
+        "group": "infrastructure.cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "VMProvisioned",
+        "status": "False",
+        "reason": "WaitingForStartupTimeout",
+        "lastTransitionTime": "2026-09-11T08:25:05Z"
+      },
+      "specificity": 45,
+      "since_ns": 325000000000
+    },
+    {
+      "object": {
+        "kind": "DevMachine",
+        "name": "mem-vmstall-k4ssg-rt7mf",
+        "namespace": "default",
+        "group": "infrastructure.cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "APIServerProvisioned",
+        "status": "False",
+        "reason": "WaitingForVMProvisioned",
+        "lastTransitionTime": "2026-09-11T08:25:05Z"
+      },
+      "specificity": 45,
+      "since_ns": 325000000000,
+      "lost_to": "waiting on VMProvisioned"
+    },
+    {
+      "object": {
+        "kind": "DevMachine",
+        "name": "mem-vmstall-k4ssg-rt7mf",
+        "namespace": "default",
+        "group": "infrastructure.cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "EtcdProvisioned",
+        "status": "False",
+        "reason": "WaitingForVMProvisioned",
+        "lastTransitionTime": "2026-09-11T08:25:05Z"
+      },
+      "specificity": 45,
+      "since_ns": 325000000000,
+      "lost_to": "waiting on VMProvisioned"
+    },
+    {
+      "object": {
+        "kind": "DevMachine",
+        "name": "mem-vmstall-k4ssg-rt7mf",
+        "namespace": "default",
+        "group": "infrastructure.cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "NodeProvisioned",
+        "status": "False",
+        "reason": "WaitingForVMProvisioned",
+        "lastTransitionTime": "2026-09-11T08:25:05Z"
+      },
+      "specificity": 45,
+      "since_ns": 325000000000,
+      "lost_to": "waiting on VMProvisioned"
+    },
+    {
+      "object": {
+        "kind": "DevMachine",
+        "name": "mem-vmstall-k4ssg-rt7mf",
+        "namespace": "default",
+        "group": "infrastructure.cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "Ready",
+        "status": "False",
+        "reason": "NotReady",
+        "message": "* VMProvisioned: WaitingForStartupTimeout\n* NodeProvisioned: WaitingForVMProvisioned\n* EtcdProvisioned: WaitingForVMProvisioned\n* APIServerProvisioned: WaitingForVMProvisioned",
+        "lastTransitionTime": "2026-09-11T08:25:05Z"
+      },
+      "specificity": 45,
+      "since_ns": 325000000000,
+      "lost_to": "summary condition"
+    },
+    {
+      "object": {
+        "kind": "Machine",
+        "name": "mem-vmstall-k4ssg-rt7mf",
+        "namespace": "default",
+        "group": "cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "InfrastructureReady",
+        "status": "False",
+        "reason": "NotReady",
+        "message": "* VMProvisioned: WaitingForStartupTimeout\n* NodeProvisioned: WaitingForVMProvisioned\n* EtcdProvisioned: WaitingForVMProvisioned\n* APIServerProvisioned: WaitingForVMProvisioned",
+        "lastTransitionTime": "2026-09-11T08:25:02Z"
+      },
+      "specificity": 40,
+      "since_ns": 328000000000,
+      "lost_to": "less specific object"
+    },
+    {
+      "object": {
+        "kind": "Machine",
+        "name": "mem-vmstall-k4ssg-rt7mf",
+        "namespace": "default",
+        "group": "cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "Available",
+        "status": "False",
+        "reason": "NotReady",
+        "lastTransitionTime": "2026-09-11T08:25:02Z"
+      },
+      "specificity": 40,
+      "since_ns": 328000000000,
+      "lost_to": "less specific object"
+    },
+    {
+      "object": {
+        "kind": "Machine",
+        "name": "mem-vmstall-k4ssg-rt7mf",
+        "namespace": "default",
+        "group": "cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "Ready",
+        "status": "False",
+        "reason": "NotReady",
+        "message": "* InfrastructureReady:\n  * VMProvisioned: WaitingForStartupTimeout\n  * NodeProvisioned: WaitingForVMProvisioned\n  * EtcdProvisioned: WaitingForVMProvisioned\n  * APIServerProvisioned: WaitingForVMProvisioned\n* NodeHealthy: Waiting for Cluster control plane to be initialized\n* NodeKubeadmLabelsAndTaintsSet: Waiting for Cluster control plane to be initialized\n* Control plane components: Waiting for Cluster control plane to be initialized\n* EtcdMemberHealthy: Waiting for Cluster control plane to be initialized",
+        "lastTransitionTime": "2026-09-11T08:25:02Z"
+      },
+      "specificity": 40,
+      "since_ns": 328000000000,
+      "lost_to": "less specific object"
+    },
+    {
+      "object": {
+        "kind": "KubeadmControlPlane",
+        "name": "mem-vmstall-k4ssg",
+        "namespace": "default",
+        "group": "controlplane.cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "Initialized",
+        "status": "False",
+        "reason": "NotInitialized",
+        "lastTransitionTime": "2026-09-11T08:24:56Z"
+      },
+      "specificity": 20,
+      "since_ns": 334000000000,
+      "lost_to": "less specific object"
+    },
+    {
+      "object": {
+        "kind": "KubeadmControlPlane",
+        "name": "mem-vmstall-k4ssg",
+        "namespace": "default",
+        "group": "controlplane.cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "MachinesReady",
+        "status": "False",
+        "reason": "NotReady",
+        "message": "* Machine mem-vmstall-k4ssg-rt7mf:\n  * InfrastructureReady:\n    * VMProvisioned: WaitingForStartupTimeout\n    * NodeProvisioned: WaitingForVMProvisioned\n    * EtcdProvisioned: WaitingForVMProvisioned\n    * APIServerProvisioned: WaitingForVMProvisioned\n  * NodeHealthy: Waiting for Cluster control plane to be initialized\n  * NodeKubeadmLabelsAndTaintsSet: Waiting for Cluster control plane to be initialized\n  * Control plane components: Waiting for Cluster control plane to be initialized\n  * EtcdMemberHealthy: Waiting for Cluster control plane to be initialized",
+        "lastTransitionTime": "2026-09-11T08:25:02Z"
+      },
+      "specificity": 20,
+      "since_ns": 328000000000,
+      "lost_to": "less specific object"
+    },
+    {
+      "object": {
+        "kind": "KubeadmControlPlane",
+        "name": "mem-vmstall-k4ssg",
+        "namespace": "default",
+        "group": "controlplane.cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "Available",
+        "status": "False",
+        "reason": "NotAvailable",
+        "message": "Control plane not yet initialized",
+        "lastTransitionTime": "2026-09-11T08:24:56Z"
+      },
+      "specificity": 20,
+      "since_ns": 334000000000,
+      "lost_to": "less specific object"
+    },
+    {
+      "object": {
+        "kind": "Cluster",
+        "name": "mem-vmstall",
+        "namespace": "default",
+        "group": "cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "WorkerMachinesReady",
+        "status": "False",
+        "reason": "NotReady",
+        "message": "* Machines mem-vmstall-default-cl8xj-qmrp6-5nr97, mem-vmstall-default-cl8xj-qmrp6-7l4tr:\n  * BootstrapConfigReady:\n    * DataSecretAvailable: Waiting for Cluster control plane to be initialized\n    * CertificatesAvailable: Condition not yet reported\n  * InfrastructureReady:\n    * VMProvisioned: WaitingForControlPlaneInitialized\n    * NodeProvisioned: WaitingForVMProvisioned\n  * NodeHealthy: Waiting for Cluster control plane to be initialized",
+        "lastTransitionTime": "2026-09-11T08:25:17Z"
+      },
+      "specificity": 10,
+      "since_ns": 313000000000,
+      "lost_to": "less specific object"
+    },
+    {
+      "object": {
+        "kind": "Cluster",
+        "name": "mem-vmstall",
+        "namespace": "default",
+        "group": "cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "ControlPlaneMachinesReady",
+        "status": "False",
+        "reason": "NotReady",
+        "message": "* Machine mem-vmstall-k4ssg-rt7mf:\n  * InfrastructureReady:\n    * VMProvisioned: WaitingForStartupTimeout\n    * NodeProvisioned: WaitingForVMProvisioned\n    * EtcdProvisioned: WaitingForVMProvisioned\n    * APIServerProvisioned: WaitingForVMProvisioned\n  * NodeHealthy: Waiting for Cluster control plane to be initialized\n  * NodeKubeadmLabelsAndTaintsSet: Waiting for Cluster control plane to be initialized\n  * Control plane components: Waiting for Cluster control plane to be initialized\n  * EtcdMemberHealthy: Waiting for Cluster control plane to be initialized",
+        "lastTransitionTime": "2026-09-11T08:25:03Z"
+      },
+      "specificity": 10,
+      "since_ns": 327000000000,
+      "lost_to": "less specific object"
+    },
+    {
+      "object": {
+        "kind": "Cluster",
+        "name": "mem-vmstall",
+        "namespace": "default",
+        "group": "cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "WorkersAvailable",
+        "status": "False",
+        "reason": "NotAvailable",
+        "message": "* MachineDeployment mem-vmstall-default-cl8xj: 0 available replicas, at least 2 required (spec.strategy.rollout.maxUnavailable is 0, spec.replicas is 2)",
+        "lastTransitionTime": "2026-09-11T08:24:59Z"
+      },
+      "specificity": 10,
+      "since_ns": 331000000000,
+      "lost_to": "less specific object"
+    },
+    {
+      "object": {
+        "kind": "Cluster",
+        "name": "mem-vmstall",
+        "namespace": "default",
+        "group": "cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "RemoteConnectionProbe",
+        "status": "False",
+        "reason": "ProbeFailed",
+        "message": "Remote connection not established yet",
+        "lastTransitionTime": "2026-09-11T08:24:54Z"
+      },
+      "specificity": 10,
+      "since_ns": 336000000000,
+      "lost_to": "less specific object"
+    },
+    {
+      "object": {
+        "kind": "Cluster",
+        "name": "mem-vmstall",
+        "namespace": "default",
+        "group": "cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "ControlPlaneInitialized",
+        "status": "False",
+        "reason": "NotInitialized",
+        "message": "Control plane not yet initialized",
+        "lastTransitionTime": "2026-09-11T08:24:54Z"
+      },
+      "specificity": 10,
+      "since_ns": 336000000000,
+      "lost_to": "less specific object"
+    },
+    {
+      "object": {
+        "kind": "Cluster",
+        "name": "mem-vmstall",
+        "namespace": "default",
+        "group": "cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "ControlPlaneAvailable",
+        "status": "False",
+        "reason": "NotAvailable",
+        "message": "Control plane not yet initialized",
+        "lastTransitionTime": "2026-09-11T08:24:54Z"
+      },
+      "specificity": 10,
+      "since_ns": 336000000000,
+      "lost_to": "less specific object"
+    },
+    {
+      "object": {
+        "kind": "Cluster",
+        "name": "mem-vmstall",
+        "namespace": "default",
+        "group": "cluster.x-k8s.io"
+      },
+      "condition": {
+        "type": "Available",
+        "status": "False",
+        "reason": "NotAvailable",
+        "message": "* RemoteConnectionProbe: Remote connection not established yet\n* ControlPlaneAvailable: Control plane not yet initialized\n* WorkersAvailable:\n  * MachineDeployment mem-vmstall-default-cl8xj: 0 available replicas, at least 2 required (spec.strategy.rollout.maxUnavailable is 0, spec.replicas is 2)",
+        "lastTransitionTime": "2026-09-11T08:24:54Z"
+      },
+      "specificity": 10,
+      "since_ns": 336000000000,
+      "lost_to": "less specific object"
+    }
+  ],
+  "condition_type": "VMProvisioned"
+}
