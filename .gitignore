@@ -5,3 +5,6 @@
 # Local model cassettes are recorded per machine until one is reviewed and
 # committed deliberately; see docs/ai.md.
 /testdata/cassettes/*.local.json
+
+# macOS writes these into any directory Finder has opened.
+.DS_Store

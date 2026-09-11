@@ -70,6 +70,24 @@ func TestUX_PlainTranscriptGoldens(t *testing.T) {
 	}
 }
 
+// A frame taken while the run is still going, which is what a person actually
+// watches. The last envelope of a happy path shows everything done, so it never
+// exercises a progress bar in flight or an estimate. This is also the figure the
+// paper uses, so a layout change shows up as a diff there too.
+func TestUX_TTYFrameMidRun(t *testing.T) {
+	envelopes := load(t, "std-docker-happy")
+	require.GreaterOrEqual(t, len(envelopes), 2)
+
+	// The second envelope: infrastructure done, control plane and workers still
+	// coming up, so the frame carries a running bar and an estimate.
+	v := viewAt(envelopes[1], sampleEstimates())
+	frame := (&render.TTY{}).Frame(v, 80)
+	require.Contains(t, frame, "running")
+	require.Contains(t, frame, "left", "a running frontier phase shows an estimate")
+
+	golden.Text(t, filepath.Join(goldenDir, "tty", "std-docker-happy-midrun-80.txt"), frame)
+}
+
 // The TTY frame at both widths. A frame is a pure function of the view and the
 // width, so these goldens pin the layout without a terminal.
 func TestUX_TTYFrameGoldensAt80And120(t *testing.T) {

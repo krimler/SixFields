@@ -11,9 +11,16 @@ Two passes, because the second resolves the table and figure references.
 
 ## Uploading to arXiv
 
-arXiv wants the source, not the PDF. Upload `sixfields.tex` on its own; there are
-no figures or `.bib` files, and the bibliography is inline in a `thebibliography`
-environment, so one file is the whole submission.
+`arxiv-sixfields.zip` is the submission. It holds `sixfields.tex` and nothing
+else: the figures are listings, the bibliography is inline, so one file is the
+whole paper. It was verified by unpacking it into an empty directory and
+compiling there.
+
+Rebuild it after any edit:
+
+```sh
+make paper
+```
 
 Suggested categories: `cs.SE` as primary, `cs.DC` as cross-list.
 
@@ -32,3 +39,8 @@ The ones most likely to move:
 | 659 API constants | `docs/api-snapshot.json` |
 | 6 recorded, 5 synthetic fixtures | `testdata/fixtures/*/` `_meta.synthetic` |
 | provisioning times | single runs, recorded in the session that produced them |
+
+Figure 2, the mid-run display, is reproduced from
+`testdata/golden/render/tty/std-docker-happy-midrun-80.txt`, which a test
+regenerates. A layout change shows up as a diff in that golden, so the figure and
+the tool cannot drift apart silently.

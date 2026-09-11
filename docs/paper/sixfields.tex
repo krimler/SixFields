@@ -213,6 +213,27 @@ whenever any did, defeating stall detection entirely.
 
 \begin{figure}[t]
 \begin{lstlisting}
+Cluster/dev-1  class std . v1.34.11 . self
+infrastructure  ############ done     ready              5s
+control plane   ######______ running  0/1 nodes   ~13s left
+workers         ######______ running  0/2 nodes
+addons          ######______ running  waiting
+
+safe to Ctrl-C; `cluster status dev-1` resumes
+\end{lstlisting}
+\caption{The ordinary display, mid-run. Four phases in the order they complete, a
+state, one detail, and on the right either an elapsed time for a finished phase or
+an estimate for the one the cluster is waiting on. Only the frontier phase carries
+an estimate; the phases behind it are waiting, and their own history says nothing
+about how long the phase in front will take. Reproduced from a recorded run;
+block characters are substituted for the originals.}
+\label{fig:phases}
+\end{figure}
+
+Figure~\ref{fig:phases} shows the display during a run.
+
+\begin{figure}[t]
+\begin{lstlisting}
 DevMachine/dev-1-cp-abcde: etcd is not coming up (6m32s)
 raw: kubectl get devmachine.infrastructure.cluster.x-k8s.io
      dev-1-cp-abcde -n default -o yaml

@@ -139,6 +139,14 @@ bench: ## cluster-bench, sequential, per backend. Requires PROFILE=bench.
 envtest:
 	@hack/envtest-assets.sh >/dev/null
 
+.PHONY: paper
+paper: ## Compile the arXiv paper and rebuild its submission zip
+	cd docs/paper && pdflatex -interaction=nonstopmode sixfields.tex >/dev/null \
+	  && pdflatex -interaction=nonstopmode sixfields.tex >/dev/null \
+	  && rm -f arxiv-sixfields.zip && zip -q arxiv-sixfields.zip sixfields.tex
+	@echo "docs/paper/sixfields.pdf  $$(cd docs/paper && pdfinfo sixfields.pdf | awk '/Pages/{print $$2}') pages"
+	@echo "docs/paper/arxiv-sixfields.zip"
+
 .PHONY: clean
 clean:
 	rm -rf $(BIN)
