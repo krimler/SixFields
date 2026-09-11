@@ -24,7 +24,7 @@ against fixtures. `make test` runs in 5s of a 30s budget, `make test-envtest` in
 | 3 — the stream | done; every D2 gate is a test, replay is the UI loop |
 | 4 — hosted control plane | done; a k0smotron control plane reaches Ready in 3m07s and reports readiness, not node counts |
 | 5 — k0s on machines | done; both placements are one provider family and differ in one class reference |
-| 6 — eject, e2e, docs | eject verified live (649 rendered lines re-apply with zero diff); the e2e suite is written but has never been run as a suite |
+| 6 — eject, e2e, docs | done; the e2e suite passes in three minutes on the in-memory substrate |
 
 ## What is proven, and how
 
@@ -41,17 +41,13 @@ grounding check, and they replay inside `make test`, which never calls a model.
 
 ## What is still prototype
 
-- **The e2e suite** in `e2e/` is written against the live paths but has never been
-  executed end to end. Run it with `make e2e`.
-- **The `inmemory` overlay** renders, is tested, and is the intended fast
-  substrate, but no cluster has ever been created from it. PLAN.md Phase 3 wants
-  `inmem-happy` and the two induced in-memory stalls recorded from it; all three
-  are still synthetic.
-- **`cluster-bench`**, the **nightly UX probe** and `docs/ux-probe/` are not built.
-  `docs/ux-probe/README.md` says what a report must contain.
 - **`cluster history` and `cluster rollback`** (PLAN.md D5.6) are not implemented.
-- **The `--explain` grounding** is checked against cassettes, not against a live
-  model on every run. `make test-llm` with `CLUSTER_AI_RECORD=1` re-records.
+- **The `anthropic` backend** has never run. `AI_CREDIT_CAP_USD` is 0 and CLAUDE.md
+  puts spending past that cap on the must-ask list.
+- **The UX probe runs by hand.** `docs/ux-probe/` has a report from a real run;
+  nothing schedules it nightly.
+- **`inmem-happy` is still synthetic.** The in-memory substrate now runs, and its
+  stall fixture is recorded, but the happy path on it has not been re-recorded.
 
 ## Known constraints, found by running it
 
