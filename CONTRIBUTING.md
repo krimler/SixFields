@@ -58,10 +58,12 @@ file and line the behaviour depends on.
 
 **An em dash.** There is a lint, over every file this project wrote.
 
-**A contrast that carries nothing**, so "not just X but Y" or "more than just".
-Also linted. Naming an alternative you rejected is different, and it belongs in a
-comment or in `DECISIONS.md`. It does not belong in something a user reads,
-because the user never considered the alternative.
+**A contrast that carries nothing.** The lint catches the usual shapes. Say the
+one thing the sentence has to say.
+
+Naming an alternative you rejected is welcome, and it belongs in a comment or in
+`DECISIONS.md`. The words for that are allowed everywhere, because a sentence like
+"Linux is untested rather than unsupported" needs them.
 
 **A test that is skipped.** A skip needs a linked issue and an expiry date in the
 reason.

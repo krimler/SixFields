@@ -1,136 +1,171 @@
+<div align="center">
+
 # SixFields
 
-SixFields builds a Kubernetes cluster from six lines of text, and shows you four
-progress bars while it works.
+Create a Kubernetes cluster from a file of six fields, and watch it being built.
 
-This page assumes you have never done this before. Every word that matters is
-explained the first time it appears, and there are links at the bottom if you want
-to go deeper.
+[![Status](https://img.shields.io/badge/status-experimental-orange)](STATUS.md)
+[![Setup](https://img.shields.io/badge/setup-macOS%20today%2C%20Linux%20untested-lightgrey)](#3-what-you-need-on-your-machine)
+[![Cluster API](https://img.shields.io/badge/Cluster%20API-v1beta2-326ce5)](https://cluster-api.sigs.k8s.io/)
+[![Licence](https://img.shields.io/badge/licence-Apache--2.0-blue)](LICENSE)
+<!-- When CI exists, add:
+[![CI](https://github.com/OWNER/REPO/actions/workflows/ci.yml/badge.svg)](https://github.com/OWNER/REPO/actions/workflows/ci.yml)
+-->
 
-## Before you start
+</div>
 
-This is young software. It was built over a few days, it has been run on one
-machine, and it has never carried anything real. The tests are thorough and the
-whole thing is honest about what it has and has not done. Use it to learn, to try
-ideas, and to build clusters you can throw away. Do not put anything you care
-about on it yet. `STATUS.md` lists what is finished and what is still a sketch.
+SixFields is a small tool built on top of Cluster API. You describe a cluster in about fifteen lines of YAML, of which six are yours to decide. SixFields checks the file the moment you submit it, builds the cluster, and shows you four progress bars while it works. If the build gets stuck, it tells you which one thing is stuck and what to do about it.
 
-You need:
+This README is written as a tutorial. It assumes you have not used Kubernetes before. If you have, you can skip Section 2 and skim the rest. Part II at the end is a reference for the commands and the code.
 
-- a **Mac with an Apple Silicon chip** (M1 or later). Linux is not supported yet,
-  because the setup script uses Homebrew.
-- **Docker Desktop**, **OrbStack** or **Colima**, running. Any of the three works.
-- about **8 GB of free memory** and **20 GB of disk**.
-- an internet connection for the first run, which downloads about a gigabyte.
+> [!WARNING]
+> SixFields is new. It was written over a few days, it has been run on one machine, and it has never carried a real workload. Use it to learn and to experiment with clusters you can throw away. Do not put anything you care about on it yet. `STATUS.md` lists what is finished and what is not.
 
-Everything else is installed for you.
+## Contents
 
-## The words you need
+**Part I: Tutorial**
 
-**Kubernetes** is a program that runs other programs across a group of computers.
-You give it a list of what you want running, and it keeps that true. People say
-"k8s" for short, because there are eight letters between the k and the s.
+1. [What SixFields does](#1-what-sixfields-does)
+2. [A few terms you need to know](#2-a-few-terms-you-need-to-know)
+3. [What you need on your machine](#3-what-you-need-on-your-machine)
+4. [Setting up](#4-setting-up)
+5. [Creating your first cluster](#5-creating-your-first-cluster)
+6. [The cluster file](#6-the-cluster-file)
+7. [A faster cluster for practising](#7-a-faster-cluster-for-practising)
+8. [When a cluster gets stuck](#8-when-a-cluster-gets-stuck)
+9. [When there is a mistake in your file](#9-when-there-is-a-mistake-in-your-file)
+10. [Using your cluster](#10-using-your-cluster)
+11. [Deleting clusters](#11-deleting-clusters)
+12. [Leaving SixFields](#12-leaving-sixfields)
+13. [Exit codes](#13-exit-codes)
+14. [Summary](#14-summary)
+15. [Exercises](#15-exercises)
 
-A **cluster** is one group of computers running Kubernetes together. Making one by
-hand is fiddly, and that is the problem this tool solves.
+**Part II: Reference**
 
-A **node** is one computer in the cluster. Some nodes do the thinking and some do
-the work. The thinking ones are the **control plane**. The working ones are
-**workers**, and your programs run there.
+16. [Command reference](#16-command-reference)
+17. [How the code is organised](#17-how-the-code-is-organised)
+18. [Working on SixFields](#18-working-on-sixfields)
+19. [Contributing](#19-contributing)
+20. [Related projects](#20-related-projects)
+21. [Further reading](#21-further-reading)
+22. [Licence](#22-licence)
 
-**YAML** is a file format for writing down settings. It uses indentation the way
-an outline does. You will write about fifteen lines of it and never touch it
-again.
+## 1. What SixFields does
 
-**Docker** runs a program in a **container**, which is a sealed box with its own
-filesystem. SixFields uses containers to pretend to be computers, so your laptop
-can host a whole cluster.
+Cluster API is the official Kubernetes project for creating clusters. It works, but it is hard to use for two reasons, and SixFields exists to remove those two reasons.
 
-**Cluster API** is the official Kubernetes project for building clusters. It is
-powerful and it is hard to read. SixFields keeps its power and hides the parts you
-do not need yet.
+The first reason is that Cluster API reports mistakes late, and in the wrong place. Suppose you write a file describing a cluster and submit it. Kubernetes accepts the file without complaint. Nothing visible happens for several minutes. Then a message appears, not on the object you created but on some other object you have never heard of, in a field with a name like `InfrastructureReady`, worded as if you already knew what it meant. The mistake was in your file all along, but you find out about it much later and somewhere else.
 
-## Why this exists
+SixFields checks your file the moment you submit it. If you have set a field you are not allowed to set, the file is refused immediately, and the message names the field and gives the reason. Nothing is silently ignored, and nothing fails eight minutes later because of something you typed.
 
-Cluster API works. The trouble is what it feels like to use.
+The second reason is that Cluster API tells you very little while a cluster is being built. A real cluster takes several minutes to create. During that time plain Cluster API shows you one word, such as `Provisioning`. It does not tell you how far along the build is, how much longer it will take, or whether it has stopped making progress, so you cannot tell the difference between slow and stuck.
 
-You write a file describing a cluster. Kubernetes accepts it. Eight minutes later
-nothing has happened, and the reason is sitting on an object you have never heard
-of, in a field called something like `InfrastructureReady`, in a form that assumes
-you already know the answer. The mistake was in the file you wrote. The complaint
-arrives somewhere else, much later.
+SixFields shows four progress bars, one for each stage of the build, with an estimate of the time remaining based on your own earlier runs. If nothing has moved for a while, it prints one line naming the object that is holding things up.
 
-That is two separate problems.
+SixFields does this without adding any new kind of Kubernetes object, and without running any extra software inside your cluster. It consists of a template for clusters, a rule about which fields you may set, and a command that watches. You can stop using all three at any time and your clusters will carry on working.
 
-The first is that errors arrive late and in the wrong place. SixFields fixes it by
-checking your file the moment you write it. A field you are not allowed to set is
-refused immediately, by name, with the reason. Nothing is silently ignored and
-nothing fails eight minutes later.
+## 2. A few terms you need to know
 
-The second is that the wait tells you nothing. A real cluster takes minutes, and
-plain Cluster API gives you a word like `Provisioning` and no way to tell slow
-from stuck. SixFields shows four progress bars, an estimate from your own past
-runs, and when nothing has moved for a while, one line naming the object that is
-blocking.
+Before we create a cluster, it is necessary to understand a few terms. Each is explained the first time it appears, and Section 21 has links if you would like to read more. If you already work with Kubernetes and Cluster API, skip to Section 3.
 
-SixFields adds no new Kubernetes objects for you to learn and runs no extra
-software in your cluster. It is a blueprint, a rule about who may write what, and
-a program that watches. You can walk away from all three and keep your clusters.
+**Kubernetes** is a program whose job is to run other programs on a group of computers. You give Kubernetes a list of what you want running, and it starts those programs, watches them, and restarts them if they stop. The name is often shortened to k8s, because there are eight letters between the k and the s.
 
-## The one strange idea
+A group of computers that Kubernetes manages together is called a **cluster**. Each computer in the cluster is a **node**. Nodes are of two kinds. **Control plane** nodes take the decisions: which program runs on which node, and what to do when something fails. **Worker** nodes are where your programs run. A small cluster might have one control plane node and two worker nodes.
 
-To build a cluster, SixFields uses a cluster.
+The smallest thing that Kubernetes runs is a **pod**, which is one or more containers that are started and stopped together. A **container** is a program running inside its own sealed filesystem, isolated from the rest of the machine. The frozen copy of a filesystem that a container starts from is called an **image**. **Docker** is the software that runs containers on your laptop. SixFields uses containers to stand in for computers, which is how a whole cluster can run on one laptop.
 
-The first one is a factory. You hand the factory a short order form, and it builds
-you the cluster you asked for. Kubernetes people call the factory the **management
-cluster**.
+**YAML** is a file format for writing down settings. It uses indentation to show structure, the way an outline does. In this tutorial you will write about fifteen lines of it.
 
-The factory lives on your laptop inside Docker. You build it once and keep it.
+**Cluster API** is the official Kubernetes project for creating and managing clusters. It is powerful, but the files it expects you to write are long, and the messages it gives back are difficult to read. SixFields is built on Cluster API and hides the parts you do not need yet.
 
-## First run
+Within Cluster API, a **ClusterClass** is a template for a cluster. It decides everything that should be the same for every cluster, such as the networking and the images, so that an individual cluster file only has to say what is different: the name, the version, and how many workers.
+
+Finally, Cluster API has one idea that surprises most people the first time they meet it. To build a cluster, it uses another cluster. The cluster that does the building is called the **management cluster**, and it is where the Cluster API software runs. The clusters it builds for you are called **workload clusters**. In SixFields, the management cluster is a small cluster that runs on your laptop inside Docker. You create it once and keep it. Running it on a laptop is a convenience for development; in real use a management cluster lives on a server, and nothing in SixFields ties it to a laptop.
+
+## 3. What you need on your machine
+
+SixFields itself runs wherever Go and `kubectl` run. The command-line tool is pure Go with no C dependencies, so it builds for Linux as easily as for macOS. The ClusterClass, the policy, and the add-on are Kubernetes objects, so they run wherever the management cluster runs. And the clusters themselves are Linux already: kind's nodes are Linux containers, the machines that Cluster API's Docker provider creates are Linux containers, and k0s is a Linux binary.
+
+What is macOS-only today is the setup: the scripts in `hack/` behind `make bootstrap` and `make doctor`, which install the tools and check your machine. They have been run on one Apple Silicon Mac and nowhere else, so Linux is untested rather than unsupported. Section 18 lists exactly which scripts are involved and what it would take to change them.
+
+For the setup as it stands, you need:
+
+- A Mac. The setup scripts use Homebrew, and they have been run only on Apple Silicon (M1 or later).
+- Docker Desktop, OrbStack, or Colima, installed and running. Any of the three will do; the setup scripts know all three.
+- About 8 GB of free memory and 20 GB of free disk space.
+- An internet connection for the first run, which downloads about one gigabyte.
+
+Everything else is installed for you in the next section.
+
+If you are on Linux, `make bootstrap` and `make doctor` will not work, but nothing else is in the way. Install kubectl, kind, and the other tools yourself at the versions recorded in `versions.env`, and build the command with `go build ./cmd/cluster`. Because the tool is pure Go, cross-compiling from a Mac with `GOOS=linux GOARCH=amd64` also works. Bear in mind that nobody has run the rest of the setup on Linux yet, so expect small problems in the scripts rather than in the tool.
+
+## 4. Setting up
+
+Setting up takes three commands. Run them from the root of this repository.
 
 ```sh
 make bootstrap
+make build
 make dev-up
+```
+
+Let us see what each one does.
+
+`make bootstrap` installs the tools that SixFields needs. It uses **Homebrew**, the package installer for macOS. Homebrew cannot pin a version per tool, so it installs the current one, and `make doctor` then compares what you have against the versions recorded in `versions.env` and warns you about any that differ. This is the macOS path; Section 3 says what to do on Linux. Two of these tools are worth knowing by name. **kubectl** is the command you use to talk to any Kubernetes cluster. **kind** creates a small Kubernetes cluster inside Docker, and the management cluster is made with it.
+
+`make build` compiles SixFields itself into `bin/cluster`. Nothing installs it into a system directory, so for the rest of this tutorial put it on your path:
+
+```sh
+export PATH="$PWD/bin:$PATH"
+```
+
+That lasts for the current terminal session. If you open a new terminal, run it again, or write `./bin/cluster` wherever this tutorial writes `cluster`.
+
+`make dev-up` creates the management cluster. It does three things in turn: it starts a kind cluster, it installs Cluster API into that cluster, and it loads the SixFields ClusterClass and the rule about fields. The first time you run it, it downloads an image of about one gigabyte, so expect it to take a few minutes.
+
+If any of the three fails, run `make doctor`. It examines your machine and tells you what is missing or wrong.
+
+## 5. Creating your first cluster
+
+With the management cluster running, create a workload cluster with one command:
+
+```sh
 cluster up dev-1 -f examples/dev-1.yaml
 ```
 
-Three commands. Here is what each one does.
+Here `dev-1` is the name of the cluster and `examples/dev-1.yaml` is the file that describes it. We will look inside that file in the next section. The command sends the file to the management cluster and then waits while the cluster is built, showing a display like this:
 
-`make bootstrap` installs the tools. It uses **Homebrew**, the package installer
-for macOS, and it pins every version so you get the ones the tests ran with. Two
-of the tools are worth knowing by name: **kubectl** is how you talk to a
-Kubernetes cluster, and **kind** builds a small cluster inside Docker.
+```
+Cluster/dev-1  class std · v1.34.11 · self
+infrastructure  ████████████ done     ready                                  1m30s
+control plane   ██████░░░░░░ running  0/1 nodes                        ~1m10s left
+workers         ░░░░░░░░░░░░ pending  waiting
+addons          ████████████ done     none
 
-`make dev-up` builds the factory. It starts the small cluster, installs Cluster
-API into it, and loads the SixFields blueprint. The first run takes a few minutes
-because it downloads an **image**, which is a frozen copy of a filesystem that a
-container starts from. This one is about a gigabyte.
-
-`cluster up dev-1 -f examples/dev-1.yaml` hands over the order form and waits.
-When it finishes you have a working cluster called `dev-1`.
-
-If something goes wrong, run `make doctor`. It checks your machine and tells you
-what to fix.
-
-## A faster way to look around
-
-The cluster above is real. Its nodes are containers, it downloads images, and it
-takes several minutes.
-
-There is a second kind of cluster that the factory only pretends to build. It uses
-no containers and it finishes in about a minute. Everything on this page works the
-same way on it, so it is a good place to try things.
-
-```sh
-cluster up fast-1 -f examples/fast-1.yaml
+safe to Ctrl-C; `cluster status dev-1` resumes
 ```
 
-One line in the file is different. You will see which in a moment.
+Let us understand this display.
 
-## The order form
+The first line names the cluster, and shows the ClusterClass it was built from (`std`), the Kubernetes version (`v1.34.11`), and where its control plane runs (`self`, meaning on nodes of its own).
 
-This is `examples/dev-1.yaml`. It is the whole thing.
+The next four lines are the four stages of the build. They are always the same four, in the order in which they usually finish.
+
+- **infrastructure** is the networking the cluster needs before any node can start. Part of it is a **load balancer**, which is a single address that forwards traffic to whichever control plane node is healthy.
+- **control plane** is the nodes that take the decisions, as we saw in Section 2.
+- **workers** are the nodes on which your programs will run.
+- **addons** are the extras that the ClusterClass installs for you. The most important of these is the **network plugin**, which is the piece that lets pods on different nodes talk to each other. Kubernetes does not include one, and nodes stay unhealthy until something provides it. The ClusterClass installs one, so you will not run into this problem.
+
+Each stage line shows a progress bar, a status word (`done`, `running`, or `pending`), a short description of the current state, and a time on the right. The time is based on your own earlier runs. SixFields remembers the timings of your last twenty runs and uses them to estimate how long each stage takes on your machine. Until you have done three runs it shows `no history yet`, because fewer than three is too few to estimate from.
+
+The last line tells you that it is safe to press Ctrl-C. The build does not stop when you do; it carries on in the management cluster. To watch it again, run `cluster status dev-1`.
+
+When all four stages show `done`, the command exits and you have a working cluster called `dev-1`. Section 10 shows how to connect to it.
+
+## 6. The cluster file
+
+Now let us look at the file we just used. Here is the object in `examples/dev-1.yaml`. The file itself opens with a few comment lines, which are left out here:
 
 ```yaml
 apiVersion: cluster.x-k8s.io/v1beta2
@@ -150,85 +185,72 @@ spec:
         replicas: 2
 ```
 
-The first four lines are bookkeeping. `apiVersion` and `kind` tell Kubernetes what
-sort of object this is. `namespace` is a folder name for keeping objects apart;
-`default` is the one that already exists.
+Let us go through it.
 
-Six fields are yours:
+The first four lines are bookkeeping that every Kubernetes object has. `apiVersion` and `kind` together say what sort of object this is: a `Cluster`, as defined by Cluster API. `name` is the name of the cluster. `namespace` is like a folder name; Kubernetes uses namespaces to keep objects apart, and `default` is the one that exists already.
 
-| Field | Meaning |
+Everything under `spec` describes what you want. `topology` means that this cluster is built from a ClusterClass, and `classRef` says which one: `std`, the class that ships with SixFields. `version` is the version of Kubernetes to install. `workers` describes the worker nodes, in one or more groups called machine deployments. This file has one group, named `default`, of the `default` kind of worker, with two replicas. Replicas means copies, so two replicas means two worker nodes.
+
+Of all these lines, six are yours to decide. The rest are either bookkeeping or fixed by the ClusterClass.
+
+| Field | What it means |
 |---|---|
-| `name` | what to call your cluster |
-| `classRef.name` | which blueprint to use. `std` is the one that ships |
+| `name` | what to call the cluster |
+| `classRef.name` | which ClusterClass to use; `std` is the one that ships |
 | `version` | which version of Kubernetes to install |
-| `name` (under workers) | a name for this group of worker nodes |
-| `class` | which kind of worker node. `default` is the one that ships |
+| `name` (under `machineDeployments`) | a name for this group of worker nodes |
+| `class` | which kind of worker node; `default` is the one that ships |
 | `replicas` | how many worker nodes you want |
-
-`replicas` means copies. Two replicas means two worker nodes.
 
 Two more fields are optional:
 
-- `size` is `dev` for one control-plane node or `ha` for three. `ha` is short for
-  high availability, which means the cluster survives losing one of them.
-- `placement` is `self` to run the control plane on its own nodes, or `hosted` to
-  run it inside the factory as **pods**. A pod is the smallest thing Kubernetes
-  runs: one or more containers that live and die together.
+- `size` may be `dev`, which gives you one control plane node, or `ha`, which gives you three. `ha` stands for high availability; a cluster with three control plane nodes keeps working if one of them fails.
+- `placement` may be `self`, which runs the control plane on its own nodes, or `hosted`, which runs it as pods inside the management cluster.
 
-`classRef.name` is the line that changes for the faster cluster. It reads
-`std-inmemory` there. To see every blueprint your factory has:
+There is one wrinkle with `size`. Setting it to `ha` does not on its own give you three control plane nodes; you must also write the number in the file:
+
+```yaml
+  topology:
+    controlPlane:
+      replicas: 3
+    variables:
+    - name: size
+      value: ha
+```
+
+The two have to agree, and the file is refused if they do not. The reason is a limitation of Cluster API: a ClusterClass cannot set the number of control plane nodes, so the number has to be written on the cluster. `cluster new --size ha` writes both for you, and `examples/ha-hosted.yaml` shows the whole file.
+
+Everything else about the cluster, such as the networking, the images, and how the control plane starts, comes from the ClusterClass. Those decisions are made once, in the `assembly/` directory, and every cluster gets the same ones. To see the ClusterClasses your management cluster has, run:
 
 ```sh
 kubectl get clusterclass
 ```
 
-You can write the file by hand. You can also have SixFields write it:
+You need not write the file by hand. The `cluster new` command writes it for you from the six fields:
 
 ```sh
 cluster new dev-1 --version v1.34.11 --pool default=2 > cluster.yaml
 ```
 
-Everything else about the cluster comes from the blueprint. You do not choose the
-networking, the images, or how the control plane starts. Those are decided once,
-in `assembly/`, and every cluster gets the same answers.
+Here `--pool default=2` means a worker group named `default` with two replicas.
 
-## What you see while it builds
+## 7. A faster cluster for practising
 
-```
-Cluster/dev-1  class std · v1.34.11 · self
-infrastructure  ████████████ done     ready                                  1m30s
-control plane   ██████░░░░░░ running  0/1 nodes                        ~1m10s left
-workers         ░░░░░░░░░░░░ pending  waiting
-addons          ████████████ done     none
+The cluster we created in Section 5 is a real one. Its nodes are containers, it downloads images, and it takes several minutes to build. That is slower than you want when you are learning.
 
-safe to Ctrl-C; `cluster status dev-1` resumes
+SixFields ships a second ClusterClass, called `std-inmemory`, for practising. A cluster of this class is only simulated by the management cluster: no containers are created, and the build finishes in about a minute. Everything in this tutorial works the same way on it, so it is a good place to try things out.
+
+```sh
+cluster up fast-1 -f examples/fast-1.yaml
 ```
 
-Four rows, always the same four, in the order they finish.
+If you compare `examples/fast-1.yaml` with `examples/dev-1.yaml`, you will find that the only setting that differs is `classRef.name`, which reads `std-inmemory`. The cluster has a different name as well, and the comment at the top of the file is different.
 
-**infrastructure** is the networking your cluster needs before anything starts.
-Part of it is a **load balancer**, a single address that forwards to whichever
-control-plane node is healthy.
+## 8. When a cluster gets stuck
 
-**control plane** is the thinking part. **workers** are the nodes that run your
-programs.
+A build does not always finish. Sometimes a node fails to start, an image cannot be downloaded, or a component never reports that it is healthy. Cluster API keeps waiting, and the progress bar stops moving.
 
-**addons** are the extras the blueprint installs for you. The important one is the
-**network plugin**, the piece that lets pods on different nodes talk to each
-other. Kubernetes does not include one, and nodes stay unhealthy until something
-provides it. The blueprint installs one so you never meet this problem.
-
-The time on the right is how long that step usually takes on your machine.
-SixFields remembers your last twenty runs. Before three runs it says `no history
-yet`, because three runs is too few to guess from.
-
-Press Ctrl-C whenever you like. The cluster keeps building. Run `cluster status
-dev-1` to watch again.
-
-## When it gets stuck
-
-Building a cluster can stall. A node fails to start, an image will not download, a
-piece never reports healthy. When that happens you get one line:
+When this happens, SixFields prints a short block like the one below. You can also ask for it at any time with `cluster why dev-1`.
 
 ```
 DevMachine/dev-1-cp-abcde: etcd is not coming up (6m32s)
@@ -237,91 +259,87 @@ typical: p50 1m15s · p95 2m00s
 next: cluster docs CAPI-CP-003
 ```
 
-Read it top to bottom:
+Let us read it line by line.
 
-- `DevMachine/dev-1-cp-abcde` is the object to look at. There are about twenty
-  objects behind a cluster and most of them are complaining. This is the one that
-  matters.
-- `etcd is not coming up` is what is wrong, in English. **etcd** is the database
-  where Kubernetes keeps everything it knows. Nothing works without it.
-- `(6m32s)` is how long it has been stuck.
-- `raw:` is a command you can paste. It prints everything Kubernetes knows about
-  that object. Nothing is hidden from you.
-- `typical:` is how long this step usually takes, so you can tell "slow" from
-  "stuck". **p50** is the middle of your past runs: half were faster. **p95** is
-  the slow end: only one run in twenty took longer. The line appears once you have
-  built three clusters.
-- `next:` is what to do.
+The first line names one object, `DevMachine/dev-1-cp-abcde`, and says what is wrong with it in plain words: etcd is not coming up. **etcd** is the database in which Kubernetes keeps everything it knows, and nothing works until it is running. The time in brackets, `6m32s`, is how long this has been stuck. Note that there are about twenty objects behind every cluster, and when something goes wrong several of them may be reporting problems at once. SixFields picks the one that is the cause and shows only that.
 
-There are five levels of detail. Most people stop at the first.
+The `raw:` line is a command you can copy and paste. It prints everything Kubernetes knows about that object. The block above is only a summary; nothing is hidden, and this command shows the whole object.
 
-1. The line above.
-2. `cluster why dev-1 --verbose` shows the full text and why this object was
-   picked over the others.
-3. The `raw:` command shows the object itself.
-4. `cluster docs CAPI-CP-003` prints a **runbook**: a checklist for that exact
-   problem, with the commands to run and what a good and a bad answer look like.
-5. `cluster why dev-1 --explain` asks a language model to explain the runbook's
-   findings in three lines. This one is optional and needs a model running on your
-   machine. `docs/ai.md` says what it sends and where.
+The `typical:` line tells you how long this stage usually takes on your machine, so that you can tell slow from stuck. `p50` is the middle value of your earlier runs: half of them were faster. `p95` is the slow end: only one run in twenty took longer. This line appears once you have built three clusters.
 
-## When your file is wrong
+The `next:` line tells you what to do next.
 
-Typing a field the blueprint owns gets you an error straight away:
+There are five levels of detail in all, each giving more than the last. Most of the time the first is enough.
+
+1. The block above.
+2. `cluster why dev-1 --verbose` shows the full text of the problem, and explains why this object was chosen over the others.
+3. The `raw:` command shows the object itself, exactly as Kubernetes stores it.
+4. `cluster docs CAPI-CP-003` prints a **runbook** for this exact problem: a checklist with the commands to run, and what a good answer and a bad answer look like.
+5. `cluster why dev-1 --explain` asks a language model to explain the runbook's findings in three lines. This is optional, and it needs a model running on your own machine. `docs/ai.md` says exactly what is sent and where.
+
+## 9. When there is a mistake in your file
+
+In Section 6 we saw that only six fields are yours. Suppose you set one that belongs to the ClusterClass, say `spec.clusterNetwork`. The file is refused the moment you submit it, with this message:
 
 ```
 spec.clusterNetwork is managed by ClusterClass 'std'. Set it via the class or use break-glass (docs/eject.md).
 ```
 
-A **ClusterClass** is what Kubernetes calls the blueprint. You get this message the
-moment you apply the file. To check before you apply:
+The message tells you three things: which field is the problem, who owns it (the ClusterClass named `std`), and what to do if you really need to change it. Changing it means either editing the ClusterClass, or switching the six-field rule off, which Section 12 discusses.
+
+You need not submit a file to find out whether it is acceptable. The `plan` command checks a file without building anything:
 
 ```sh
 cluster plan -f cluster.yaml
 ```
 
-The message is the same either way.
+It prints the same message that `cluster up` would.
 
-## Getting into your new cluster
+## 10. Using your cluster
 
-A **kubeconfig** is a small file holding an address and a password, and `kubectl`
-reads it to know which cluster you mean.
+To use a cluster you need its **kubeconfig**, a small file that holds the cluster's address and a credential. `kubectl` reads this file to know which cluster you mean. Get it, and use it, like this:
 
 ```sh
 cluster kubeconfig dev-1 > dev-1.kubeconfig
 KUBECONFIG=dev-1.kubeconfig kubectl get nodes
 ```
 
-The kubeconfig Cluster API writes points at an address that only works from inside
-Docker. `cluster kubeconfig` fixes the address for you.
+The first command writes the kubeconfig to a file. The second sets the `KUBECONFIG` environment variable for one command and asks the cluster to list its nodes. For `dev-1` you should see one control plane node and two worker nodes.
 
-## Leaving
+There is one thing to know here. The kubeconfig that Cluster API itself writes contains an address that only works from inside Docker. `cluster kubeconfig` replaces it with an address that works from your machine. If you ever fetch the kubeconfig some other way and `kubectl` cannot connect, this is the reason.
 
-Every object SixFields made is a normal Cluster API object. You can take them and
-go:
+## 11. Deleting clusters
+
+SixFields has no delete command of its own, because Cluster API already has one. A cluster is deleted by deleting its `Cluster` object from the management cluster, and Cluster API then removes everything that belongs to it:
+
+```sh
+kubectl delete cluster dev-1
+```
+
+To remove everything at once, including the management cluster itself, run:
+
+```sh
+make dev-down
+```
+
+This deletes the management cluster, every workload cluster it made, and all of their containers.
+
+## 12. Leaving SixFields
+
+Every object that SixFields creates is an ordinary Cluster API object. Nothing about your cluster depends on SixFields staying installed, and you can take the objects with you:
 
 ```sh
 cluster render dev-1 > dev-1-objects.yaml
 kubectl diff -f dev-1-objects.yaml && echo "no diff"
 ```
 
-That file is your whole cluster, and `kubectl diff` exits 0 to prove it matches
-what is running. Most of those objects are ones the blueprint owns, so actually
-applying the file needs the six-field rule switched off first. `docs/eject.md`
-shows how, without stopping any cluster.
+The first command writes out every object behind the cluster. The second compares that file with what is running; `kubectl diff` exits with 0 when they match, so `no diff` is printed. That file is your whole cluster.
 
-## Cleaning up
+Note, however, that most of these objects are owned by the ClusterClass, so applying the file yourself needs the six-field rule switched off first. `docs/eject.md` shows how to do this without stopping any cluster.
 
-```sh
-make dev-down
-```
+## 13. Exit codes
 
-This deletes the factory and every cluster it built, including the containers.
-
-## Exit codes
-
-An **exit code** is the number a command leaves behind so a script can tell what
-happened. Zero always means success.
+An exit code is the number a command leaves behind when it finishes, so that a script can tell what happened. Zero always means success. The `cluster` command uses these:
 
 | Code | Meaning |
 |---|---|
@@ -330,97 +348,86 @@ happened. Zero always means success.
 | 3 | your file was rejected |
 | 4 | something on your machine is wrong; run `make doctor` |
 
-## What else is out there
+## 14. Summary
 
-SixFields is not the first attempt at this.
+In this tutorial we have seen that:
 
-[clusterctl](https://cluster-api.sigs.k8s.io/clusterctl/overview) is the official
-Cluster API command. It installs providers and it can describe a cluster as a tree
-of conditions. SixFields uses it, and folds that tree into four rows.
+- SixFields is built on Cluster API and adds nothing that runs inside your cluster.
+- A management cluster, created once with `make dev-up`, builds workload clusters for you.
+- A cluster is described by a YAML file in which six fields are yours: the name, the ClusterClass, the Kubernetes version, and the name, kind, and number of worker nodes.
+- `cluster up` submits the file and shows four progress bars: infrastructure, control plane, workers, and addons.
+- Setting a field you do not own is refused immediately, with the field named and the reason given. `cluster plan` checks a file without building anything.
+- When a build gets stuck, `cluster why` names the one object that is the cause, and `cluster docs` prints a runbook for it.
+- `cluster kubeconfig` gives you a kubeconfig that works from your machine.
+- Clusters of the `std-inmemory` class build in about a minute and are the fastest way to practise.
 
-[Giant Swarm](https://www.giantswarm.io/) and [Syself](https://syself.com/) both
-ship opinionated Cluster API platforms, each wrapping a ClusterClass in Helm
-charts for their own customers. Their field surfaces are the closest thing to the
-six fields here.
+## 15. Exercises
 
-What SixFields does differently is refuse the extra fields at write time, and turn
-the wait into something you can read. It is also vendor neutral and it adds
-nothing that runs inside your cluster.
+1. Create an in-memory cluster with three worker nodes instead of two, using `cluster new` to write the file.
+2. Add a `spec.clusterNetwork` section to a cluster file and check it with `cluster plan`. Read the message carefully.
+3. Start a build, press Ctrl-C halfway through, and pick the display up again with `cluster status`.
+4. Run `cluster render` on a finished cluster and count how many objects are behind it.
+5. Run `make replay F=inmem-stall-vm`, which replays a recorded run of a build that stalls, and read the block that `why` produces.
 
-## Where to learn more
+---
 
-Every one of these is free and written for beginners.
+The rest of this README is reference material.
 
-- [Kubernetes basics](https://kubernetes.io/docs/tutorials/kubernetes-basics/), an
-  interactive walkthrough from the Kubernetes project.
-- [What a pod is](https://kubernetes.io/docs/concepts/workloads/pods/) and
-  [what a node is](https://kubernetes.io/docs/concepts/architecture/nodes/).
-- [YAML in ten minutes](https://learnxinyminutes.com/docs/yaml/).
-- [Docker's own getting started guide](https://docs.docker.com/get-started/).
-- [The Cluster API book](https://cluster-api.sigs.k8s.io/), the project SixFields
-  is built on.
-- [kind](https://kind.sigs.k8s.io/), which runs the factory.
-- [kubectl commands](https://kubernetes.io/docs/reference/kubectl/), the ones you
-  will use most.
-- [etcd](https://etcd.io/) and [k0s](https://k0sproject.io/), two pieces the
-  blueprint uses.
-
-## Every command
+## 16. Command reference
 
 | Command | What it does |
 |---|---|
-| `cluster up NAME -f FILE` | apply the file and wait, showing the four rows |
-| `cluster status NAME` | show the four rows for a cluster that already exists |
+| `cluster up NAME -f FILE` | submit the file and wait, showing the four progress bars |
+| `cluster status NAME` | show the progress bars for a cluster that already exists |
 | `cluster why NAME` | name the one object that is blocking |
-| `cluster plan -f FILE` | check a file without applying it |
+| `cluster plan -f FILE` | check a file without submitting it |
 | `cluster new NAME` | write a file from the six fields |
 | `cluster render NAME` | print every object behind a cluster |
 | `cluster kubeconfig NAME` | print a kubeconfig that works from your machine |
 | `cluster docs CODE` | print the runbook for a problem |
 | `cluster explain CODE` | print the short version of a problem |
-| `cluster doctor` | check that you can create a cluster here |
+| `cluster doctor` | check that this machine can create a cluster |
 | `cluster skills install` | install the read-only agent skills |
+| `cluster version` | print the version of the binary |
 
-Every one takes `--help`. Add `--json` to `status` and `why` when a script is
-reading the output.
+Every command accepts `--help`. `status` and `why` accept `--json` when a script is reading the output.
 
-## How the code is organized
+## 17. How the code is organised
 
 ```
-assembly/     the blueprint: the ClusterClass and the templates it points at
-policy/       the rule about who may write what, and its tests
+assembly/     the ClusterClass and the templates it points at
+policy/       the rule about which fields you may set, and its tests
 cmd/cluster/  the command you type
-internal/     the parts the command is made of
+internal/     the packages the command is made of
 docs/         everything you are meant to read
 testdata/     recorded runs, and the expected output for each
 e2e/          tests that build real clusters
-hack/         the scripts behind the make targets
+hack/         the scripts behind the make targets (macOS-only today)
 ```
 
-`internal/` is worth a closer look, because it is split on one idea. The pieces
-that think are pure: you hand them a snapshot of a cluster and they hand back an
-answer, with no network in between.
+`internal/` is worth a closer look, because it is organised around one rule: the packages that make decisions do not talk to the network. You give them a snapshot of a cluster, and they give you back an answer. Only the `watch` package talks to Kubernetes.
 
 | Package | What it does |
 |---|---|
 | `snapshot` | one moment in a cluster's life, as plain data |
-| `fold` | turns that into the four rows you see |
-| `why` | picks the one object to name when things stall |
-| `eta` | keeps the timings of your past runs and predicts the next |
-| `gen` | turns the six fields into a Cluster file |
-| `msg` | every sentence the tool can say, in one place |
-| `render` | draws the rows, the plain text, and the JSON |
+| `fold` | turns a snapshot into the four progress bars |
+| `why` | picks the one object to name when a build stalls |
+| `eta` | keeps the timings of past runs and estimates the next |
+| `gen` | turns the six fields into a `Cluster` file |
+| `msg` | every sentence the tool can print, in one place |
+| `render` | draws the progress bars, the plain text, and the JSON |
 | `watch` | reads a live cluster and builds a snapshot |
-| `explain` | the optional language model rung |
+| `explain` | the optional language model step |
 
-Only `watch` talks to Kubernetes. Everything above it works on a snapshot, so a
-recorded run replays through exactly the code a live run uses. That is why you can
-develop the display with no cluster at all, and why the tests are fast.
+Five more packages under `internal/` exist for the tests: `fixture` writes and reads recorded runs, `golden` compares output against checked-in files, `envtest` starts a real Kubernetes API server, `bench` scores the language model backends, and `style` holds the writing rules for this repository.
 
-## Working on SixFields
+Because everything above `watch` works on a snapshot, a recorded run can be replayed through exactly the code that a live run uses. This is why you can develop the display with no cluster at all, and why the tests are fast.
 
-`CLAUDE.md` holds the rules. `PLAN.md` holds the plan. `STATUS.md` says where the
-work is right now.
+## 18. Working on SixFields
+
+`CLAUDE.md` holds the rules for working in this repository. `PLAN.md` holds the plan. `STATUS.md` says where the work is right now.
+
+There are three kinds of tests:
 
 ```sh
 make test          # pure logic, under 30 seconds
@@ -428,25 +435,55 @@ make test-envtest  # against a real Kubernetes API server
 make e2e           # against real clusters
 ```
 
-You can work on the display without any cluster at all. SixFields records real
-runs and replays them:
+You can work on the display without any cluster. SixFields records real runs and replays them:
 
 ```sh
 make replay F=inmem-stall-vm
 ```
 
-`docs/api-snapshot.md` is generated from the exact Cluster API version this repo
-pins. Every condition name in the code has to appear there, and a test fails if
-one does not.
+`docs/api-snapshot.md` is generated from the exact Cluster API version this repository pins. Every condition name used in the code has to appear there, and a test fails if one does not.
 
-## Helping
+### Portability
 
-Read `CONTRIBUTING.md`. The short version: the tests are the specification, the
-tree stays green, and every change that fixes a bug starts with a test that fails
-because of it.
+The tool is not tied to macOS; the setup scripts are. Five things in `hack/` assume a Mac:
 
-Report a security problem privately. `SECURITY.md` says how.
+1. `make bootstrap` installs tools with Homebrew from a Brewfile.
+2. `hack/doctor.sh` reads memory with `sysctl -n hw.memsize`.
+3. `hack/doctor-ai.sh` does the same.
+4. `hack/envtest-assets.sh` has `--os darwin` hardcoded.
+5. `hack/profile.sh` branches over Docker Desktop, OrbStack, and Colima, which are the three macOS Docker runtimes.
 
-## Licence
+Making the setup portable means a package-install path for apt or dnf, a memory probe that works on both systems, removing the hardcoded `darwin`, and one CI run on Linux to prove it. That is about half a day of work, all of it in `hack/`. Until it is done, Linux is untested rather than unsupported.
+
+## 19. Contributing
+
+Read `CONTRIBUTING.md`. In short: the tests are the specification, the tree stays green, and every bug fix begins with a test that fails because of the bug.
+
+To report a security problem privately, follow `SECURITY.md`.
+
+## 20. Related projects
+
+SixFields is not the first attempt at this.
+
+[clusterctl](https://cluster-api.sigs.k8s.io/clusterctl/overview) is the official Cluster API command. It installs providers and it can describe a cluster as a tree of conditions. SixFields uses it, and folds that tree into four progress bars.
+
+[Giant Swarm](https://www.giantswarm.io/) and [Syself](https://syself.com/) both ship opinionated Cluster API platforms, each wrapping a ClusterClass in Helm charts for their own customers. Their field surfaces are the closest thing to the six fields here.
+
+SixFields differs in three ways: it refuses extra fields when you submit the file, it turns the wait into something you can read, and it is vendor neutral, with nothing running inside your cluster.
+
+## 21. Further reading
+
+All of these are free and written for beginners.
+
+- [Kubernetes basics](https://kubernetes.io/docs/tutorials/kubernetes-basics/), an interactive walkthrough from the Kubernetes project.
+- [What a pod is](https://kubernetes.io/docs/concepts/workloads/pods/) and [what a node is](https://kubernetes.io/docs/concepts/architecture/nodes/).
+- [YAML in ten minutes](https://learnxinyminutes.com/docs/yaml/).
+- [Docker's getting started guide](https://docs.docker.com/get-started/).
+- [The Cluster API book](https://cluster-api.sigs.k8s.io/), the project SixFields is built on.
+- [kind](https://kind.sigs.k8s.io/), which runs the management cluster.
+- [kubectl commands](https://kubernetes.io/docs/reference/kubectl/), the ones you will use most.
+- [etcd](https://etcd.io/) and [k0s](https://k0sproject.io/), two pieces the ClusterClass uses.
+
+## 22. Licence
 
 [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0). See `LICENSE`.
