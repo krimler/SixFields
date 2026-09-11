@@ -1,7 +1,7 @@
 {
   "cluster": {
     "kind": "Cluster",
-    "name": "dev-1",
+    "name": "std-1",
     "namespace": "default",
     "group": "cluster.x-k8s.io"
   },
@@ -11,15 +11,15 @@
   "phases": [
     {
       "name": "infrastructure",
-      "state": "running",
-      "detail": "not ready",
-      "elapsed_ns": 60000000000,
-      "last_transition": "2026-09-10T12:00:00Z",
-      "started_at": "2026-09-10T12:00:00Z",
+      "state": "done",
+      "detail": "ready",
+      "elapsed_ns": 5000000000,
+      "last_transition": "2026-09-11T07:26:19Z",
+      "started_at": "2026-09-11T07:26:14Z",
       "contributors": [
         {
           "kind": "DevCluster",
-          "name": "dev-1",
+          "name": "std-1-xhxph",
           "namespace": "default",
           "group": "infrastructure.cluster.x-k8s.io"
         }
@@ -29,19 +29,19 @@
       "name": "control plane",
       "state": "running",
       "detail": "0/1 nodes",
-      "elapsed_ns": 60000000000,
-      "last_transition": "2026-09-10T12:00:45Z",
-      "started_at": "2026-09-10T12:00:00Z",
+      "elapsed_ns": 62000000000,
+      "last_transition": "2026-09-11T07:26:35Z",
+      "started_at": "2026-09-11T07:26:19Z",
       "contributors": [
         {
-          "kind": "KubeadmControlPlane",
-          "name": "dev-1-cp",
+          "kind": "K0sControlPlane",
+          "name": "std-1-g7mdp",
           "namespace": "default",
           "group": "controlplane.cluster.x-k8s.io"
         },
         {
           "kind": "Machine",
-          "name": "dev-1-cp-abcde",
+          "name": "std-1-g7mdp-cnzvb",
           "namespace": "default",
           "group": "cluster.x-k8s.io"
         }
@@ -51,13 +51,13 @@
       "name": "workers",
       "state": "running",
       "detail": "0/2 nodes",
-      "elapsed_ns": 60000000000,
-      "last_transition": "2026-09-10T12:00:00Z",
-      "started_at": "2026-09-10T12:00:00Z",
+      "elapsed_ns": 62000000000,
+      "last_transition": "2026-09-11T07:26:23Z",
+      "started_at": "2026-09-11T07:26:19Z",
       "contributors": [
         {
           "kind": "MachineDeployment",
-          "name": "dev-1-md-0",
+          "name": "std-1-default-tzxmt",
           "namespace": "default",
           "group": "cluster.x-k8s.io"
         }
@@ -65,14 +65,21 @@
     },
     {
       "name": "addons",
-      "state": "done",
-      "detail": "none",
-      "elapsed_ns": 60000000000,
-      "started_at": "2026-09-10T12:00:00Z",
-      "contributors": null
+      "state": "running",
+      "detail": "waiting",
+      "elapsed_ns": 62000000000,
+      "started_at": "2026-09-11T07:26:19Z",
+      "contributors": [
+        {
+          "kind": "ClusterResourceSetBinding",
+          "name": "std-1",
+          "namespace": "default",
+          "group": "addons.cluster.x-k8s.io"
+        }
+      ]
     }
   ],
   "ready": false,
-  "at": "2026-09-10T12:01:00Z",
-  "elapsed_ns": 60000000000
+  "at": "2026-09-11T07:27:21Z",
+  "elapsed_ns": 67000000000
 }

@@ -1,8 +1,8 @@
-t+0s    infrastructure  running  not ready
-t+0s    control plane   running  0/1 nodes
-t+0s    workers         running  0/2 nodes
-t+0s    addons          done     none
-t+2m00s infrastructure  done     ready
-t+3m00s control plane   done     1/1 nodes
-t+4m20s workers         done     2/2 nodes
-ready in 4m20s
+t+19h26m infrastructure  done     ready
+t+19h26m control plane   running  0/1 nodes
+t+19h26m workers         running  0/2 nodes
+t+19h26m addons          running  waiting
+t+19h28m control plane   done     1/1 nodes
+t+19h29m addons          done     1/1 applied
+t+19h31m workers         done     2/2 nodes
+ready in 5m16s
