@@ -7,7 +7,7 @@ resources:
 - ../../backends/docker
 - clusterclass.yaml
 - controlplane.yaml
-- bootstrap.yaml
+- ../../bootstrap/k0s-worker
 
 # Installing the assembly means writing kinds the policy manages (*Template). That
 # is the operator break-glass case, not a hole: this label is one half, and

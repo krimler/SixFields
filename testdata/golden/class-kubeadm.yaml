@@ -1,20 +1,24 @@
-apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
-kind: K0sWorkerConfigTemplate
+apiVersion: bootstrap.cluster.x-k8s.io/v1beta2
+kind: KubeadmConfigTemplate
 metadata:
   labels:
     capi-distro.io/break-glass: "true"
-  name: std-default-bootstrap
+  name: std-kubeadm-default-bootstrap
 spec:
   template:
     spec:
-      version: v1.34.11+k0s.0
+      joinConfiguration:
+        nodeRegistration:
+          kubeletExtraArgs:
+          - name: eviction-hard
+            value: nodefs.available<0%,nodefs.inodesFree<0%,imagefs.available<0%
 ---
 apiVersion: cluster.x-k8s.io/v1beta2
 kind: ClusterClass
 metadata:
   labels:
     capi-distro.io/break-glass: "true"
-  name: std
+  name: std-kubeadm
 spec:
   controlPlane:
     machineInfrastructure:
@@ -23,9 +27,9 @@ spec:
         kind: DevMachineTemplate
         name: std-control-plane-machine
     templateRef:
-      apiVersion: controlplane.cluster.x-k8s.io/v1beta1
-      kind: K0sControlPlaneTemplate
-      name: std-control-plane
+      apiVersion: controlplane.cluster.x-k8s.io/v1beta2
+      kind: KubeadmControlPlaneTemplate
+      name: std-kubeadm-control-plane
   infrastructure:
     templateRef:
       apiVersion: infrastructure.cluster.x-k8s.io/v1beta2
@@ -56,9 +60,9 @@ spec:
     machineDeployments:
     - bootstrap:
         templateRef:
-          apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
-          kind: K0sWorkerConfigTemplate
-          name: std-default-bootstrap
+          apiVersion: bootstrap.cluster.x-k8s.io/v1beta2
+          kind: KubeadmConfigTemplate
+          name: std-kubeadm-default-bootstrap
       class: default
       infrastructure:
         templateRef:
@@ -66,30 +70,35 @@ spec:
           kind: DevMachineTemplate
           name: std-default-machine
 ---
-apiVersion: controlplane.cluster.x-k8s.io/v1beta1
-kind: K0sControlPlaneTemplate
+apiVersion: controlplane.cluster.x-k8s.io/v1beta2
+kind: KubeadmControlPlaneTemplate
 metadata:
   labels:
     capi-distro.io/break-glass: "true"
-  name: std-control-plane
+  name: std-kubeadm-control-plane
 spec:
   template:
     spec:
-      k0sConfigSpec:
-        args:
-        - --enable-worker=true
-        k0s:
-          apiVersion: k0s.k0sproject.io/v1beta1
-          kind: ClusterConfig
-          metadata:
-            name: k0s
-          spec:
-            api:
-              extraArgs:
-                anonymous-auth: "true"
-            telemetry:
-              enabled: false
-      version: v1.34.11+k0s.0
+      kubeadmConfigSpec:
+        clusterConfiguration:
+          apiServer:
+            certSANs:
+            - localhost
+            - host.docker.internal
+            - '::'
+            - ::1
+            - 127.0.0.1
+            - 0.0.0.0
+        initConfiguration:
+          nodeRegistration:
+            kubeletExtraArgs:
+            - name: eviction-hard
+              value: nodefs.available<0%,nodefs.inodesFree<0%,imagefs.available<0%
+        joinConfiguration:
+          nodeRegistration:
+            kubeletExtraArgs:
+            - name: eviction-hard
+              value: nodefs.available<0%,nodefs.inodesFree<0%,imagefs.available<0%
 ---
 apiVersion: infrastructure.cluster.x-k8s.io/v1beta2
 kind: DevClusterTemplate
@@ -101,7 +110,7 @@ spec:
   template:
     spec:
       backend:
-        inMemory: {}
+        docker: {}
 ---
 apiVersion: infrastructure.cluster.x-k8s.io/v1beta2
 kind: DevMachineTemplate
@@ -113,23 +122,8 @@ spec:
   template:
     spec:
       backend:
-        inMemory:
-          apiServer:
-            provisioning:
-              startupDuration: 1s
-              startupJitter: "0.2"
-          etcd:
-            provisioning:
-              startupDuration: 1s
-              startupJitter: "0.2"
-          node:
-            provisioning:
-              startupDuration: 1s
-              startupJitter: "0.2"
-          vm:
-            provisioning:
-              startupDuration: 2s
-              startupJitter: "0.2"
+        docker:
+          customImage: kindest/node:v1.34.11@sha256:44e222ee2132dab25ff87301682f89eb82c7880ea3a1bf543bfe9708fd08d67d
 ---
 apiVersion: infrastructure.cluster.x-k8s.io/v1beta2
 kind: DevMachineTemplate
@@ -141,12 +135,5 @@ spec:
   template:
     spec:
       backend:
-        inMemory:
-          node:
-            provisioning:
-              startupDuration: 1s
-              startupJitter: "0.2"
-          vm:
-            provisioning:
-              startupDuration: 2s
-              startupJitter: "0.2"
+        docker:
+          customImage: kindest/node:v1.34.11@sha256:44e222ee2132dab25ff87301682f89eb82c7880ea3a1bf543bfe9708fd08d67d

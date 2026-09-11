@@ -1,0 +1,9 @@
+{
+  "code": "CAPI-CP-002",
+  "lines": [
+    "DevMachine/dev-1-cp-abcde is blocking control plane progress.",
+    "Reason: ImagePullFailure during node image pull.",
+    "Fix: Ensure correct and accessible node image."
+  ],
+  "next_command": "kubectl get devmachine.infrastructure.cluster.x-k8s.io dev-1-cp-abcde -n default -o yaml"
+}

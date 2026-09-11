@@ -1,0 +1,9 @@
+{
+  "code": "CAPI-VERSION-001",
+  "lines": [
+    "DevMachine/dev-1-cp-abcde is blocking progress.",
+    "Kubernetes version v1.99.0 requested but not available.",
+    "Set spec.topology.version to a published version."
+  ],
+  "next_command": "kubectl get cluster dev-1 -n default -o jsonpath='{.spec.topology.version}'"
+}

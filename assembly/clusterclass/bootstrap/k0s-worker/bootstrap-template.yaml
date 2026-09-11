@@ -1,0 +1,12 @@
+---
+# Workers join with a k0s token, whichever placement the control plane uses.
+# The version is the + spelling: k0smotron's webhook rejects the dash form here,
+# while the hosted control plane's image tag requires it. See versions.env.
+apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+kind: K0sWorkerConfigTemplate
+metadata:
+  name: std-default-bootstrap
+spec:
+  template:
+    spec:
+      version: ${K0S_VERSION}

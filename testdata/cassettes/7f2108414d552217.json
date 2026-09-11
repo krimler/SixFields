@@ -1,0 +1,9 @@
+{
+  "code": "CAPI-TOPO-001",
+  "lines": [
+    "Cluster/dev-1 is stalled.",
+    "Reason: ReconcileFailed due to undefined gpuPool variable in ClusterClass std.",
+    "Fix by defining the gpuPool variable and re-applying the configuration."
+  ],
+  "next_command": "cluster plan -f cluster.yaml"
+}

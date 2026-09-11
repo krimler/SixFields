@@ -2,7 +2,7 @@
 apiVersion: controlplane.cluster.x-k8s.io/v1beta2
 kind: KubeadmControlPlaneTemplate
 metadata:
-  name: std-control-plane
+  name: std-kubeadm-control-plane
 spec:
   template:
     spec:

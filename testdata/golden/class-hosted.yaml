@@ -3,7 +3,7 @@ kind: K0sWorkerConfigTemplate
 metadata:
   labels:
     capi-distro.io/break-glass: "true"
-  name: std-hosted-default-bootstrap
+  name: std-default-bootstrap
 spec:
   template:
     spec:
@@ -53,7 +53,7 @@ spec:
         templateRef:
           apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
           kind: K0sWorkerConfigTemplate
-          name: std-hosted-default-bootstrap
+          name: std-default-bootstrap
       class: default
       infrastructure:
         templateRef:

@@ -1,0 +1,9 @@
+{
+  "code": "CAPI-CP-003",
+  "lines": [
+    "DevMachine/inmem-1-cp-abcde is stalled.",
+    "etcd has not finished starting after 30 minutes.",
+    "Control plane progress resumes when etcd starts."
+  ],
+  "next_command": "kubectl get devmachine.infrastructure.cluster.x-k8s.io inmem-1-cp-abcde -n default"
+}

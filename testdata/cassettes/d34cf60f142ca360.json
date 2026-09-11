@@ -1,0 +1,9 @@
+{
+  "code": "CAPI-CP-001",
+  "lines": [
+    "K0smotronControlPlane/hosted-1-cp is blocking progress.",
+    "PodNotReady: ImagePullBackOff for control plane pod.",
+    "Check Machine creation and bootstrap data production."
+  ],
+  "next_command": "kubectl get machines -n default -l cluster.x-k8s.io/cluster-name=hosted-1"
+}

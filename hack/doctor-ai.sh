@@ -3,7 +3,14 @@
 # Recommends a size class, never a hardcoded model name: the generation moves.
 set -uo pipefail
 cd "$(dirname "$0")/.."
+
+# versions.env holds the pinned values, but an environment variable is how a
+# person points this at a runtime they just started, so it wins.
+url_override=${CLUSTER_AI_URL:-}
+model_override=${CLUSTER_AI_MODEL:-}
 source versions.env
+CLUSTER_AI_URL=${url_override:-${CLUSTER_AI_URL:-}}
+CLUSTER_AI_MODEL=${model_override:-${CLUSTER_AI_MODEL:-}}
 PROFILE=${PROFILE:-dev}
 
 total_gb=$(( $(sysctl -n hw.memsize) / 1024 / 1024 / 1024 ))
@@ -27,9 +34,13 @@ if (( budget < 5 )); then
   exit 1
 fi
 
-if (( budget >= 40 )); then       class="a large MoE at Q4, or a 32B dense at Q8"
+# Dense over MoE at equal fit: a dense model explains better, and --explain is the
+# only thing the dev profile loads a model for. The MoE belongs to bench, where
+# nothing else is running and throughput is the point.
+if [[ "$PROFILE" == "bench" ]] && (( budget >= 12 )); then
+  class="a ~35B-A3B MoE at Q4 (mmap; only ~3B active per token)"
+elif (( budget >= 40 )); then     class="a 32B dense at Q8, or a large MoE at Q4"
 elif (( budget >= 18 )); then     class="a 27-32B dense at Q4 (~17-20 GB)"
-elif (( budget >= 12 )); then     class="a ~35B-A3B MoE at Q4 (mmap; only ~3B active per token)"
 elif (( budget >= 8 )); then      class="a ~14B dense at Q4_K_M (~9 GB)"
 else                              class="a ~9B dense at Q4 (~6.6 GB)"
 fi

@@ -245,3 +245,26 @@ func TestExplain_AddressesSurviveWhenRedactionIsOff(t *testing.T) {
 	anon := explain.NewAnonymizer()
 	require.Contains(t, anon.Hide("endpoint 10.96.0.1:6443"), "10.96.0.1")
 }
+
+// The cassettes are recorded from the pinned local model (versions.env), and this
+// replays them in `make test` — no network, no model, no key. Every one must pass
+// the same two gates a live answer does, so a model that starts inventing object
+// names fails the build the next time cassettes are re-recorded.
+func TestExplain_RecordedAnswersAreValidAndGrounded(t *testing.T) {
+	cassettes := explain.Cassette{Dir: "../../testdata/cassettes"}
+
+	for _, scenario := range stallScenarios {
+		t.Run(scenario, func(t *testing.T) {
+			req := requestFor(t, scenario)
+			answer, err := cassettes.Explain(context.Background(), req)
+			require.NoError(t, err, "no cassette for %s; record one with: CLUSTER_AI_RECORD=1 make test-llm", scenario)
+
+			require.NoError(t, answer.Validate(req.Code), "%+v", answer)
+			require.NoError(t, answer.Grounded(req), "%+v", answer)
+
+			// The model explains; it does not decide. The code it returns is the
+			// one the analyzer chose.
+			require.Equal(t, string(req.Code), answer.Code)
+		})
+	}
+}

@@ -1,0 +1,9 @@
+---
+# The worker bootstrap, shared by both placements. A k0s control plane is joined
+# with a k0s token whether it runs on machines or as pods, so this is the same
+# object in every class — which is what makes PLAN.md Phase 5's "differ in exactly
+# one class reference" true.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- bootstrap-template.yaml

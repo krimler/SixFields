@@ -15,7 +15,7 @@ import (
 
 const repoRoot = ".."
 
-var overlays = []string{"docker", "inmemory", "hosted"}
+var overlays = []string{"docker", "inmemory", "hosted", "kubeadm"}
 
 // render runs the same script `make render` runs, so a test can never pass
 // against a rendering nobody else produces.
@@ -143,32 +143,41 @@ func TestAssembly_SubstratesDifferOnlyInTheBackend(t *testing.T) {
 	require.Contains(t, backendKeys(t, find(t, render(t, "inmemory"), "DevMachineTemplate")), "inMemory")
 }
 
-// PLAN.md Phase 5 asks that the two placements differ in exactly one class
-// reference. They differ in two, and the second one is not optional: a k0s
-// control plane is joined with a k0s token, so the worker bootstrap has to change
-// with it. Everything else — the infrastructure, the machine template, the
-// variables — is identical.
-func TestAssembly_PlacementsDifferInTwoReferences(t *testing.T) {
+// PLAN.md Phase 5's acceptance: the two placements differ in exactly one class
+// reference. They do, now that both bootstrap with k0s — same provider family,
+// same join mechanism, one set of condition types to fold.
+func TestAssembly_PlacementsDifferInOneReference(t *testing.T) {
 	self := find(t, render(t, "docker"), "ClusterClass")["spec"].(map[string]any)
 	hosted := find(t, render(t, "hosted"), "ClusterClass")["spec"].(map[string]any)
 
 	require.Equal(t, self["infrastructure"], hosted["infrastructure"])
 	require.Equal(t, self["variables"], hosted["variables"])
+	require.Equal(t, self["workers"], hosted["workers"],
+		"both placements join workers the same way")
 
-	require.Equal(t, "KubeadmControlPlaneTemplate", templateKind(t, self, "controlPlane"))
+	require.Equal(t, "K0sControlPlaneTemplate", templateKind(t, self, "controlPlane"))
 	require.Equal(t, "K0smotronControlPlaneTemplate", templateKind(t, hosted, "controlPlane"))
-
-	require.Equal(t, "KubeadmConfigTemplate", bootstrapKind(t, self))
-	require.Equal(t, "K0sWorkerConfigTemplate", bootstrapKind(t, hosted))
 
 	// A hosted control plane has no machines, so it must not name a machine
 	// template — that is what makes the control-plane phase report readiness
 	// rather than a node count.
 	_, hasMachines := hosted["controlPlane"].(map[string]any)["machineInfrastructure"]
 	require.False(t, hasMachines, "a hosted control plane has no machines")
+}
 
-	// The worker machine is the same object in both.
-	require.Equal(t, workerInfrastructure(t, self), workerInfrastructure(t, hosted))
+// kubeadm is the documented fallback, not the default. It is rendered and tested
+// so a reader who needs it finds a working class rather than reconstructing one.
+func TestAssembly_KubeadmFallbackIsRenderedButNotDefault(t *testing.T) {
+	fallback := find(t, render(t, "kubeadm"), "ClusterClass")
+	require.Equal(t, "std-kubeadm", fallback["metadata"].(map[string]any)["name"])
+
+	spec := fallback["spec"].(map[string]any)
+	require.Equal(t, "KubeadmControlPlaneTemplate", templateKind(t, spec, "controlPlane"))
+	require.Equal(t, "KubeadmConfigTemplate", bootstrapKind(t, spec))
+
+	// The default class must not be the fallback.
+	std := find(t, render(t, "docker"), "ClusterClass")
+	require.Equal(t, "std", std["metadata"].(map[string]any)["name"])
 }
 
 func templateKind(t *testing.T, spec map[string]any, section string) string {

@@ -57,6 +57,31 @@ for overlay in ${OVERLAYS:-docker hosted}; do
     echo "dev-up: skipping the hosted class (k0smotron is not installed; WITH_K0SMOTRON=true installs it)"
     continue
   fi
+  # A ClusterClass's control-plane kind cannot be changed in place: CAPI forbids
+  # it "to prevent incompatible changes in the Clusters", the same rule that stops
+  # a Cluster changing placement. Switching a class's bootstrap is therefore a
+  # recreate, and that is only safe while no Cluster uses it.
+  for class in $(awk '/^  name: /{name=$2} /^kind: ClusterClass$/{want=1} want && /^  name: /{print $2; want=0}' \
+        "bin/render/${overlay}.yaml" | sort -u); do
+    current=$(kubectl get clusterclass "$class" \
+      -o jsonpath='{.spec.controlPlane.templateRef.kind}' 2>/dev/null || true)
+    wanted=$(awk -v c="$class" '
+      /^kind: ClusterClass$/{inclass=1} inclass && $0 ~ "^  name: "c"$"{found=1}
+      found && /^      kind: /{print $2; exit}' "bin/render/${overlay}.yaml")
+    [[ -z "$current" || -z "$wanted" || "$current" == "$wanted" ]] && continue
+
+    users=$(kubectl get clusters --all-namespaces \
+      -o jsonpath="{range .items[?(@.spec.topology.classRef.name==\"$class\")]}{.metadata.name} {end}" 2>/dev/null || true)
+    if [[ -n "${users// /}" ]]; then
+      echo "dev-up: ClusterClass $class changes control plane from $current to $wanted," >&2
+      echo "        but these clusters use it: ${users}" >&2
+      echo "        delete them first, or apply the new class under a different name." >&2
+      exit 1
+    fi
+    echo "dev-up: recreating ClusterClass $class ($current -> $wanted); nothing uses it"
+    kubectl delete clusterclass "$class"
+  done
+
   kubectl apply -f "bin/render/${overlay}.yaml" \
     --as "${BREAK_GLASS_USER:-capi-distro-installer}" \
     --as-group capi-distro:break-glass \

@@ -1,0 +1,6 @@
+---
+# The machine-based k0s control plane, used by placement: self.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- control-plane-template.yaml

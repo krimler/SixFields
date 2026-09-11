@@ -1,12 +1,15 @@
 ---
-# templateRef is {apiVersion,kind,name} on this release
-# (api@v1.14.2 core/v1beta2/clusterclass_types.go:1559), not apiGroup.
-# The Dev* templates it points at are supplied by the overlay, which is what
-# selects spec.backend.docker or spec.backend.inMemory.
+# The documented kubeadm fallback. PLAN.md Phase 5 moves both placements to k0s so
+# there is one provider family and one set of condition types to fold; this class
+# stays because kubeadm is what every other Cluster API assembly uses, and a
+# reader who needs it should find it here rather than reconstruct it.
+#
+# It is rendered and tested but not installed by `make dev-up`. Install it with:
+#   kubectl apply -f bin/render/kubeadm.yaml --as ... --as-group capi-distro:break-glass
 apiVersion: cluster.x-k8s.io/v1beta2
 kind: ClusterClass
 metadata:
-  name: std
+  name: std-kubeadm
 spec:
   infrastructure:
     templateRef:
@@ -15,9 +18,9 @@ spec:
       name: std-cluster
   controlPlane:
     templateRef:
-      apiVersion: controlplane.cluster.x-k8s.io/v1beta1
-      kind: K0sControlPlaneTemplate
-      name: std-control-plane
+      apiVersion: controlplane.cluster.x-k8s.io/v1beta2
+      kind: KubeadmControlPlaneTemplate
+      name: std-kubeadm-control-plane
     machineInfrastructure:
       templateRef:
         apiVersion: infrastructure.cluster.x-k8s.io/v1beta2
@@ -28,9 +31,9 @@ spec:
     - class: default
       bootstrap:
         templateRef:
-          apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
-          kind: K0sWorkerConfigTemplate
-          name: std-default-bootstrap
+          apiVersion: bootstrap.cluster.x-k8s.io/v1beta2
+          kind: KubeadmConfigTemplate
+          name: std-kubeadm-default-bootstrap
       infrastructure:
         templateRef:
           apiVersion: infrastructure.cluster.x-k8s.io/v1beta2

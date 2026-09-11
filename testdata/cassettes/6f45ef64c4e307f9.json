@@ -1,0 +1,9 @@
+{
+  "code": "CAPI-WRK-002",
+  "lines": [
+    "DevMachine/inmem-1-cp-abcde is stalled.",
+    "Provisioning failed; node did not register within 30 minutes.",
+    "Node registration will progress once the issue is resolved."
+  ],
+  "next_command": "kubectl get machine.cluster.x-k8s.io inmem-1-cp-abcde -n default -o yaml"
+}

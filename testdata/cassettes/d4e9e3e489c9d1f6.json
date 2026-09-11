@@ -1,0 +1,9 @@
+{
+  "code": "CAPI-CP-002",
+  "lines": [
+    "DevMachine dev-3-zqx65-zlwhb is blocking control plane progress.",
+    "Container for the machine is not running anymore.",
+    "Check DevMachine conditions and container logs to identify the issue."
+  ],
+  "next_command": "kubectl get devmachine.infrastructure.cluster.x-k8s.io dev-3-zqx65-zlwhb -n default -o yaml"
+}
