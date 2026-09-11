@@ -7,7 +7,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"capi-distro/internal/msg"
+	"sixfields/internal/msg"
 )
 
 // apply hands the object to kubectl rather than reimplementing server-side apply.

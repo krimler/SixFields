@@ -12,8 +12,8 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/require"
 
-	"capi-distro/internal/golden"
-	"capi-distro/internal/msg"
+	"sixfields/internal/golden"
+	"sixfields/internal/msg"
 )
 
 // runCLI executes the command tree in-process and returns stdout, stderr and the

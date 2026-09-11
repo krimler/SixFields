@@ -85,7 +85,7 @@
 apiVersion: admissionregistration.k8s.io/v1
 kind: ValidatingAdmissionPolicy
 metadata:
-  name: capi-distro-cluster-fields
+  name: sixfields-cluster-fields
 spec:
   # Fail: a policy that fails open is not subtraction. docs/eject.md is how you turn it off
   # on purpose.
@@ -304,10 +304,10 @@ spec:
     - name: breakGlassLabel
       expression: |-
         has(object.metadata.labels)
-        && 'capi-distro.io/break-glass' in object.metadata.labels
-        && object.metadata.labels['capi-distro.io/break-glass'] == 'true'
+        && 'sixfields.io/break-glass' in object.metadata.labels
+        && object.metadata.labels['sixfields.io/break-glass'] == 'true'
     - name: breakGlassGroup
-      expression: "'capi-distro:break-glass' in request.userInfo.groups"
+      expression: "'sixfields:break-glass' in request.userInfo.groups"
     - name: breakGlass
       expression: variables.breakGlassLabel && variables.breakGlassGroup
     - name: breakGlassPartial
@@ -319,8 +319,8 @@ spec:
       reason: Forbidden
       messageExpression: |-
         string(variables.denied[0])
-        + " needs both the capi-distro.io/break-glass label and membership"
-        + " of group capi-distro:break-glass. Use break-glass (docs/eject.md)."
+        + " needs both the sixfields.io/break-glass label and membership"
+        + " of group sixfields:break-glass. Use break-glass (docs/eject.md)."
     - expression: |-
         size(variables.denied) == 0 || variables.breakGlass || variables.breakGlassPartial
       reason: Forbidden
@@ -329,7 +329,7 @@ spec:
         + "'. Set it via the class or use break-glass (docs/eject.md)."
   # auditAnnotations live on the policy in admissionregistration.k8s.io/v1; the binding's
   # validationActions is what makes them recorded. The key reaches the audit event as
-  # capi-distro-cluster-fields/break-glass.
+  # sixfields-cluster-fields/break-glass.
   #
   # The Kubernetes documentation's shape for "record nothing here" is
   # `condition ? 'value' : null`. That does not compile on a v1.34 API server: CEL has no
@@ -348,9 +348,9 @@ spec:
 apiVersion: admissionregistration.k8s.io/v1
 kind: ValidatingAdmissionPolicyBinding
 metadata:
-  name: capi-distro-cluster-fields
+  name: sixfields-cluster-fields
 spec:
-  policyName: capi-distro-cluster-fields
+  policyName: sixfields-cluster-fields
   # Deny enforces; Audit is what puts the break-glass auditAnnotation on the audit event.
   validationActions: [Deny, Audit]
   # No matchResources: the binding applies wherever the policy's matchConstraints match,

@@ -290,7 +290,7 @@ func TestAssembly_RenderedObjectsCarryTheBreakGlassLabel(t *testing.T) {
 				metadata := doc["metadata"].(map[string]any)
 				labels, ok := metadata["labels"].(map[string]any)
 				require.True(t, ok, "%v has no labels", metadata["name"])
-				require.Equal(t, "true", labels["capi-distro.io/break-glass"],
+				require.Equal(t, "true", labels["sixfields.io/break-glass"],
 					"%v cannot be installed while the policy is enforcing", metadata["name"])
 			}
 		})

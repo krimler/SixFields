@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"os"
 
-	"capi-distro/internal/msg"
+	"sixfields/internal/msg"
 )
 
 // version is set by the linker in `make build`.

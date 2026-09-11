@@ -15,7 +15,7 @@ import (
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 
-	"capi-distro/internal/snapshot"
+	"sixfields/internal/snapshot"
 )
 
 // Client reads one cluster's objects from a management cluster and keeps them

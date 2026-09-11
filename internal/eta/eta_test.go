@@ -8,7 +8,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"capi-distro/internal/eta"
+	"sixfields/internal/eta"
 )
 
 func secs(values ...int) []time.Duration {

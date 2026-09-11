@@ -11,4 +11,4 @@ resources:
 labels:
 - includeSelectors: false
   pairs:
-    capi-distro.io/break-glass: "true"
+    sixfields.io/break-glass: "true"

@@ -7,7 +7,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"capi-distro/internal/msg"
+	"sixfields/internal/msg"
 )
 
 // skills ship with the binary so the agent a user already runs can drive this

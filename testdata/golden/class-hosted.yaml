@@ -2,7 +2,7 @@ apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
 kind: K0sWorkerConfigTemplate
 metadata:
   labels:
-    capi-distro.io/break-glass: "true"
+    sixfields.io/break-glass: "true"
   name: std-default-bootstrap
 spec:
   template:
@@ -13,7 +13,7 @@ apiVersion: cluster.x-k8s.io/v1beta2
 kind: ClusterClass
 metadata:
   labels:
-    capi-distro.io/break-glass: "true"
+    sixfields.io/break-glass: "true"
   name: std-hosted
 spec:
   controlPlane:
@@ -65,7 +65,7 @@ apiVersion: controlplane.cluster.x-k8s.io/v1beta1
 kind: K0smotronControlPlaneTemplate
 metadata:
   labels:
-    capi-distro.io/break-glass: "true"
+    sixfields.io/break-glass: "true"
   name: std-hosted-control-plane
 spec:
   template:
@@ -83,7 +83,7 @@ apiVersion: infrastructure.cluster.x-k8s.io/v1beta2
 kind: DevClusterTemplate
 metadata:
   labels:
-    capi-distro.io/break-glass: "true"
+    sixfields.io/break-glass: "true"
   name: std-cluster
 spec:
   template:
@@ -95,7 +95,7 @@ apiVersion: infrastructure.cluster.x-k8s.io/v1beta2
 kind: DevMachineTemplate
 metadata:
   labels:
-    capi-distro.io/break-glass: "true"
+    sixfields.io/break-glass: "true"
   name: std-control-plane-machine
 spec:
   template:
@@ -108,7 +108,7 @@ apiVersion: infrastructure.cluster.x-k8s.io/v1beta2
 kind: DevMachineTemplate
 metadata:
   labels:
-    capi-distro.io/break-glass: "true"
+    sixfields.io/break-glass: "true"
   name: std-default-machine
 spec:
   template:

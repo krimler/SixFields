@@ -6,7 +6,7 @@ package watch
 import (
 	"sort"
 
-	"capi-distro/internal/snapshot"
+	"sixfields/internal/snapshot"
 )
 
 // ClusterNameLabel is how CAPI marks every object it creates for a cluster. The

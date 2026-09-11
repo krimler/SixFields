@@ -38,7 +38,7 @@ kind: ClusterResourceSet
 metadata:
   name: ${CNI_NAME}
   labels:
-    capi-distro.io/break-glass: "true"
+    sixfields.io/break-glass: "true"
 spec:
   strategy: ApplyOnce
   # CAPI labels every Cluster built from a ClusterClass with

@@ -9,7 +9,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"capi-distro/internal/msg"
+	"sixfields/internal/msg"
 )
 
 func newKubeconfigCmd(g *globals) *cobra.Command {

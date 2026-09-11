@@ -4,7 +4,7 @@ import (
 	"github.com/spf13/cobra"
 	"sigs.k8s.io/yaml"
 
-	"capi-distro/internal/snapshot"
+	"sixfields/internal/snapshot"
 )
 
 func newRenderCmd(g *globals) *cobra.Command {

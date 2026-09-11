@@ -18,7 +18,7 @@ import (
 	"k8s.io/client-go/dynamic"
 	"sigs.k8s.io/yaml"
 
-	"capi-distro/internal/envtest"
+	"sixfields/internal/envtest"
 )
 
 // The CEL table above evaluates the policy's expressions. This one hands the same

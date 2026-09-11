@@ -7,11 +7,11 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"capi-distro/internal/explain"
-	"capi-distro/internal/msg"
-	"capi-distro/internal/render"
-	"capi-distro/internal/snapshot"
-	"capi-distro/internal/why"
+	"sixfields/internal/explain"
+	"sixfields/internal/msg"
+	"sixfields/internal/render"
+	"sixfields/internal/snapshot"
+	"sixfields/internal/why"
 )
 
 // aiOptions are the cost and privacy knobs from docs/ai.md.

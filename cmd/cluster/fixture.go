@@ -7,10 +7,10 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"capi-distro/internal/fixture"
-	"capi-distro/internal/fold"
-	"capi-distro/internal/msg"
-	"capi-distro/internal/snapshot"
+	"sixfields/internal/fixture"
+	"sixfields/internal/fold"
+	"sixfields/internal/msg"
+	"sixfields/internal/snapshot"
 )
 
 // The fixture subcommands are for people working on this tool, not for people

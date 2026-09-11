@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"capi-distro/internal/snapshot"
+	"sixfields/internal/snapshot"
 )
 
 // Filename is the name an envelope is stored under inside its scenario directory:

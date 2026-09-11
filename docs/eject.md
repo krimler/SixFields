@@ -11,19 +11,19 @@ to write, not what is already reconciled.
 
 Break-glass needs two things at once, and each is useless alone:
 
-- the object carries the label `capi-distro.io/break-glass: "true"`
-- you are in the group `capi-distro:break-glass`
+- the object carries the label `sixfields.io/break-glass: "true"`
+- you are in the group `sixfields:break-glass`
 
 With only one of them the write is denied and the message says which half you have:
 
 ```
-spec.clusterNetwork needs both the capi-distro.io/break-glass label and membership of group capi-distro:break-glass. Use break-glass (docs/eject.md).
+spec.clusterNetwork needs both the sixfields.io/break-glass label and membership of group sixfields:break-glass. Use break-glass (docs/eject.md).
 ```
 
 Label the object:
 
 ```sh
-kubectl label cluster my-cluster capi-distro.io/break-glass=true
+kubectl label cluster my-cluster sixfields.io/break-glass=true
 ```
 
 Get the group. It is an authentication attribute, so it comes from your identity provider,
@@ -32,11 +32,11 @@ an `O=` in the subject:
 
 ```sh
 openssl req -new -key you.key -out you.csr \
-  -subj "/CN=you/O=capi-distro:break-glass"
+  -subj "/CN=you/O=sixfields:break-glass"
 ```
 
 Submit that CSR, approve it, and use the issued certificate in your kubeconfig. For an OIDC
-issuer, add `capi-distro:break-glass` to the claim the API server reads as groups
+issuer, add `sixfields:break-glass` to the claim the API server reads as groups
 (`--oidc-groups-claim`). Check what you actually have:
 
 ```sh
@@ -53,12 +53,12 @@ Every break-glass write is recorded. The policy adds an audit annotation to the 
 audit event, so both uses and half-uses are greppable:
 
 ```sh
-grep -o '"capi-distro-[a-z-]*/break-glass":"[^"]*"' /var/log/kubernetes/audit.log
+grep -o '"sixfields-[a-z-]*/break-glass":"[^"]*"' /var/log/kubernetes/audit.log
 ```
 
 ```
-"capi-distro-cluster-fields/break-glass":"granted user=carol field=spec.clusterNetwork"
-"capi-distro-managed-kinds/break-glass":"incomplete user=dave kind=KubeadmControlPlane"
+"sixfields-cluster-fields/break-glass":"granted user=carol field=spec.clusterNetwork"
+"sixfields-managed-kinds/break-glass":"incomplete user=dave kind=KubeadmControlPlane"
 ```
 
 `granted` is a write that went through. `incomplete` is a denied attempt that had one half.
@@ -67,7 +67,7 @@ Take the label off when you are done. While it is there, anyone in the break-gla
 write any managed field on that object:
 
 ```sh
-kubectl label cluster my-cluster capi-distro.io/break-glass-
+kubectl label cluster my-cluster sixfields.io/break-glass-
 ```
 
 Installing or updating the assembly is itself a break-glass write. The ClusterClass
@@ -80,9 +80,9 @@ Delete the bindings first, then the policies:
 
 ```sh
 kubectl delete validatingadmissionpolicybinding \
-  capi-distro-cluster-fields capi-distro-managed-kinds
+  sixfields-cluster-fields sixfields-managed-kinds
 kubectl delete validatingadmissionpolicy \
-  capi-distro-cluster-fields capi-distro-managed-kinds
+  sixfields-cluster-fields sixfields-managed-kinds
 ```
 
 The binding enforces; a policy with no binding does nothing. In this order enforcement stops
@@ -98,7 +98,7 @@ throughout, because they were exempt from the policy anyway.
 To check it is gone:
 
 ```sh
-kubectl get validatingadmissionpolicy,validatingadmissionpolicybinding | grep capi-distro
+kubectl get validatingadmissionpolicy,validatingadmissionpolicybinding | grep sixfields
 ```
 
 To put it back:

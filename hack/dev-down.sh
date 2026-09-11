@@ -9,7 +9,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 source versions.env
-KIND_CLUSTER=${KIND_CLUSTER:-capi-distro}
+KIND_CLUSTER=${KIND_CLUSTER:-sixfields}
 
 if kind get clusters 2>/dev/null | grep -qx "$KIND_CLUSTER"; then
   kubectl config use-context "kind-${KIND_CLUSTER}" >/dev/null 2>&1 || true

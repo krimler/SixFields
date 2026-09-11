@@ -14,8 +14,8 @@ import (
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/rest"
 
-	"capi-distro/internal/envtest"
-	"capi-distro/internal/watch"
+	"sixfields/internal/envtest"
+	"sixfields/internal/watch"
 )
 
 func gvr(group, resource string) schema.GroupVersionResource {

@@ -9,7 +9,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"capi-distro/internal/explain"
+	"sixfields/internal/explain"
 )
 
 // TestLLM_RecordCassettes runs the pinned local model over every stall fixture and

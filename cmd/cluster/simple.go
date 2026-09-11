@@ -8,9 +8,9 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"capi-distro/internal/gen"
-	"capi-distro/internal/msg"
-	"capi-distro/internal/snapshot"
+	"sixfields/internal/gen"
+	"sixfields/internal/msg"
+	"sixfields/internal/snapshot"
 )
 
 // lastSnapshot drains a source and returns the final envelope, which is what the

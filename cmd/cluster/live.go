@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	"capi-distro/internal/msg"
-	"capi-distro/internal/snapshot"
-	"capi-distro/internal/watch"
+	"sixfields/internal/msg"
+	"sixfields/internal/snapshot"
+	"sixfields/internal/watch"
 )
 
 // liveSource is the other half of source: the same envelope, read from a real

@@ -3,10 +3,10 @@ package main
 import (
 	"github.com/spf13/cobra"
 
-	"capi-distro/internal/fold"
-	"capi-distro/internal/msg"
-	"capi-distro/internal/render"
-	"capi-distro/internal/why"
+	"sixfields/internal/fold"
+	"sixfields/internal/msg"
+	"sixfields/internal/render"
+	"sixfields/internal/why"
 )
 
 func newWhyCmd(g *globals) *cobra.Command {

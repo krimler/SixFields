@@ -16,7 +16,7 @@ import (
 
 	"sigs.k8s.io/yaml"
 
-	"capi-distro/internal/msg"
+	"sixfields/internal/msg"
 )
 
 // APIVersion is the Cluster API version this generator writes. It matches the

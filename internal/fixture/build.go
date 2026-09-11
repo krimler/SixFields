@@ -14,7 +14,7 @@ import (
 	"fmt"
 	"time"
 
-	"capi-distro/internal/snapshot"
+	"sixfields/internal/snapshot"
 )
 
 const (

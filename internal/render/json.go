@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"time"
 
-	"capi-distro/internal/eta"
-	"capi-distro/internal/fold"
-	"capi-distro/internal/snapshot"
-	"capi-distro/internal/why"
+	"sixfields/internal/eta"
+	"sixfields/internal/fold"
+	"sixfields/internal/snapshot"
+	"sixfields/internal/why"
 )
 
 // SchemaVersion is the contract in docs/schema/status.v1.json. Changing the shape

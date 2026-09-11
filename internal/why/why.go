@@ -10,9 +10,9 @@ import (
 	"strings"
 	"time"
 
-	"capi-distro/internal/fold"
-	"capi-distro/internal/msg"
-	"capi-distro/internal/snapshot"
+	"sixfields/internal/fold"
+	"sixfields/internal/msg"
+	"sixfields/internal/snapshot"
 )
 
 // negativePolarity conditions report an activity, not a fault: they are True while

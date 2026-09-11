@@ -4,7 +4,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 source versions.env
-KIND_CLUSTER=${KIND_CLUSTER:-capi-distro}
+KIND_CLUSTER=${KIND_CLUSTER:-sixfields}
 
 if ! docker info >/dev/null 2>&1; then
   echo "dev-up: no container runtime. Start Docker Desktop, OrbStack or Colima, then re-run." >&2
@@ -83,8 +83,8 @@ for overlay in ${OVERLAYS:-docker hosted}; do
   done
 
   kubectl apply -f "bin/render/${overlay}.yaml" \
-    --as "${BREAK_GLASS_USER:-capi-distro-installer}" \
-    --as-group capi-distro:break-glass \
+    --as "${BREAK_GLASS_USER:-sixfields-installer}" \
+    --as-group sixfields:break-glass \
     --as-group system:masters
 done
 

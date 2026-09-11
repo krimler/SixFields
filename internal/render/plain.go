@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"capi-distro/internal/fold"
+	"sixfields/internal/fold"
 )
 
 // Plain writes one line per state change: greppable, no cursor movement, safe in

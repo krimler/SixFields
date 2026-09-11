@@ -48,7 +48,7 @@
 apiVersion: admissionregistration.k8s.io/v1
 kind: ValidatingAdmissionPolicy
 metadata:
-  name: capi-distro-managed-kinds
+  name: sixfields-managed-kinds
 spec:
   failurePolicy: Fail
   matchConstraints:
@@ -99,10 +99,10 @@ spec:
     - name: breakGlassLabel
       expression: |-
         has(object.metadata.labels)
-        && 'capi-distro.io/break-glass' in object.metadata.labels
-        && object.metadata.labels['capi-distro.io/break-glass'] == 'true'
+        && 'sixfields.io/break-glass' in object.metadata.labels
+        && object.metadata.labels['sixfields.io/break-glass'] == 'true'
     - name: breakGlassGroup
-      expression: "'capi-distro:break-glass' in request.userInfo.groups"
+      expression: "'sixfields:break-glass' in request.userInfo.groups"
     - name: breakGlass
       expression: variables.breakGlassLabel && variables.breakGlassGroup
     - name: breakGlassPartial
@@ -114,8 +114,8 @@ spec:
       reason: Forbidden
       messageExpression: |-
         variables.kind
-        + " needs both the capi-distro.io/break-glass label and membership"
-        + " of group capi-distro:break-glass. Use break-glass (docs/eject.md)."
+        + " needs both the sixfields.io/break-glass label and membership"
+        + " of group sixfields:break-glass. Use break-glass (docs/eject.md)."
     # 'std' is a literal here, where cluster-fields.yaml reads it from
     # spec.topology.classRef.name. These objects carry no class name: the topology
     # controller labels what it creates with cluster.x-k8s.io/cluster-name, never with the
@@ -125,7 +125,7 @@ spec:
       messageExpression: |-
         variables.kind + " is managed by ClusterClass 'std'."
         + " Set it via the class or use break-glass (docs/eject.md)."
-  # Written to the audit event as capi-distro-managed-kinds/break-glass. String-typed
+  # Written to the audit event as sixfields-managed-kinds/break-glass. String-typed
   # throughout, yielding "" when no break-glass was involved, because a v1.34 API server
   # rejects the documented `condition ? 'value' : null` shape: CEL has no conditional
   # overload for (bool, string, null). See the same note in cluster-fields.yaml.
@@ -140,9 +140,9 @@ spec:
 apiVersion: admissionregistration.k8s.io/v1
 kind: ValidatingAdmissionPolicyBinding
 metadata:
-  name: capi-distro-managed-kinds
+  name: sixfields-managed-kinds
 spec:
-  policyName: capi-distro-managed-kinds
+  policyName: sixfields-managed-kinds
   validationActions: [Deny, Audit]
   # No matchResources: the binding applies wherever the policy's matchConstraints match,
   # in every namespace.

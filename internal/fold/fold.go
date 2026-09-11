@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"capi-distro/internal/snapshot"
+	"sixfields/internal/snapshot"
 )
 
 type PhaseName string

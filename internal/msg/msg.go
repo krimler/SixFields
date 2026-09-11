@@ -159,7 +159,7 @@ var registry = map[Code]Entry{
 	BreakGlassPartial: {
 		Code: BreakGlassPartial, Class: Denial,
 		Title:      "break-glass needs both the label and the group",
-		Summary:    "{{.Field}} needs both the capi-distro.io/break-glass label and membership of group capi-distro:break-glass. Use break-glass (docs/eject.md).",
+		Summary:    "{{.Field}} needs both the sixfields.io/break-glass label and membership of group sixfields:break-glass. Use break-glass (docs/eject.md).",
 		NextAction: "docs/eject.md",
 	},
 

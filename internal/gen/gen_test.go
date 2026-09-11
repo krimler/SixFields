@@ -6,9 +6,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"capi-distro/internal/gen"
-	"capi-distro/internal/golden"
-	"capi-distro/internal/msg"
+	"sixfields/internal/gen"
+	"sixfields/internal/golden"
+	"sixfields/internal/msg"
 )
 
 func minimal() gen.Spec {

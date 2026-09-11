@@ -103,8 +103,8 @@ audit of a `std-docker-happy` run), then implement the one that does, and docume
   (b) ownership label: objects carrying `topology.cluster.x-k8s.io/owned` are exempt.
 Default expectation: (a) is required, (b) is belt-and-braces. Do not assume; verify.
 
-Break-glass: label `capi-distro.io/break-glass: "true"` on the object **and** the
-requesting identity in group `capi-distro:break-glass`. Both required. Every use is
+Break-glass: label `sixfields.io/break-glass: "true"` on the object **and** the
+requesting identity in group `sixfields:break-glass`. Both required. Every use is
 logged by the binding's audit annotation.
 
 Work:

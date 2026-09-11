@@ -14,9 +14,9 @@ import (
 	"strings"
 	"time"
 
-	"capi-distro/internal/fold"
-	"capi-distro/internal/msg"
-	"capi-distro/internal/why"
+	"sixfields/internal/fold"
+	"sixfields/internal/msg"
+	"sixfields/internal/why"
 )
 
 // SchemaVersion is docs/schema/explain.v1.json. Output that does not validate is

@@ -6,7 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"capi-distro/internal/msg"
+	"sixfields/internal/msg"
 )
 
 func newDoctorCmd(g *globals) *cobra.Command {
@@ -67,7 +67,7 @@ func managedKindRefused(g *globals) (refused bool, detail string) {
 	const manifest = `apiVersion: controlplane.cluster.x-k8s.io/v1beta2
 kind: KubeadmControlPlane
 metadata:
-  name: capi-distro-doctor-probe
+  name: sixfields-doctor-probe
 spec:
   replicas: 1
   version: v1.0.0
@@ -76,7 +76,7 @@ spec:
       infrastructureRef:
         apiGroup: infrastructure.cluster.x-k8s.io
         kind: DevMachineTemplate
-        name: capi-distro-doctor-probe
+        name: sixfields-doctor-probe
 `
 	args := []string{"apply", "--dry-run=server", "-n", g.namespace, "-f", "-"}
 	if g.kubeconfig != "" {

@@ -6,16 +6,16 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"capi-distro/internal/gen"
-	"capi-distro/internal/msg"
-	"capi-distro/policy/tests"
+	"sixfields/internal/gen"
+	"sixfields/internal/msg"
+	"sixfields/policy/tests"
 )
 
 const vapDir = "../vap"
 
 const (
-	fieldsPolicy = "capi-distro-cluster-fields"
-	kindsPolicy  = "capi-distro-managed-kinds"
+	fieldsPolicy = "sixfields-cluster-fields"
+	kindsPolicy  = "sixfields-managed-kinds"
 )
 
 // Identities. The controllers are the ones that must be exempt for the happy path
@@ -323,14 +323,14 @@ func TestPolicy_ClusterAdminIsNotExempt(t *testing.T) {
 
 func TestPolicy_BreakGlassNeedsBothHalves(t *testing.T) {
 	deny := deniedPaths["spec.clusterNetwork"]
-	label := withLabel("capi-distro.io/break-glass", "true")
-	group := []string{"capi-distro:break-glass", "system:authenticated"}
+	label := withLabel("sixfields.io/break-glass", "true")
+	group := []string{"sixfields:break-glass", "system:authenticated"}
 
 	t.Run("label only", func(t *testing.T) {
 		got := decide(t, fieldsPolicy, tests.Request{Object: cluster(deny, label)})
 		require.False(t, got.Allowed)
 		require.Contains(t, got.Message, "needs both")
-		require.Contains(t, got.Message, "capi-distro:break-glass")
+		require.Contains(t, got.Message, "sixfields:break-glass")
 	})
 	t.Run("group only", func(t *testing.T) {
 		got := decide(t, fieldsPolicy, tests.Request{Object: cluster(deny), Groups: group})
@@ -347,8 +347,8 @@ func TestPolicy_BreakGlassNeedsBothHalves(t *testing.T) {
 // none records nothing.
 func TestPolicy_BreakGlassIsAudited(t *testing.T) {
 	deny := deniedPaths["spec.clusterNetwork"]
-	label := withLabel("capi-distro.io/break-glass", "true")
-	group := []string{"capi-distro:break-glass", "system:authenticated"}
+	label := withLabel("sixfields.io/break-glass", "true")
+	group := []string{"sixfields:break-glass", "system:authenticated"}
 
 	granted := decide(t, fieldsPolicy, tests.Request{Object: cluster(deny, label), Groups: group, Username: "carol"})
 	require.Contains(t, granted.Audit["break-glass"], "granted")

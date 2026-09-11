@@ -5,8 +5,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"capi-distro/internal/eta"
-	"capi-distro/internal/fold"
+	"sixfields/internal/eta"
+	"sixfields/internal/fold"
 )
 
 func newStatusCmd(g *globals) *cobra.Command {

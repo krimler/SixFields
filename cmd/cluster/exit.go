@@ -1,6 +1,6 @@
 package main
 
-import "capi-distro/internal/msg"
+import "sixfields/internal/msg"
 
 // quiet carries an exit code for a command that has already said everything it
 // has to say. Without it the stall block would be printed twice: once by the

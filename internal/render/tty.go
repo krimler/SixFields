@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"capi-distro/internal/fold"
+	"sixfields/internal/fold"
 )
 
 // TTY draws four rows and redraws them in place. It is what a person watching a

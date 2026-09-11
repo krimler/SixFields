@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"capi-distro/internal/fixture"
-	"capi-distro/internal/snapshot"
+	"sixfields/internal/fixture"
+	"sixfields/internal/snapshot"
 )
 
 // replaySource plays a recorded timeline back through the same code a live run

@@ -1,6 +1,6 @@
 ---
 name: cluster-inspect
-description: Read-only investigation of a Cluster API cluster built with capi-distro. Use when someone asks why a cluster is not coming up, what phase it is in, what is blocking it, or what objects a cluster produced. Runs `cluster status --json`, `cluster why --json` and `cluster render`, and grounds every claim in that output.
+description: Read-only investigation of a Cluster API cluster built with sixfields. Use when someone asks why a cluster is not coming up, what phase it is in, what is blocking it, or what objects a cluster produced. Runs `cluster status --json`, `cluster why --json` and `cluster render`, and grounds every claim in that output.
 ---
 
 # cluster-inspect

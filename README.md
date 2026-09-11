@@ -1,4 +1,4 @@
-# capi-distro
+# sixfields
 
 Create a Cluster API cluster by writing six fields, and watch it come up as four
 phases instead of a condition tree. When it stops, one line names the object that

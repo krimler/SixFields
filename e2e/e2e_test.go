@@ -173,7 +173,7 @@ func TestE2E_RenderReAppliesWithNoDiff(t *testing.T) {
 	require.Contains(t, denied, "break-glass")
 
 	run(t, time.Minute, "kubectl", "delete", "validatingadmissionpolicybinding",
-		"capi-distro-cluster-fields", "capi-distro-managed-kinds")
+		"sixfields-cluster-fields", "sixfields-managed-kinds")
 	t.Cleanup(func() { run(t, time.Minute, "kubectl", "apply", "-f", "policy/vap/") })
 
 	out, code := run(t, 2*time.Minute, "kubectl", "diff", "-f", path)
@@ -210,7 +210,7 @@ metadata:
   name: e2e-break-glass
   namespace: default
   labels:
-    capi-distro.io/break-glass: "true"
+    sixfields.io/break-glass: "true"
 spec:
   clusterNetwork:
     pods:

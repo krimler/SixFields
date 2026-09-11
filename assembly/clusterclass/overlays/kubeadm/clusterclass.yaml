@@ -5,7 +5,7 @@
 # reader who needs it should find it here rather than reconstruct it.
 #
 # It is rendered and tested but not installed by `make dev-up`. Install it with:
-#   kubectl apply -f bin/render/kubeadm.yaml --as ... --as-group capi-distro:break-glass
+#   kubectl apply -f bin/render/kubeadm.yaml --as ... --as-group sixfields:break-glass
 apiVersion: cluster.x-k8s.io/v1beta2
 kind: ClusterClass
 metadata:

@@ -5,8 +5,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"capi-distro/internal/gen"
-	"capi-distro/internal/msg"
+	"sixfields/internal/gen"
+	"sixfields/internal/msg"
 )
 
 func newUpCmd(g *globals) *cobra.Command {

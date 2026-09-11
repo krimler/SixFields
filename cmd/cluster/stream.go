@@ -10,12 +10,12 @@ import (
 	"github.com/mattn/go-isatty"
 	"golang.org/x/term"
 
-	"capi-distro/internal/eta"
-	"capi-distro/internal/fold"
-	"capi-distro/internal/msg"
-	"capi-distro/internal/render"
-	"capi-distro/internal/snapshot"
-	"capi-distro/internal/why"
+	"sixfields/internal/eta"
+	"sixfields/internal/fold"
+	"sixfields/internal/msg"
+	"sixfields/internal/render"
+	"sixfields/internal/snapshot"
+	"sixfields/internal/why"
 )
 
 // source produces snapshots, from a live cluster or from a recorded fixture. The

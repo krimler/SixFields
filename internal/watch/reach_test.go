@@ -5,9 +5,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"capi-distro/internal/fixture"
-	"capi-distro/internal/snapshot"
-	"capi-distro/internal/watch"
+	"sixfields/internal/fixture"
+	"sixfields/internal/snapshot"
+	"sixfields/internal/watch"
 )
 
 func obj(kind, name string, mutate ...func(snapshot.Object)) snapshot.Object {

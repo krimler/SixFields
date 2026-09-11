@@ -8,7 +8,7 @@ SHELL := /usr/bin/env bash
 
 BIN := bin
 CLUSTER := $(BIN)/cluster
-KIND_CLUSTER ?= capi-distro
+KIND_CLUSTER ?= sixfields
 PROFILE ?= dev
 FIXTURES := testdata/fixtures
 

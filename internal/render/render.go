@@ -11,11 +11,11 @@ import (
 	"strings"
 	"time"
 
-	"capi-distro/internal/eta"
-	"capi-distro/internal/fold"
-	"capi-distro/internal/msg"
-	"capi-distro/internal/snapshot"
-	"capi-distro/internal/why"
+	"sixfields/internal/eta"
+	"sixfields/internal/fold"
+	"sixfields/internal/msg"
+	"sixfields/internal/snapshot"
+	"sixfields/internal/why"
 )
 
 // View is everything a renderer may show. Assembling it is the caller's job, so

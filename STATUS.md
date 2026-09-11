@@ -76,7 +76,7 @@ down where the next person will hit it:
 
 ## Blocked on a human
 
-1. **The project name and the licence** (QUESTIONS.md Q1). `capi-distro` is in the
+1. **The project name and the licence** (QUESTIONS.md Q1). `sixfields` is in the
    module path and the break-glass label domain; no LICENSE is committed, because
    committing one is the decision.
 2. **`docs/schema/cluster-spec.v1.json` covers `machineDeployments` only.** A cloud

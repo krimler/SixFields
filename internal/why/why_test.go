@@ -14,12 +14,12 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"capi-distro/internal/fixture"
-	"capi-distro/internal/fold"
-	"capi-distro/internal/golden"
-	"capi-distro/internal/msg"
-	"capi-distro/internal/snapshot"
-	"capi-distro/internal/why"
+	"sixfields/internal/fixture"
+	"sixfields/internal/fold"
+	"sixfields/internal/golden"
+	"sixfields/internal/msg"
+	"sixfields/internal/snapshot"
+	"sixfields/internal/why"
 )
 
 const fixturesDir = "../../testdata/fixtures"

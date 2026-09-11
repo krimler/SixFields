@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"capi-distro/internal/snapshot"
+	"sixfields/internal/snapshot"
 )
 
 // Timeline is one scenario: a name, why it exists, and the envelopes a watcher

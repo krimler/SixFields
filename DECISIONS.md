@@ -3,6 +3,27 @@
 Newest first. Each entry: date, decision, alternatives, why, `REVISIT` if a human
 should confirm.
 
+## 2026-09-11 — The project is SixFields, under Apache-2.0
+
+Decision: the name is **SixFields**, after the surface it gives a user, and the licence is
+**Apache-2.0** (`LICENSE`).
+Alternatives: `capi-distro` (the working name, which describes the category rather than the
+idea); LGPL-3.0.
+Why the licence: Apache-2.0 is what every CNCF project uses and what the CNCF IP Policy
+expects, and it is what Cluster API, k0smotron, Kubernetes and every provider in this repo
+already use, so there is nothing to reconcile. LGPL-3.0 is avoided across this ecosystem by
+anyone who links or redistributes, and would block adoption and CNCF donation.
+
+The rename reached the Go module path, the break-glass label domain
+(`sixfields.io/break-glass`), the break-glass group (`sixfields:break-glass`), the policy
+object names, and the kind cluster name.
+
+Two things deliberately did not change. The CLI binary stays `cluster`, because
+`cluster up dev-1` reads as the thing you are doing and `sixfields up dev-1` does not; the
+project and the command are allowed different names. The error codes keep their `CAPI-`
+prefix, because they classify Cluster API stalls and that is what a reader is looking at.
+`REVISIT` either if the human disagrees; both are a one-line change.
+
 ## 2026-09-11 — Both placements bootstrap with k0s; kubeadm is a rendered fallback
 
 Decision: `std` uses `K0sControlPlaneTemplate` and `K0sWorkerConfigTemplate`,
@@ -61,7 +82,7 @@ Decision: `hack/addons.sh` installs a `ClusterResourceSet` with a digest-pinned 
 manifest, selected by the `topology.cluster.x-k8s.io/owned` label CAPI puts on every
 Cluster built from a class.
 Alternatives: leave the CNI to the user (then no cluster from this class ever reaches
-Ready, which is what happened); a `capi-distro.io/cni` label the user sets (a seventh
+Ready, which is what happened); a `sixfields.io/cni` label the user sets (a seventh
 field); an empty selector (CAPI rejects it).
 Why: an opinionated assembly that produces a cluster whose nodes never become Ready is not
 an assembly. It also makes the fourth phase report something real instead of "none".
