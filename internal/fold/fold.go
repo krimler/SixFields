@@ -194,9 +194,6 @@ func placement(cluster snapshot.Object) string {
 		if v.String("name") != "placement" {
 			continue
 		}
-		if s, ok := v.Map("value"); ok {
-			_ = s
-		}
 		if s := v.String("value"); s != "" {
 			return s
 		}

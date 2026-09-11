@@ -171,7 +171,7 @@ func Rank(env snapshot.Envelope, res fold.Result, opt Options) (Stall, bool) {
 	full := strings.Join(strings.Fields(win.Condition.Message), " ")
 	stall := Stall{
 		Object:        win.Object,
-		Code:          classify(env, res, phase, win),
+		Code:          classify(res, phase, win),
 		Phase:         phase.Name,
 		Reason:        win.Condition.Reason,
 		Message:       msg.Truncate(full, MessageBudget),
@@ -283,12 +283,12 @@ func severityRank(s string) int {
 
 // classify maps the winning candidate to one stall class. Every branch here has a
 // runbook in docs/runbooks and a long form in internal/msg/longform.
-func classify(env snapshot.Envelope, res fold.Result, phase fold.Phase, win Candidate) msg.Code {
+func classify(res fold.Result, phase fold.Phase, win Candidate) msg.Code {
 	cond := win.Condition
 	if win.Object.Kind == "Cluster" && cond.Type == "TopologyReconciled" {
 		return msg.TopologyFailed
 	}
-	if isVersionFailure(env, res, cond) {
+	if isVersionFailure(res, cond) {
 		return msg.VersionUnavailable
 	}
 	// A node that never became ready has one runbook whether it is a control-plane
@@ -327,11 +327,10 @@ func isMachineKind(kind string) bool {
 // isVersionFailure is deliberately narrow: an image failure that names the version
 // the user asked for is a version problem, and an image failure that does not is a
 // registry problem. Guessing either way would send the user to the wrong runbook.
-func isVersionFailure(env snapshot.Envelope, res fold.Result, c snapshot.Condition) bool {
+func isVersionFailure(res fold.Result, c snapshot.Condition) bool {
 	if res.Version == "" || !strings.Contains(c.Message, res.Version) {
 		return false
 	}
-	_ = env
 	return strings.Contains(strings.ToLower(c.Reason), "image") ||
 		strings.Contains(strings.ToLower(c.Message), "image")
 }

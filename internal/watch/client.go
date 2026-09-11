@@ -71,7 +71,7 @@ func loadConfig(kubeconfig string) (*rest.Config, error) {
 // Resources returns the CAPI resources that can be listed and watched in this
 // management cluster. Discovery, not a hardcoded list: a provider installed later
 // shows up without a code change.
-func (c *Client) Resources(ctx context.Context) ([]schema.GroupVersionResource, error) {
+func (c *Client) Resources() ([]schema.GroupVersionResource, error) {
 	// Preferred versions only. CAPI serves v1beta1 and v1beta2 of every kind at
 	// this release, and listing both returns each object twice and prints a
 	// deprecation warning per resource — which is what a first real run looked
@@ -94,7 +94,6 @@ func (c *Client) Resources(ctx context.Context) ([]schema.GroupVersionResource, 
 		}
 	}
 	sort.Slice(out, func(i, j int) bool { return out[i].String() < out[j].String() })
-	_ = ctx
 	return out, nil
 }
 
@@ -125,7 +124,7 @@ func verbs(have []string, want ...string) bool {
 
 // Snapshot lists everything once and returns the envelope for one cluster.
 func (c *Client) Snapshot(ctx context.Context, name string) (snapshot.Envelope, error) {
-	resources, err := c.Resources(ctx)
+	resources, err := c.Resources()
 	if err != nil {
 		return snapshot.Envelope{}, err
 	}
@@ -158,7 +157,7 @@ func (c *Client) Watch(ctx context.Context, name string, debounce time.Duration)
 	if _, err := c.Snapshot(ctx, name); err != nil {
 		return nil, err
 	}
-	resources, err := c.Resources(ctx)
+	resources, err := c.Resources()
 	if err != nil {
 		return nil, err
 	}

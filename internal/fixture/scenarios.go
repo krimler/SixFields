@@ -2,7 +2,6 @@ package fixture
 
 import (
 	"fmt"
-	"sort"
 	"time"
 
 	"capi-distro/internal/snapshot"
@@ -33,15 +32,6 @@ func All() []Timeline {
 		hostedStallPod(),
 		twoStalls(),
 	}
-}
-
-func Names() []string {
-	var out []string
-	for _, t := range All() {
-		out = append(out, t.Name)
-	}
-	sort.Strings(out)
-	return out
 }
 
 type opts struct {

@@ -3,6 +3,7 @@ package msg
 import (
 	"encoding/json"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -205,4 +206,67 @@ func TestUX_RunbookExamplesMatchTheRealStallBlock(t *testing.T) {
 		require.NotContains(t, text, "\n  raw: ", "%s: the raw line must not be indented", code)
 		require.NotContains(t, text, "\n  Next: ", "%s: the renderer writes `next:`, not `Next:`", code)
 	}
+}
+
+// The jargon lint runs over the docs as well as the code. A user-facing page that
+// names a CAPI condition type has leaked an implementation detail into the one
+// place a reader is meant to be able to trust; the runbooks are exempt, because
+// naming conditions is what a runbook is for.
+func TestUX_NoJargonInUserFacingDocs(t *testing.T) {
+	deny := conditionTypeNames(t)
+	require.NotEmpty(t, deny)
+
+	for _, path := range []string{
+		"../../README.md",
+		"../../docs/user-guide.md",
+		"../../docs/eject.md",
+		"../../docs/ai.md",
+	} {
+		t.Run(filepath.Base(path), func(t *testing.T) {
+			b, err := os.ReadFile(path)
+			require.NoError(t, err)
+
+			for i, line := range prose(string(b)) {
+				for _, jargon := range deny {
+					require.NotContains(t, line, jargon,
+						"%s:%d names the condition type %q outside a code block", path, i+1, jargon)
+				}
+			}
+		})
+	}
+}
+
+// prose returns the lines a reader reads as English: fenced code blocks and
+// backticked spans are where a command or a raw condition name belongs.
+func prose(text string) []string {
+	var out []string
+	fenced := false
+	for _, line := range strings.Split(text, "\n") {
+		if strings.HasPrefix(strings.TrimSpace(line), "```") {
+			fenced = !fenced
+			out = append(out, "")
+			continue
+		}
+		if fenced || strings.HasPrefix(line, "    ") {
+			out = append(out, "")
+			continue
+		}
+		out = append(out, stripInlineCode(line))
+	}
+	return out
+}
+
+func stripInlineCode(line string) string {
+	var b strings.Builder
+	inCode := false
+	for _, r := range line {
+		if r == '`' {
+			inCode = !inCode
+			continue
+		}
+		if !inCode {
+			b.WriteRune(r)
+		}
+	}
+	return b.String()
 }
