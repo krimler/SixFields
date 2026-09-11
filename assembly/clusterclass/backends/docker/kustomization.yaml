@@ -1,0 +1,8 @@
+---
+# The docker backend's Dev* templates, shared by every class that runs machines
+# in containers. kustomize will not let an overlay reference a file outside its
+# own directory, so the shared part is a directory of its own.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- infrastructure.yaml

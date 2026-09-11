@@ -50,10 +50,18 @@ hack/render.sh
 # this supplies the group. Both halves are required, and the binding records the
 # use in the audit log — which is the point. RBAC still comes from the caller, so
 # system:masters is impersonated alongside.
-kubectl apply -f "bin/render/${OVERLAY:-docker}.yaml" \
-  --as "${BREAK_GLASS_USER:-capi-distro-installer}" \
-  --as-group capi-distro:break-glass \
-  --as-group system:masters
+for overlay in ${OVERLAYS:-docker hosted}; do
+  [[ -f "bin/render/${overlay}.yaml" ]] || continue
+  # The hosted class needs k0smotron; skip it rather than fail when it is absent.
+  if [[ "$overlay" == "hosted" ]] && ! kubectl get crd k0smotroncontrolplanetemplates.controlplane.cluster.x-k8s.io >/dev/null 2>&1; then
+    echo "dev-up: skipping the hosted class (k0smotron is not installed; WITH_K0SMOTRON=true installs it)"
+    continue
+  fi
+  kubectl apply -f "bin/render/${overlay}.yaml" \
+    --as "${BREAK_GLASS_USER:-capi-distro-installer}" \
+    --as-group capi-distro:break-glass \
+    --as-group system:masters
+done
 
 hack/addons.sh
 

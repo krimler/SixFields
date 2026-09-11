@@ -6,7 +6,7 @@ metadata:
 spec:
   topology:
     classRef:
-      name: std
+      name: std-hosted
     controlPlane:
       replicas: 3
     variables:

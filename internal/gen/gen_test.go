@@ -195,3 +195,25 @@ func mentions(errs []*msg.Error, needle string) bool {
 	}
 	return false
 }
+
+// A ClusterClass has exactly one control plane, so placement cannot be a patch on
+// the same class: hosted resolves to a second class. The user writes
+// placement: hosted and never types the class name.
+func TestGen_PlacementResolvesToAClass(t *testing.T) {
+	require.Equal(t, "std", gen.ClassFor("std", "self"))
+	require.Equal(t, "std-hosted", gen.ClassFor("std", "hosted"))
+	require.Equal(t, "std-hosted", gen.ClassFor("std-hosted", "hosted"),
+		"resolving twice must not stack the suffix")
+
+	spec := minimal()
+	spec.Placement = "hosted"
+	out, err := spec.YAML()
+	require.NoError(t, err)
+	require.Contains(t, string(out), "name: std-hosted")
+
+	// And it folds back, so what a user reads is what they wrote.
+	back, errs := gen.FromYAML(out)
+	require.Empty(t, errs, "%v", errs)
+	require.Equal(t, "std", back.Class)
+	require.Equal(t, "hosted", back.Placement)
+}

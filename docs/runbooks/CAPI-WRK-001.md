@@ -71,9 +71,31 @@ not implemented. For that kind, the replica counters (`status.replicas`,
    ```
 
    Good: `ScalingUp True ScalingUp` with a fresh `lastTransitionTime` — it is working.
-   Bad: `ScalingUp` True and unchanged for minutes; the message names what it cannot
-   create. A missing or unresolvable `DevMachineTemplate` is the usual content, and that
-   comes from the class: read `cluster docs CAPI-TOPO-001`.
+   Bad: `ScalingUp True ScalingUp: Scaling up from 0 to 2 replicas`, unchanged for
+   minutes, with `HAVE 0`. **The message does not say why.** On CAPI v1.14.2 a failure
+   to create the Machine — a template that will not clone, a bootstrap config a webhook
+   rejects — appears in no condition and emits no event. Go to step 2b.
+
+2b. Creation blocked with no reason on any object: read the controller log.
+
+   ```
+   kubectl logs -n capi-system deployment/capi-controller-manager --tail=200 \
+     | grep -i "failed to sync replicas" | tail -3
+   ```
+
+   This is the only place the reason exists. A real one, from a run of this assembly:
+
+   ```
+   failed to clone bootstrap configuration from K0sWorkerConfigTemplate
+   default/hosted-1-default-dtsmv while creating a Machine: ... admission webhook
+   "validate-k0sworkerconfig-v1beta1.k0smotron.io" denied the request:
+   spec.version: Invalid value: "v1.36.4-k0s.0": k0s specific versions must be
+   specified using the '+k0s' suffix
+   ```
+
+   Read the object it names. Everything after `denied the request:` is the fix, and it
+   is almost always a field in the class rather than anything on the cluster: correct it
+   in `assembly/`, re-run `make dev-up`, and the MachineSet retries by itself.
 
 3. Readiness blocked: find the machine that is not ready.
 

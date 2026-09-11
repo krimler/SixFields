@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"regexp"
 	"sort"
+	"strings"
 
 	"sigs.k8s.io/yaml"
 
@@ -24,6 +25,21 @@ const APIVersion = "cluster.x-k8s.io/v1beta2"
 
 // DefaultClass is the only class an ordinary user names.
 const DefaultClass = "std"
+
+// HostedClassSuffix is how placement resolves to a class. A ClusterClass has
+// exactly one controlPlane (api@v1.14.2 core/v1beta2/clusterclass_types.go), so a
+// hosted control plane cannot be a patch on the same class; it is a second class,
+// and this is the only place that knows it.
+const HostedClassSuffix = "-hosted"
+
+// ClassFor returns the class a placement resolves to. The user writes
+// placement: hosted and never sees this.
+func ClassFor(class, placement string) string {
+	if placement == "hosted" && !strings.HasSuffix(class, HostedClassSuffix) {
+		return class + HostedClassSuffix
+	}
+	return class
+}
 
 // Backend is which worker kind the class puts behind a pool. Users never set it:
 // the overlay does, because it depends on whether the provider has a native
@@ -163,7 +179,7 @@ func (s Spec) Cluster() map[string]any {
 	topology := map[string]any{
 		// v1beta2 spells the class reference spec.topology.classRef.{name,namespace}
 		// (api@v1.14.2 core/v1beta2/cluster_types.go, Topology.ClassRef).
-		"classRef": map[string]any{"name": s.Class},
+		"classRef": map[string]any{"name": ClassFor(s.Class, s.Placement)},
 		"version":  s.Version,
 		"variables": []any{
 			map[string]any{"name": "size", "value": s.Size},
@@ -235,6 +251,9 @@ func FromObject(obj map[string]any) (Spec, []*msg.Error) {
 	topology, _ := root["topology"].(map[string]any)
 	if classRef, ok := topology["classRef"].(map[string]any); ok {
 		spec.Class, _ = classRef["name"].(string)
+		// placement is expanded into the class name on the way out, so it is
+		// folded back on the way in and the spec round-trips.
+		spec.Class = strings.TrimSuffix(spec.Class, HostedClassSuffix)
 		for field := range classRef {
 			if field != "name" && field != "namespace" {
 				errs = append(errs, msg.New(msg.FieldManaged, msg.Vars{Field: "spec.topology.classRef." + field, Class: class}))

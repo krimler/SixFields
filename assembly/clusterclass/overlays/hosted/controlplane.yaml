@@ -1,0 +1,25 @@
+---
+# A hosted control plane runs as pods in the management cluster: there are no
+# control-plane machines, so this class has no machineInfrastructure and the
+# control-plane phase reports readiness rather than node counts.
+#
+# Shape read from k0smotron@v1.10.9 api/controlplane/v1beta1/k0smotron_template_types.go
+# (K0smotronControlPlaneTemplate -> spec.template.spec is a k0smotron ClusterSpec,
+# api/k0smotron.io/v1beta1/k0smotroncluster_types.go).
+apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+kind: K0smotronControlPlaneTemplate
+metadata:
+  name: std-hosted-control-plane
+spec:
+  template:
+    spec:
+      version: ${K0SMOTRON_K0S_VERSION}
+      replicas: 1
+      service:
+        # NodePort is what works on kind without a load-balancer controller. A
+        # cloud overlay would set LoadBalancer here.
+        type: NodePort
+        apiPort: 30443
+        konnectivityPort: 30132
+      persistence:
+        type: emptyDir

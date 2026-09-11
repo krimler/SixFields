@@ -15,7 +15,7 @@ import (
 
 const repoRoot = ".."
 
-var overlays = []string{"docker", "inmemory"}
+var overlays = []string{"docker", "inmemory", "hosted"}
 
 // render runs the same script `make render` runs, so a test can never pass
 // against a rendering nobody else produces.
@@ -131,22 +131,67 @@ func TestAssembly_VariableSchemasRejectAndDefault(t *testing.T) {
 	}
 }
 
-// The two placements differ in as little as possible. PLAN.md Phase 5 asks for
-// exactly one class reference; until the hosted class exists, this pins that the
-// docker and inmemory overlays differ only in the machine backend.
-func TestAssembly_OverlaysDifferOnlyInTheBackend(t *testing.T) {
+// docker and inmemory are the same class on two substrates: a Cluster written for
+// one applies to the other unchanged.
+func TestAssembly_SubstratesDifferOnlyInTheBackend(t *testing.T) {
 	docker := find(t, render(t, "docker"), "ClusterClass")
 	inmemory := find(t, render(t, "inmemory"), "ClusterClass")
-	require.Equal(t, docker["metadata"], inmemory["metadata"],
-		"both overlays are the same class; a cluster written for one applies to the other")
+	require.Equal(t, docker["metadata"], inmemory["metadata"])
+	require.Equal(t, docker["spec"], inmemory["spec"])
 
-	dockerDocs, inmemoryDocs := render(t, "docker"), render(t, "inmemory")
-	require.Equal(t, len(dockerDocs), len(inmemoryDocs))
+	require.Contains(t, backendKeys(t, find(t, render(t, "docker"), "DevMachineTemplate")), "docker")
+	require.Contains(t, backendKeys(t, find(t, render(t, "inmemory"), "DevMachineTemplate")), "inMemory")
+}
 
-	dockerTemplate := find(t, dockerDocs, "DevMachineTemplate")
-	inmemoryTemplate := find(t, inmemoryDocs, "DevMachineTemplate")
-	require.Contains(t, backendKeys(t, dockerTemplate), "docker")
-	require.Contains(t, backendKeys(t, inmemoryTemplate), "inMemory")
+// PLAN.md Phase 5 asks that the two placements differ in exactly one class
+// reference. They differ in two, and the second one is not optional: a k0s
+// control plane is joined with a k0s token, so the worker bootstrap has to change
+// with it. Everything else — the infrastructure, the machine template, the
+// variables — is identical.
+func TestAssembly_PlacementsDifferInTwoReferences(t *testing.T) {
+	self := find(t, render(t, "docker"), "ClusterClass")["spec"].(map[string]any)
+	hosted := find(t, render(t, "hosted"), "ClusterClass")["spec"].(map[string]any)
+
+	require.Equal(t, self["infrastructure"], hosted["infrastructure"])
+	require.Equal(t, self["variables"], hosted["variables"])
+
+	require.Equal(t, "KubeadmControlPlaneTemplate", templateKind(t, self, "controlPlane"))
+	require.Equal(t, "K0smotronControlPlaneTemplate", templateKind(t, hosted, "controlPlane"))
+
+	require.Equal(t, "KubeadmConfigTemplate", bootstrapKind(t, self))
+	require.Equal(t, "K0sWorkerConfigTemplate", bootstrapKind(t, hosted))
+
+	// A hosted control plane has no machines, so it must not name a machine
+	// template — that is what makes the control-plane phase report readiness
+	// rather than a node count.
+	_, hasMachines := hosted["controlPlane"].(map[string]any)["machineInfrastructure"]
+	require.False(t, hasMachines, "a hosted control plane has no machines")
+
+	// The worker machine is the same object in both.
+	require.Equal(t, workerInfrastructure(t, self), workerInfrastructure(t, hosted))
+}
+
+func templateKind(t *testing.T, spec map[string]any, section string) string {
+	t.Helper()
+	ref := spec[section].(map[string]any)["templateRef"].(map[string]any)
+	return ref["kind"].(string)
+}
+
+func firstPool(t *testing.T, spec map[string]any) map[string]any {
+	t.Helper()
+	pools := spec["workers"].(map[string]any)["machineDeployments"].([]any)
+	require.NotEmpty(t, pools)
+	return pools[0].(map[string]any)
+}
+
+func bootstrapKind(t *testing.T, spec map[string]any) string {
+	t.Helper()
+	return firstPool(t, spec)["bootstrap"].(map[string]any)["templateRef"].(map[string]any)["kind"].(string)
+}
+
+func workerInfrastructure(t *testing.T, spec map[string]any) any {
+	t.Helper()
+	return firstPool(t, spec)["infrastructure"]
 }
 
 func backendKeys(t *testing.T, template map[string]any) []string {
@@ -235,4 +280,27 @@ func TestAssembly_RenderedObjectsCarryTheBreakGlassLabel(t *testing.T) {
 			}
 		})
 	}
+}
+
+// k0smotron wants the same k0s release spelled two ways: the control plane puts
+// it in an image tag, where + is not valid, and the worker config's webhook
+// rejects the dash form. Getting this wrong fails minutes later, in a MachineSet
+// controller log, on an object the user never wrote — so it is held here.
+func TestAssembly_K0sVersionsAreTheSameRelease(t *testing.T) {
+	plus := pinned(t, "K0S_VERSION")
+	dash := pinned(t, "K0SMOTRON_K0S_VERSION")
+	require.NotEmpty(t, plus)
+	require.Equal(t, strings.Replace(plus, "+", "-", 1), dash,
+		"the two spellings must name the same k0s release")
+
+	docs := render(t, "hosted")
+	controlPlane := find(t, docs, "K0smotronControlPlaneTemplate")
+	require.Equal(t, dash,
+		controlPlane["spec"].(map[string]any)["template"].(map[string]any)["spec"].(map[string]any)["version"],
+		"the control plane's version goes into an image tag, so it takes the dash form")
+
+	worker := find(t, docs, "K0sWorkerConfigTemplate")
+	require.Equal(t, plus,
+		worker["spec"].(map[string]any)["template"].(map[string]any)["spec"].(map[string]any)["version"],
+		"k0smotron's webhook rejects the dash form here")
 }
