@@ -6,7 +6,7 @@
 // _meta.synthetic and a note saying what it stands in for, and
 // TestFixtures_SyntheticAreDeclared fails on one that does not. When a container
 // runtime is available, `make record-fixture` replaces them scenario by scenario
-// and the assertions do not change — that is the whole point of folding from an
+// and the assertions do not change, that is the whole point of folding from an
 // envelope rather than from a client.
 package fixture
 

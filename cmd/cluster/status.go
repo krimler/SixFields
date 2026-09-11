@@ -24,7 +24,7 @@ func newStatusCmd(g *globals) *cobra.Command {
 	cmd.Flags().BoolVar(&watch, "watch", false, "keep watching until the cluster is ready")
 	cmd.Flags().BoolVar(&g.noTTY, "no-tty", false, "one line per state change, for logs and CI")
 	cmd.Flags().BoolVar(&g.jsonOut, "json", false, "emit the versioned status document")
-	cmd.Flags().StringVar(&g.replay, "replay", "", "replay a recorded fixture directory instead of a cluster")
+	cmd.Flags().StringVar(&g.replay, "replay", "", "replay a recorded fixture directory in place of a cluster")
 	cmd.Flags().Float64Var(&g.speed, "speed", 1, "replay speed multiplier")
 	cmd.Flags().StringVar(&g.stallAfter, "stall-after", "3m", "how long without a change before a phase is called stalled")
 

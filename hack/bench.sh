@@ -3,7 +3,7 @@
 # BACKENDS picks which: noop,cassette (the default) need no model and no network.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-# Exported, not just sourced: the local backend reads CLUSTER_AI_URL and
+# Exported, so the local backend reads CLUSTER_AI_URL and
 # CLUSTER_AI_MODEL from the environment of the test binary.
 set -a
 source versions.env
@@ -12,7 +12,7 @@ set +a
 BACKENDS=${BACKENDS:-noop,cassette}
 
 if [[ "${PROFILE:-dev}" != "bench" ]]; then
-  echo "bench: the bench profile only. It runs alone — 4 GB of VM, one resident model," >&2
+  echo "bench: the bench profile only. It runs alone, 4 GB of VM, one resident model," >&2
   echo "       nothing else (PLAN.md D1). Two steps:" >&2
   echo "         make profile P=bench      # resize the container VM and wait for it" >&2
   echo "         PROFILE=bench make bench  # or: export PROFILE=bench" >&2

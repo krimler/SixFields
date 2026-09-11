@@ -150,7 +150,7 @@ func TestPolicy_AllowsEveryPermittedField(t *testing.T) {
 }
 
 // size is the user's word for how many control-plane nodes. The generator expands
-// it, and the policy accepts the expansion only when the two agree — the same
+// it, and the policy accepts the expansion only when the two agree, the same
 // mapping internal/gen uses, so the CLI and the policy cannot drift.
 func TestPolicy_ControlPlaneReplicasMustAgreeWithSize(t *testing.T) {
 	for _, tc := range []struct {
@@ -251,7 +251,7 @@ func TestPolicy_EveryDeniedPathIsDenied(t *testing.T) {
 	}
 }
 
-// Every denial names the offending path, names the class, and says break-glass —
+// Every denial names the offending path, names the class, and says break-glass,
 // the same three things internal/msg promises (D2.3).
 func TestUX_AdmissionMessageContract(t *testing.T) {
 	for path, mutate := range deniedPaths {
@@ -427,7 +427,7 @@ func TestPolicy_UnmanagedKindsAreUntouched(t *testing.T) {
 }
 
 // The ownership label is the second check, not a way for a user to exempt
-// themselves — metadata.labels is inside the allowed surface.
+// themselves, metadata.labels is inside the allowed surface.
 func TestPolicy_OwnedLabelDoesNotExemptAPerson(t *testing.T) {
 	obj := managed("MachineDeployment", func(o map[string]any) {
 		o["metadata"].(map[string]any)["labels"] = map[string]any{"topology.cluster.x-k8s.io/owned": ""}

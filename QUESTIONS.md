@@ -7,7 +7,7 @@ No questions are open.
 
 ## Answered
 
-### Q1 — Project name and licence (answered 2026-09-11)
+### Q1, Project name and licence (answered 2026-09-11)
 
 The project is **SixFields**. The licence is **Apache-2.0**, in `LICENSE`.
 
@@ -18,7 +18,7 @@ ecosystem by anyone who links or redistributes, and CNCF would not accept it.
 
 Moved to DECISIONS.md.
 
-### Q2 — Recorded fixtures need a container runtime (answered 2026-09-10)
+### Q2, Recorded fixtures need a container runtime (answered 2026-09-10)
 
 A runtime became available and four fixtures are now recorded from real runs:
 `std-docker-happy` (six points to Ready), `std-docker-ready`, `hosted-docker-happy`, and

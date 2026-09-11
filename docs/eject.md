@@ -88,7 +88,7 @@ kubectl delete validatingadmissionpolicy \
 The binding enforces; a policy with no binding does nothing. In this order enforcement stops
 in one step. The other order leaves a binding pointing at a policy that is gone: a v1.34 API
 server ignores that binding, so writes do go through, but it starts enforcing again the
-moment anything re-creates the policy — a GitOps reconcile, or a re-run of
+moment anything re-creates the policy, a GitOps reconcile, or a re-run of
 `kubectl apply -k policy/vap`.
 
 Nothing else has to change. Both objects are cluster-scoped and hold no state; no Cluster,
@@ -109,9 +109,9 @@ kubectl apply -k policy/vap
 
 ## Leave the assembly: `cluster render`
 
-`cluster render` prints the complete set of Cluster API objects behind one cluster — the
+`cluster render` prints the complete set of Cluster API objects behind one cluster, the
 Cluster, the control plane, the MachineDeployments and MachineSets, the Machines, the
-bootstrap configs, the infrastructure objects and the templates they came from — as plain
+bootstrap configs, the infrastructure objects and the templates they came from, as plain
 YAML with no ClusterClass and no topology:
 
 ```sh

@@ -1,4 +1,4 @@
-# CAPI-CP-003 — etcd is not coming up
+# CAPI-CP-003, etcd is not coming up
 
 After this page you can tell an etcd member that failed from an etcd member CAPI simply
 cannot see, decide whether quorum still exists, and know which of those two you must not
@@ -7,7 +7,7 @@ fix by deleting a machine.
 ## What you are seeing
 
 ```
-KubeadmControlPlane/dev-1 — etcd is not coming up (6m20s)
+KubeadmControlPlane/dev-1, etcd is not coming up (6m20s)
 raw: kubectl get kubeadmcontrolplane.controlplane.cluster.x-k8s.io dev-1 -n default -o yaml
 next: cluster docs CAPI-CP-003
 ```
@@ -22,11 +22,11 @@ two layers.
 
 Cluster-wide, `EtcdClusterHealthy`:
 
-- reason `NotHealthy` — at least one member is bad, and the message names it.
-- reason `HealthUnknown` — CAPI has not been able to check.
-- reason `ConnectionDown` — the management cluster cannot reach the workload API server,
+- reason `NotHealthy`, at least one member is bad, and the message names it.
+- reason `HealthUnknown`, CAPI has not been able to check.
+- reason `ConnectionDown`, the management cluster cannot reach the workload API server,
   so nothing was checked. This is a networking fault, not an etcd fault.
-- reason `InspectionFailed` — the check itself errored.
+- reason `InspectionFailed`, the check itself errored.
 
 Per machine, `EtcdMemberHealthy` and `EtcdPodHealthy`, with reasons `NotHealthy`,
 `InspectionFailed`, `ConnectionDown`, and `Deleting` (for `EtcdMemberHealthy`) or
@@ -40,7 +40,7 @@ machine on the strength of `ConnectionDown` can destroy quorum on a cluster that
 On the CAPD `inMemory` backend etcd is faked. The `DevMachine`
 (`infrastructure.cluster.x-k8s.io/v1beta2`) carries `EtcdProvisioned` with reasons
 `WaitingForVMProvisioned`, `WaitingForNodeProvisioned`, `WaitingForStartupTimeout` and
-`Provisioned`. `WaitingForStartupTimeout` is a configured delay, not a failure — that is
+`Provisioned`. `WaitingForStartupTimeout` is a configured delay, not a failure, that is
 how `inmem-stall-etcd` is induced.
 
 ## Check, in order
@@ -52,11 +52,11 @@ how `inmem-stall-etcd` is induced.
      -o jsonpath='{range .status.conditions[*]}{.type}{"  "}{.status}{"  "}{.reason}{"  "}{.message}{"\n"}{end}'
    ```
 
-   Good: `EtcdClusterHealthy True Healthy`, and the stall is somewhere else — re-read
+   Good: `EtcdClusterHealthy True Healthy`, and the stall is somewhere else, re-read
    `cluster why dev-1`.
    Bad: `EtcdClusterHealthy False NotHealthy` with a message naming one machine. Go to
    step 2 with that name.
-   Also bad: reason `ConnectionDown` — stop reading etcd and go to step 4.
+   Also bad: reason `ConnectionDown`, stop reading etcd and go to step 4.
 
 2. Read the per-machine conditions.
 
@@ -66,8 +66,8 @@ how `inmem-stall-etcd` is induced.
    ```
 
    Good: exactly one machine with `EtcdMemberHealthy False NotHealthy` and the others
-   True — quorum survives while you fix it.
-   Bad: two of three False — quorum is already lost, and no controller will recover it;
+   True, quorum survives while you fix it.
+   Bad: two of three False, quorum is already lost, and no controller will recover it;
    go to step 5 before deleting anything.
 
 3. inMemory backend only: check whether the delay is configured.
@@ -80,8 +80,8 @@ how `inmem-stall-etcd` is induced.
 
    Good: `EtcdProvisioned=WaitingForStartupTimeout` and the elapsed time is shorter than
    the template's `spec.template.spec.backend.inMemory.etcd.provisioning.startupDuration`
-   — it is a timer, wait it out.
-   Bad: `EtcdProvisioned=WaitingForVMProvisioned` — etcd is not the blocked step at all;
+  , it is a timer, wait it out.
+   Bad: `EtcdProvisioned=WaitingForVMProvisioned`, etcd is not the blocked step at all;
    the machine is. Read `cluster docs CAPI-CP-002`.
 
 4. Confirm the management cluster can reach the workload API server.
@@ -94,7 +94,7 @@ how `inmem-stall-etcd` is induced.
    ```
 
    Good: `RemoteConnectionProbe True ProbeSucceeded` and `get nodes` returns.
-   Bad: `ProbeFailed`, or `get nodes` times out — the etcd conditions are meaningless
+   Bad: `ProbeFailed`, or `get nodes` times out, the etcd conditions are meaningless
    until this works. On the docker backend the load-balancer container is the usual cause:
    `docker ps -a --filter name=dev-1`.
 
@@ -136,5 +136,5 @@ kubectl get kubeadmcontrolplane,machine,devmachine -n default \
 
 On the docker backend add the `etcdctl endpoint status` output above and
 `docker logs <control-plane-container> 2>&1 | tail -200 > /tmp/etcd.log`. Say in the
-report whether quorum was intact when you captured it — that decides what anyone can
+report whether quorum was intact when you captured it, that decides what anyone can
 safely suggest.

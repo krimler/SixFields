@@ -246,7 +246,7 @@ func conditionValues(t *testing.T) map[string]bool {
 	return out
 }
 
-// A condition that reports an activity — Paused, Deleting, ScalingUp — is False
+// A condition that reports an activity, Paused, Deleting, ScalingUp, is False
 // whenever nothing is happening, which is most of the time. Ranking that as a
 // failure is how the first live run named "Paused=False" as the blocking
 // condition on a machine whose node had genuinely not come up.

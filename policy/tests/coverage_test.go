@@ -10,7 +10,7 @@ import (
 )
 
 // CLAUDE.md rule 5: every denied field has a negative test. This is what makes
-// that checkable rather than aspirational — the list comes out of the policy, so
+// that checkable rather than aspirational, the list comes out of the policy, so
 // adding a denial without adding a case here fails the build.
 func TestPolicy_EveryDeniedPathHasACase(t *testing.T) {
 	covered := map[string]bool{}

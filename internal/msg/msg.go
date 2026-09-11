@@ -194,7 +194,7 @@ var registry = map[Code]Entry{
 // upstream condition type, reason and message are one rung down, under --verbose
 // and on the raw: line (D2.5, the jargon lint).
 var defaultSummary = map[Class]string{
-	Stall:       "{{.Object}} — {{.Title}} ({{.Since}})",
+	Stall:       "{{.Object}}: {{.Title}} ({{.Since}})",
 	Denial:      "{{.Field}} is managed by ClusterClass '{{.Class}}'. Set it via the class or use break-glass (docs/eject.md).",
 	Environment: "{{.Title}}.",
 }

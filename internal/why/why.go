@@ -1,6 +1,6 @@
 // Package why answers one question: of everything that is wrong, which single
 // object should the user look at? It is the deterministic analyzer that every AI
-// path is built on — the model only ever explains what this package decided.
+// path is built on, the model only ever explains what this package decided.
 //
 // Pure: it takes an envelope and a fold result and returns values.
 package why
@@ -18,8 +18,8 @@ import (
 // negativePolarity conditions report an activity, not a fault: they are True while
 // the object is doing the thing and False the rest of the time
 // (api@v1.14.2 core/v1beta2/cluster_types.go:532, ConditionPolarity). Treating
-// their False as a failure is how a first live run ranked "Paused=False" — "this
-// object is not paused" — above the node that had genuinely not come up.
+// their False as a failure is how a first live run ranked "Paused=False", "this
+// object is not paused", above the node that had genuinely not come up.
 //
 // They are excluded from the candidate set entirely: True means work in progress,
 // which the phase detail already shows, and False means nothing at all.
@@ -218,7 +218,7 @@ func firstNotDone(res fold.Result) (fold.Phase, bool) {
 }
 
 // collect gathers every False condition on every object contributing to the phase,
-// plus the objects those contributors point at — the truth about a Machine is
+// plus the objects those contributors point at, the truth about a Machine is
 // usually on its DevMachine.
 func collect(env snapshot.Envelope, phase fold.Phase, now time.Time) []Candidate {
 	seen := map[string]bool{}

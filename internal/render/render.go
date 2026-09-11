@@ -41,7 +41,7 @@ type Renderer interface {
 
 // Heartbeater says something when nothing has changed for a while. A renderer
 // that cannot do this will go silent during a long phase, and a silent tool looks
-// like a hung one — which is the whole problem this project is about.
+// like a hung one, which is the whole problem this project is about.
 type Heartbeater interface {
 	Heartbeat(v View, width int) (string, bool)
 }
@@ -50,7 +50,7 @@ type Heartbeater interface {
 const DefaultWidth = 80
 
 // Theme carries the one decision that changes every line: colour or not. Nothing
-// in this package encodes meaning in colour alone — TestUX_ColorCarriesNoMeaning
+// in this package encodes meaning in colour alone, TestUX_ColorCarriesNoMeaning
 // strips the ANSI and asserts the tokens are identical.
 type Theme struct{ Color bool }
 
@@ -120,7 +120,7 @@ func Short(d time.Duration) string {
 
 // etaText is the right-hand column of a running phase. A stalled phase never gets
 // one: an estimate next to a stall is a lie about progress. Nor does a phase
-// behind a stalled one — it is waiting, and its own history says nothing about
+// behind a stalled one, it is waiting, and its own history says nothing about
 // how long the thing in front of it will take.
 func etaText(v View, p fold.Phase) string {
 	if p.State != fold.Running || !isFrontier(v.Result, p.Name) {

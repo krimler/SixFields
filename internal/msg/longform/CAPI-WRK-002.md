@@ -1,4 +1,4 @@
-# CAPI-WRK-002 — a node is not joining the cluster
+# CAPI-WRK-002, a node is not joining the cluster
 
 What happened: a Machine has infrastructure and bootstrap data but its node never
 appeared in the workload cluster.

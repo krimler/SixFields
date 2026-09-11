@@ -29,13 +29,13 @@
 # the exempt identities below.
 #
 # Exemption, identical to cluster-fields.yaml, which carries the long version of this note:
-#   (a) identity — the load-bearing check, an allow-list of the provider controller service
+#   (a) identity, the load-bearing check, an allow-list of the provider controller service
 #       accounts, read out of the pinned provider manifests with
 #         clusterctl generate provider --core cluster-api:v1.14.2 |
 #           grep -A3 'kind: ServiceAccount'
 #       and the same for --infrastructure docker:v1.14.2, --bootstrap kubeadm:v1.14.2,
 #       --control-plane kubeadm:v1.14.2 and k0sproject-k0smotron:v1.10.9.
-#   (b) ownership label — the second check. topology.cluster.x-k8s.io/owned, the name in
+#   (b) ownership label, the second check. topology.cluster.x-k8s.io/owned, the name in
 #       api@v1.14.2 core/v1beta2/common_types.go:33 (ClusterTopologyOwnedLabel), and the
 #       label the topology controller puts on everything it creates.
 # Which one actually holds must be confirmed against an audit of a real run (PLAN.md

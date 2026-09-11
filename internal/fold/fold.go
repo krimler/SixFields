@@ -1,7 +1,7 @@
 // Package fold turns a snapshot of every CAPI object behind a cluster into four
 // phases a person can read. It is the answer to "a long opaque wait".
 //
-// Pure: it takes an envelope and returns values. No Kubernetes client, no clock —
+// Pure: it takes an envelope and returns values. No Kubernetes client, no clock,
 // the caller passes Now, so a replay at 50x and a live run fold identically.
 package fold
 
@@ -534,7 +534,7 @@ func firstFalse(obj snapshot.Object) (snapshot.Condition, bool) {
 // clock accumulates the transition times that belong to one phase. The Cluster
 // carries conditions for all four phases at once, so taking its whole
 // LastTransition would make every phase look like it changed whenever any of them
-// did — and stall detection would never fire.
+// did, and stall detection would never fire.
 type clock struct{ latest time.Time }
 
 // only adds the named conditions of an object.

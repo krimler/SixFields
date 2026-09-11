@@ -2,7 +2,7 @@
 
 // Package envtest starts a real Kubernetes API server for tests that need one.
 // It is the middle layer: faster and more honest than e2e, and able to check the
-// things a pure test cannot — that the admission policy compiles and denies, and
+// things a pure test cannot, that the admission policy compiles and denies, and
 // that the watcher discovers what it should.
 package envtest
 

@@ -1,4 +1,4 @@
-# CAPI-INFRA-001 — infrastructure is not ready
+# CAPI-INFRA-001, infrastructure is not ready
 
 After this page you can name the infrastructure object that is blocking the cluster,
 say whether it is still working or actually stuck, and fix the five things that cause
@@ -7,7 +7,7 @@ this most of the time.
 ## What you are seeing
 
 ```
-DevCluster/dev-1 — infrastructure is not ready (4m12s)
+DevCluster/dev-1, infrastructure is not ready (4m12s)
 raw: kubectl get devcluster.infrastructure.cluster.x-k8s.io dev-1 -n default -o yaml
 next: cluster docs CAPI-INFRA-001
 ```
@@ -20,18 +20,18 @@ The `infrastructure` row of `cluster status` reads `stalled`. Every row below it
 The `Cluster` (`cluster.x-k8s.io/v1beta2`) holds the rollup. Its `InfrastructureReady`
 condition is False, and the reason says what kind of failure it is:
 
-- `NotReady` — the infrastructure object exists and reports it is not ready. The real
+- `NotReady`, the infrastructure object exists and reports it is not ready. The real
   message is on that object, not here.
-- `ObjectDoesNotExist` — `spec.infrastructureRef` points at an object that is not there.
+- `ObjectDoesNotExist`, `spec.infrastructureRef` points at an object that is not there.
   That is a topology problem, not an infrastructure one: read `cluster docs CAPI-TOPO-001`.
-- `InvalidConditionReported` / `InternalError` — the provider reported something CAPI
+- `InvalidConditionReported` / `InternalError`, the provider reported something CAPI
   could not read. The provider controller log is the only place with more.
 
 The object named by `spec.infrastructureRef` holds the truth. On CAPD that is a
 `DevCluster` (`infrastructure.cluster.x-k8s.io/v1beta2`):
 
-- `Ready` — False with reason `NotReady` for the whole time the backend is provisioning.
-- `LoadBalancerAvailable` — set only with `spec.backend.docker`. False with reason
+- `Ready`, False with reason `NotReady` for the whole time the backend is provisioning.
+- `LoadBalancerAvailable`, set only with `spec.backend.docker`. False with reason
   `NotAvailable` while the load-balancer container is being created; its message carries
   the container runtime's own error.
 
@@ -46,9 +46,9 @@ only condition, and it flips on a timer.
    cluster why dev-1
    ```
 
-   Good: it names a `DevCluster` and the elapsed time is under a minute — the provider is
+   Good: it names a `DevCluster` and the elapsed time is under a minute, the provider is
    still working, wait.
-   Bad: it names the `Cluster` itself with reason `ObjectDoesNotExist` — no infrastructure
+   Bad: it names the `Cluster` itself with reason `ObjectDoesNotExist`, no infrastructure
    object was ever created. Stop here and read `cluster docs CAPI-TOPO-001`.
 
 2. Read the Cluster's rollup.
@@ -59,7 +59,7 @@ only condition, and it flips on a timer.
    ```
 
    Good: `InfrastructureReady  False  NotReady` with a message naming the DevCluster.
-   Bad: `Paused  True` — the cluster is paused and nothing reconciles at all.
+   Bad: `Paused  True`, the cluster is paused and nothing reconciles at all.
 
 3. Read the infrastructure object.
 
@@ -70,7 +70,7 @@ only condition, and it flips on a timer.
 
    Good: `Ready  False  NotReady` with a `lastTransitionTime` that moved in the last minute.
    Bad: `LoadBalancerAvailable  False  NotAvailable` with a message from the container
-   runtime (port in use, no such image, permission denied) — that message is the fault.
+   runtime (port in use, no such image, permission denied), that message is the fault.
    Also bad: no conditions at all. The provider controller never reconciled the object;
    go to step 4.
 
@@ -83,8 +83,8 @@ only condition, and it flips on a timer.
 
    Take `<namespace>` and `<name>` from the first command's output.
    Good: log lines mentioning `dev-1` in the last minute.
-   Bad: no deployment for the infrastructure provider — the provider is not installed, run
-   `make dev-up`. Or the pod is `CrashLoopBackOff` — read its log, not the Cluster's.
+   Bad: no deployment for the infrastructure provider, the provider is not installed, run
+   `make dev-up`. Or the pod is `CrashLoopBackOff`, read its log, not the Cluster's.
 
 5. Docker backend only: confirm the containers exist.
 
@@ -93,7 +93,7 @@ only condition, and it flips on a timer.
    ```
 
    Good: a container whose name starts with `dev-1` and whose status is `Up`.
-   Bad: `docker` itself fails — the container runtime is down, run `make doctor`. Or the
+   Bad: `docker` itself fails, the container runtime is down, run `make doctor`. Or the
    container exists with status `Exited`; `docker logs <container>` has the reason.
 
 ## Common causes

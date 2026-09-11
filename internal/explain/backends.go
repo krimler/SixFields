@@ -11,8 +11,8 @@ import (
 	"strings"
 )
 
-// Noop echoes the analyzer's own output back. Every AI code path — the flag, the
-// timeout, the grounding check, the renderer — is exercised by it, with no model
+// Noop echoes the analyzer's own output back. Every AI code path, the flag, the
+// timeout, the grounding check, the renderer, is exercised by it, with no model
 // and no network.
 type Noop struct{}
 
@@ -77,7 +77,7 @@ func Key(req Request) string {
 
 // Prompt is what every model backend sends. It is built from the analyzer's
 // output only, and it says plainly that inventing a name is the one unacceptable
-// failure — the grounding check enforces it either way.
+// failure, the grounding check enforces it either way.
 func Prompt(req Request) string {
 	var b strings.Builder
 	b.WriteString("A Cluster API cluster has stopped making progress. A deterministic analyzer has already\n")
@@ -99,7 +99,7 @@ func Prompt(req Request) string {
 	b.WriteString(`{"code":"<the stall class above>","lines":["<what is blocked>","<why>","<what changes when it is fixed>"],"next_command":"<one command to run>"}`)
 	b.WriteString("\n\nRules: exactly three lines, each one sentence and under 160 characters. Use no\n")
 	b.WriteString("Kubernetes condition type names. Every object name and every number you write must\n")
-	b.WriteString("appear above — if you are not sure of a name, leave it out. next_command must start\n")
+	b.WriteString("appear above, if you are not sure of a name, leave it out. next_command must start\n")
 	b.WriteString("with kubectl, cluster, clusterctl, docker or make.\n")
 	return b.String()
 }

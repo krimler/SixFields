@@ -16,7 +16,7 @@ import (
 // outcome is the k8s-bench split, and it is the column worth reading: a
 // framework error is the backend failing to produce a usable answer, a reasoning
 // error is a usable answer that is wrong. Reported as one number they say
-// nothing — a model that is badly wired and a model that is bad at the task need
+// nothing, a model that is badly wired and a model that is bad at the task need
 // opposite fixes.
 type outcome int
 

@@ -74,7 +74,7 @@ func loadConfig(kubeconfig string) (*rest.Config, error) {
 func (c *Client) Resources() ([]schema.GroupVersionResource, error) {
 	// Preferred versions only. CAPI serves v1beta1 and v1beta2 of every kind at
 	// this release, and listing both returns each object twice and prints a
-	// deprecation warning per resource — which is what a first real run looked
+	// deprecation warning per resource, which is what a first real run looked
 	// like before this line said "Preferred".
 	lists, err := c.discovery.ServerPreferredResources()
 	if err != nil && len(lists) == 0 {
@@ -202,7 +202,7 @@ func (c *Client) Watch(ctx context.Context, name string, debounce time.Duration)
 				// waiting for one waits for ever: `cluster up` on an already-ready
 				// cluster and `cluster fixture record` both hung on this. The
 				// heartbeat also keeps the renderer's "no silent gaps" promise
-				// honest against a live cluster, not only against a replay.
+				// honest against a live cluster as well as against a replay.
 				if !dirty && now.Sub(last) < Heartbeat {
 					continue
 				}

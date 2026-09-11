@@ -12,7 +12,7 @@ import (
 
 // apply hands the object to kubectl rather than reimplementing server-side apply.
 // The escape hatch runs the same command a user would, so a failure here is a
-// failure they can reproduce by hand — and the admission message reaches them
+// failure they can reproduce by hand, and the admission message reaches them
 // unchanged.
 func apply(cmd *cobra.Command, g *globals, manifest []byte) error {
 	if g.replay != "" {

@@ -4,8 +4,8 @@
 # so placement resolves to a second class rather than to a patch, and
 # internal/gen maps placement: hosted to this name.
 #
-# It differs from std in exactly two references — the control plane and the
-# worker bootstrap — and TestAssembly_PlacementsDifferInTwoReferences holds that.
+# It differs from std in exactly two references, the control plane and the
+# worker bootstrap, and TestAssembly_PlacementsDifferInTwoReferences holds that.
 apiVersion: cluster.x-k8s.io/v1beta2
 kind: ClusterClass
 metadata:

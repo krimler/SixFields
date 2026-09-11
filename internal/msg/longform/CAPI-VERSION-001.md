@@ -1,4 +1,4 @@
-# CAPI-VERSION-001 — the requested Kubernetes version is not available
+# CAPI-VERSION-001, the requested Kubernetes version is not available
 
 What happened: the control plane cannot provision because the version in
 `spec.topology.version` has no image the provider can use.

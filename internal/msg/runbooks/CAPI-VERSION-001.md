@@ -1,4 +1,4 @@
-# CAPI-VERSION-001 — the requested Kubernetes version is not available
+# CAPI-VERSION-001, the requested Kubernetes version is not available
 
 After this page you can prove in one command whether the node image for
 `spec.topology.version` exists for your architecture, and pick a version that does
@@ -7,7 +7,7 @@ without waiting for another ten-minute timeout.
 ## What you are seeing
 
 ```
-KubeadmControlPlane/dev-1 — the requested Kubernetes version is not available (5m40s)
+KubeadmControlPlane/dev-1, the requested Kubernetes version is not available (5m40s)
 raw: kubectl get kubeadmcontrolplane.controlplane.cluster.x-k8s.io dev-1 -n default -o yaml
 next: set spec.topology.version to a version the provider publishes
 ```
@@ -53,7 +53,7 @@ image produces exactly this stall.
 
    Good: `ContainerProvisioned False NotProvisioned` with a message naming an image and a
    pull failure. That confirms the code; go to step 2.
-   Bad: `ContainerProvisioned False WaitingForBootstrapData` — the image is not the
+   Bad: `ContainerProvisioned False WaitingForBootstrapData`, the image is not the
    problem, bootstrap is: `cluster docs CAPI-CP-001`.
 
 2. Compare the three versions that must agree.
@@ -67,7 +67,7 @@ image produces exactly this stall.
 
    Good: the topology version, the tag in `customImage`, and `WORKLOAD_K8S_VERSION` are
    the same `vX.Y.Z`.
-   Bad: the topology version is newer than the image tag — that is the fault. Either set
+   Bad: the topology version is newer than the image tag, that is the fault. Either set
    the version back, or bump `WORKLOAD_NODE_IMAGE` in `versions.env` and re-apply the
    assembly.
 
@@ -81,8 +81,8 @@ image produces exactly this stall.
 
    Good: the pull succeeds and the architecture matches your host (`arm64` on Apple
    Silicon, `amd64` on Intel).
-   Bad: `manifest unknown` — that tag was never published; pick another patch release.
-   Also bad: the image is `amd64` on an `arm64` host — the machine boots and dies. kind
+   Bad: `manifest unknown`, that tag was never published; pick another patch release.
+   Also bad: the image is `amd64` on an `arm64` host, the machine boots and dies. kind
    publishes per-architecture digests; use the digest pinned in `versions.env`, not a
    floating tag.
 
@@ -103,7 +103,7 @@ image produces exactly this stall.
    ```
 
    Good: the plan renders with the version you chose and the class accepts it.
-   Bad: the plan errors on the version's format — the class's schema rejects the string
+   Bad: the plan errors on the version's format, the class's schema rejects the string
    (a missing `v` prefix is the usual cause): `cluster docs CAPI-TOPO-001`.
 
 ## Common causes

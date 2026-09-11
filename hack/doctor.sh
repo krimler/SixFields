@@ -11,7 +11,7 @@ bad()  { printf "  \033[31mfail\033[0m  %s\n" "$1"; fail=1; }
 
 echo "tools"
 check_version() { # name  actual  want
-  if [[ -z "${2:-}" ]]; then bad "$1 is not installed — run: make bootstrap"; return; fi
+  if [[ -z "${2:-}" ]]; then bad "$1 is not installed, run: make bootstrap"; return; fi
   if [[ "$2" == *"${3#v}"* ]]; then ok "$1 $2"; else warn "$1 $2 (versions.env pins $3)"; fi
 }
 check_version go         "$(go version 2>/dev/null | awk '{print $3}' | sed 's/^go//')" "$GO_VERSION"
@@ -19,7 +19,7 @@ check_version kind       "$(kind version 2>/dev/null | awk '{print $2}')"       
 check_version kubectl    "$(kubectl version --client -o json 2>/dev/null | jq -r .clientVersion.gitVersion)" "$KUBECTL_VERSION"
 check_version clusterctl "$(clusterctl version -o short 2>/dev/null)"                   "$CLUSTERCTL_VERSION"
 for t in kustomize golangci-lint yamllint kubeconform jq envsubst; do
-  command -v "$t" >/dev/null && ok "$t" || bad "$t is not installed — run: make bootstrap"
+  command -v "$t" >/dev/null && ok "$t" || bad "$t is not installed, run: make bootstrap"
 done
 
 echo "architecture"
@@ -31,7 +31,7 @@ if [[ "$arch" == "arm64" ]]; then
       if docker manifest inspect "$img" 2>/dev/null | jq -e '.manifests[]?|select(.platform.architecture=="arm64")' >/dev/null; then
         ok "$img has an arm64 manifest"
       else
-        bad "$img has no arm64 manifest — it will fail with 'exec format error'"
+        bad "$img has no arm64 manifest, it will fail with 'exec format error'"
       fi
     else
       warn "could not inspect $img (registry unreachable or docker down)"
@@ -53,7 +53,7 @@ if docker info >/dev/null 2>&1; then
   # kind mounts this path into the management cluster so CAPD can reach the runtime.
   [[ -S "$sock" ]] && ok "socket exists for the kind extraMount" || bad "socket $sock is not a socket"
 else
-  bad "no container runtime — start Docker Desktop, OrbStack or Colima"
+  bad "no container runtime, start Docker Desktop, OrbStack or Colima"
 fi
 
 echo "memory profile ${PROFILE:-dev}"
@@ -71,16 +71,16 @@ if (( total_gb == 0 )); then
 elif (( need <= total_gb )); then
   ok "${total_gb} GB physical; profile needs ${vm} GB VM + ${model} GB model + ${reserve} GB macOS = ${need} GB"
 else
-  bad "${total_gb} GB physical but profile needs ${need} GB — run: make profile P=dev"
+  bad "${total_gb} GB physical but profile needs ${need} GB, run: make profile P=dev"
 fi
 if command -v docker >/dev/null && docker info >/dev/null 2>&1; then
   vm_actual=$(( $(docker info --format '{{.MemTotal}}' 2>/dev/null || echo 0) / 1024 / 1024 / 1024 ))
   if (( vm_actual > 0 )) && (( vm_actual != vm )); then
-    warn "container VM has ${vm_actual} GB, profile ${PROFILE:-dev} wants ${vm} GB — run: make profile P=${PROFILE:-dev}"
+    warn "container VM has ${vm_actual} GB, profile ${PROFILE:-dev} wants ${vm} GB, run: make profile P=${PROFILE:-dev}"
   fi
 fi
 
 echo "envtest"
-if assets=$(hack/envtest-assets.sh 2>/dev/null); then ok "assets at $assets"; else warn "envtest assets missing — run: make envtest"; fi
+if assets=$(hack/envtest-assets.sh 2>/dev/null); then ok "assets at $assets"; else warn "envtest assets missing, run: make envtest"; fi
 
 exit $fail

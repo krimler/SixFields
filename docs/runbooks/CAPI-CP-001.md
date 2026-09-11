@@ -1,12 +1,12 @@
-# CAPI-CP-001 — control plane is not initializing
+# CAPI-CP-001, control plane is not initializing
 
-After this page you can tell apart the three reasons no API server has come up —
-no machine, no certificates, no bootstrap — and read the object that knows which.
+After this page you can tell apart the three reasons no API server has come up,
+no machine, no certificates, no bootstrap, and read the object that knows which.
 
 ## What you are seeing
 
 ```
-KubeadmControlPlane/dev-1 — control plane is not initializing (3m41s)
+KubeadmControlPlane/dev-1, control plane is not initializing (3m41s)
 raw: kubectl get kubeadmcontrolplane.controlplane.cluster.x-k8s.io dev-1 -n default -o yaml
 next: cluster docs CAPI-CP-001
 ```
@@ -20,20 +20,20 @@ is `CAPI-CP-002` instead.
 
 Two conditions on the `Cluster` (`cluster.x-k8s.io/v1beta2`):
 
-- `ControlPlaneInitialized` — False with reason `NotInitialized` until the control-plane
+- `ControlPlaneInitialized`, False with reason `NotInitialized` until the control-plane
   provider reports its first API server. It never goes back to False afterwards.
-- `ControlPlaneAvailable` — False with reason `NotAvailable`, or reason
+- `ControlPlaneAvailable`, False with reason `NotAvailable`, or reason
   `ObjectDoesNotExist` when `spec.controlPlaneRef` points at nothing.
 
 The `KubeadmControlPlane` (`controlplane.cluster.x-k8s.io/v1beta2`) named by
 `spec.controlPlaneRef` says why:
 
-- `Initialized` — False with reason `NotInitialized`. The mirror of the Cluster's.
-- `CertificatesAvailable` — False with reason `NotAvailable` or `InternalError`. Nothing
+- `Initialized`, False with reason `NotInitialized`. The mirror of the Cluster's.
+- `CertificatesAvailable`, False with reason `NotAvailable` or `InternalError`. Nothing
   can boot until the cluster CA secrets exist.
-- `ScalingUp` — True with reason `ScalingUp` while it creates the first Machine, or
+- `ScalingUp`, True with reason `ScalingUp` while it creates the first Machine, or
   reason `WaitingForReplicasSet` when `spec.replicas` has not been set by the topology.
-- `MachinesReady` — reason `NoReplicas` when no Machine exists yet, `NotReady` once one
+- `MachinesReady`, reason `NoReplicas` when no Machine exists yet, `NotReady` once one
   does.
 
 With `placement: hosted` the control-plane object is a `K0smotronControlPlane`
@@ -52,7 +52,7 @@ management cluster are the next thing to read.
    ```
 
    Good: `1` and `1` (or `3` and `1` while scaling up).
-   Bad: the first line is empty — the topology never patched replicas in, and the
+   Bad: the first line is empty, the topology never patched replicas in, and the
    KubeadmControlPlane's `ScalingUp` reason is `WaitingForReplicasSet`. That is
    `cluster docs CAPI-TOPO-001`.
 
@@ -64,8 +64,8 @@ management cluster are the next thing to read.
    ```
 
    Good: `Initialized  False  NotInitialized` and `CertificatesAvailable  True  Available`
-   — certificates exist, it is waiting on the machine. Continue to step 3.
-   Bad: `CertificatesAvailable  False` — no machine will ever boot. The message names the
+  , certificates exist, it is waiting on the machine. Continue to step 3.
+   Bad: `CertificatesAvailable  False`, no machine will ever boot. The message names the
    secret; check it exists with
    `kubectl get secret -n default -l cluster.x-k8s.io/cluster-name=dev-1`.
 
@@ -77,9 +77,9 @@ management cluster are the next thing to read.
    ```
 
    Good: one Machine in phase `Provisioning` or `Provisioned` less than two minutes old.
-   Bad: no Machines at all — the control plane cannot create one; the reason is on its
+   Bad: no Machines at all, the control plane cannot create one; the reason is on its
    `ScalingUp` condition and in the control-plane provider's log (step 5).
-   Also bad: a Machine in phase `Provisioning` for longer than the stall threshold — that
+   Also bad: a Machine in phase `Provisioning` for longer than the stall threshold, that
    is `cluster docs CAPI-CP-002`.
 
 4. Read the bootstrap object for that Machine.
@@ -90,8 +90,8 @@ management cluster are the next thing to read.
      -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{range .status.conditions[*]}  {.type}{"  "}{.status}{"  "}{.reason}{"\n"}{end}{end}'
    ```
 
-   Good: `DataSecretAvailable  True  Available` — the cloud-init the machine needs exists.
-   Bad: `DataSecretAvailable  False  NotAvailable` — the bootstrap provider has not
+   Good: `DataSecretAvailable  True  Available`, the cloud-init the machine needs exists.
+   Bad: `DataSecretAvailable  False  NotAvailable`, the bootstrap provider has not
    produced it; its log is the next stop.
 
 5. Confirm the control-plane and bootstrap providers are alive.

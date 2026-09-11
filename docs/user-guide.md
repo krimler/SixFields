@@ -7,8 +7,8 @@ with you.
 ## Two nouns
 
 A **cluster** and a **pool**. You write one kind, `Cluster`, and inside it you name
-pools of workers. What backs a pool — a MachineDeployment, or a MachinePool where
-the provider has a scaling group — is the class's decision, not yours.
+pools of workers. What backs a pool, a MachineDeployment, or a MachinePool where
+the provider has a scaling group, is the class's decision, not yours.
 
 ## Six fields
 
@@ -90,11 +90,11 @@ includes every object the view was computed from.
 
 A phase is stalled when nothing contributing to it has changed for three minutes
 (`--stall-after` changes that). Only the phase the cluster is actually waiting on
-can stall — workers sitting at 0/2 behind a stuck control plane are waiting, not
+can stall, workers sitting at 0/2 behind a stuck control plane are waiting, not
 stuck.
 
 ```
-DevMachine/dev-1-cp-abcde — etcd is not coming up (6m32s)
+DevMachine/dev-1-cp-abcde, etcd is not coming up (6m32s)
 raw: kubectl get devmachine.infrastructure.cluster.x-k8s.io dev-1-cp-abcde -n default -o yaml
 typical: p50 1m15s · p95 2m00s
 next: cluster docs CAPI-CP-003
@@ -113,10 +113,10 @@ cluster why dev-1 --explain-ranking
 ## Five rungs
 
 1. The stall line.
-2. `cluster why dev-1 --verbose` — the full condition text, and the ranking.
-3. The `raw:` line — the kubectl command behind what you were shown.
-4. `cluster docs CAPI-CP-003` — the runbook for that stall class.
-5. `cluster why dev-1 --explain` — a model explains the analyzer's finding.
+2. `cluster why dev-1 --verbose`, the full condition text, and the ranking.
+3. The `raw:` line, the kubectl command behind what you were shown.
+4. `cluster docs CAPI-CP-003`, the runbook for that stall class.
+5. `cluster why dev-1 --explain`, a model explains the analyzer's finding.
    Optional, and it never decides anything: see `docs/ai.md`.
 
 `cluster explain CAPI-CP-003` prints the short form of any code without a cluster.

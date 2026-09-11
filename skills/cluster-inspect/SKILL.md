@@ -11,13 +11,13 @@ separate skill so that the two cannot be confused.
 
 ## Do this
 
-1. `cluster status <name> --json` — the four phases, the estimates, and the stall
+1. `cluster status <name> --json`, the four phases, the estimates, and the stall
    if there is one. Everything you say must come from this document.
 2. If a phase is `stalled`, `cluster why <name> --json --explain-ranking`. The
    `stall.object` field is the one object worth naming. `stall.candidates` says
    what else was failing and why it ranked lower.
-3. `cluster docs <stall.code>` — the runbook for that stall class. Follow its
-   "Check, in order" section rather than inventing checks.
+3. `cluster docs <stall.code>`, the runbook for that stall class. Follow its
+   "Check, in order" section. Do not invent checks.
 4. Only if the runbook asks for it: `cluster render <name>` for the full object
    set, or the `raw:` command the stall line printed.
 
@@ -33,7 +33,7 @@ separate skill so that the two cannot be confused.
 ## Rules
 
 - Every object name, reason and number in your report must appear in the JSON you
-  read. If it does not, you inferred it — say so, or drop it.
+  read. If it does not, you inferred it, say so, or drop it.
 - Do not name CAPI condition types in the summary. They are in
   `stall.condition_type` and on the `raw:` line; that is where they belong.
 - If `stall` is absent and no phase is stalled, the cluster is waiting normally.

@@ -1,4 +1,4 @@
-# CAPI-CP-003 — etcd is not coming up
+# CAPI-CP-003, etcd is not coming up
 
 What happened: the control plane reports etcd as unhealthy or not provisioned, so
 the API server cannot serve.

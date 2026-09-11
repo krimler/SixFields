@@ -1,4 +1,4 @@
-# CAPI-TOPO-001 — the topology could not be reconciled
+# CAPI-TOPO-001, the topology could not be reconciled
 
 What happened: the Cluster's `TopologyReconciled` condition is False, so the class
 never produced the objects the cluster needs.

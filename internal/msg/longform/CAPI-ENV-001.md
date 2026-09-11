@@ -1,4 +1,4 @@
-# CAPI-ENV-001 — no container runtime is running
+# CAPI-ENV-001, no container runtime is running
 
 What happened: the dev loop needs a container runtime and none is answering.
 

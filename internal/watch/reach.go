@@ -1,5 +1,5 @@
 // Package watch assembles the same envelope the fixtures hold, from a live
-// management cluster. Everything above it — fold, why, eta, render — cannot tell
+// management cluster. Everything above it, fold, why, eta, render, cannot tell
 // the difference, which is why a replayed fixture is a real test of the CLI.
 package watch
 
@@ -15,8 +15,8 @@ const ClusterNameLabel = "cluster.x-k8s.io/cluster-name"
 
 // Reachable returns the objects that belong to one cluster: the Cluster itself,
 // everything it references, everything labelled with its name, and everything
-// owned transitively by any of those. Anything else in the namespace — another
-// cluster's machines, a stray template — is excluded.
+// owned transitively by any of those. Anything else in the namespace, another
+// cluster's machines, a stray template, is excluded.
 //
 // Pure, so the rule "exactly the reachable set and nothing else" is a unit test
 // rather than an envtest.

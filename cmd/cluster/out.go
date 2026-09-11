@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cobra's cmd.Print family writes to stderr, not stdout — it exists for usage and
+// Cobra's cmd.Print family writes to stderr, not stdout, it exists for usage and
 // error text. Anything a user redirects into a file must go through these
 // instead, or `cluster render > objects.yaml` and `cluster new > cluster.yaml`
 // write empty files, which is exactly what they did until this file existed.

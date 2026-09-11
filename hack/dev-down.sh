@@ -26,7 +26,7 @@ if kind get clusters 2>/dev/null | grep -qx "$KIND_CLUSTER"; then
   kind delete cluster --name "$KIND_CLUSTER"
 fi
 
-# Anything the provider did not get to — because the management cluster was
+# Anything the provider did not get to, because the management cluster was
 # already gone, or a delete timed out. CAPD labels every container it creates.
 orphans=$(docker ps -aq --filter "label=io.x-k8s.kind.cluster" 2>/dev/null || true)
 if [[ -n "$orphans" ]]; then

@@ -198,7 +198,7 @@ func pinned(t *testing.T, key string) string {
 }
 
 // Cobra's cmd.Print family writes to stderr. Anything a user redirects into a
-// file — `cluster render > objects.yaml`, `cluster new > cluster.yaml` — must go
+// file, `cluster render > objects.yaml`, `cluster new > cluster.yaml`, must go
 // to stdout instead, and both wrote empty files until this test existed.
 func TestUX_DataGoesToStdout(t *testing.T) {
 	for _, tc := range []struct {

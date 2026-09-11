@@ -1,4 +1,4 @@
-# CAPI-TOPO-001 — the topology could not be reconciled
+# CAPI-TOPO-001, the topology could not be reconciled
 
 After this page you can tell a real reconcile failure from the normal in-progress
 reasons that share this condition, find the exact field of your Cluster that the class
@@ -9,13 +9,13 @@ This is the one stall class that is almost always a mistake in the `Cluster` you
 ## What you are seeing
 
 ```
-Cluster/dev-1 — the topology could not be reconciled (2m30s)
+Cluster/dev-1, the topology could not be reconciled (2m30s)
 raw: kubectl get cluster.cluster.x-k8s.io dev-1 -n default -o yaml
 next: cluster docs CAPI-TOPO-001
 ```
 
 The stall line names the `Cluster` itself, not a provider object, and usually the
-`infrastructure` row of `cluster status` is still `pending` — nothing downstream was ever
+`infrastructure` row of `cluster status` is still `pending`, nothing downstream was ever
 created.
 
 ## What is actually true
@@ -23,22 +23,22 @@ created.
 The `Cluster`'s `TopologyReconciled` condition (`cluster.x-k8s.io/v1beta2`). Its reason,
 not its status, is the whole message. Exactly one reason means a failure:
 
-- `ReconcileFailed` — the topology controller could not compute or apply the class. The
+- `ReconcileFailed`, the topology controller could not compute or apply the class. The
   message names the field or the variable. This is the one to act on.
 
 Every other False reason means "in progress, waiting on something", and is not a fault:
 
-- `ClusterCreating`, `ClusterUpgrading` — first pass, or a version change in flight.
+- `ClusterCreating`, `ClusterUpgrading`, first pass, or a version change in flight.
 - `ControlPlaneUpgradePending`, `MachineDeploymentsUpgradePending`,
-  `MachinePoolsUpgradePending` — an upgrade is queued behind the control plane.
-- `MachineDeploymentsCreatePending`, `MachinePoolsCreatePending` — pools are queued behind
+  `MachinePoolsUpgradePending`, an upgrade is queued behind the control plane.
+- `MachineDeploymentsCreatePending`, `MachinePoolsCreatePending`, pools are queued behind
   the control plane being initialized.
-- `MachineDeploymentsUpgradeDeferred`, `MachinePoolsUpgradeDeferred` — an annotation on
+- `MachineDeploymentsUpgradeDeferred`, `MachinePoolsUpgradeDeferred`, an annotation on
   the pool is holding its upgrade back on purpose.
-- `LifecycleHookBlocking` — an external hook has not answered; the message names it.
-- `ClusterClassNotReconciled` — the class itself is not ready yet. The fault is on the
+- `LifecycleHookBlocking`, an external hook has not answered; the message names it.
+- `ClusterClassNotReconciled`, the class itself is not ready yet. The fault is on the
   ClusterClass, not on your Cluster.
-- `Paused`, `Deleting` — the cluster is paused or going away.
+- `Paused`, `Deleting`, the cluster is paused or going away.
 
 When the reason is `ClusterClassNotReconciled`, read the `ClusterClass`:
 `VariablesReady` False with reason `VariableDiscoveryFailed` means a variable definition
@@ -46,7 +46,7 @@ or a patch is invalid, and `RefVersionsUpToDate` False with reason
 `RefVersionsNotUpToDate` means it references template versions that no longer exist.
 
 Two things this code does *not* cover. A field the admission policy rejects never reaches
-the topology controller — that is a `CAPI-ADM-*` denial at apply time, with the field path
+the topology controller, that is a `CAPI-ADM-*` denial at apply time, with the field path
 in the message. A version the class accepts but the provider has no image for is
 `CAPI-VERSION-001`.
 
@@ -60,10 +60,10 @@ in the message. A version the class accepts but the provider has no image for is
    ```
 
    Good: reason `ClusterCreating` or one of the `*Pending` reasons, with a
-   `lastTransitionTime` that moved recently — nothing is wrong, the stall threshold is
+   `lastTransitionTime` that moved recently, nothing is wrong, the stall threshold is
    just short. The blocking work is in another phase; run `cluster why dev-1` again.
    Bad: reason `ReconcileFailed`. The message names the field; go to step 2.
-   Also bad: reason `ClusterClassNotReconciled` — go to step 4.
+   Also bad: reason `ClusterClassNotReconciled`, go to step 4.
 
 2. Reproduce the failure without the cluster.
 
@@ -73,7 +73,7 @@ in the message. A version the class accepts but the provider has no image for is
 
    Good: it prints the same message the condition carries. Fix the field it names and
    re-apply; that loop is seconds, not minutes.
-   Bad: `cluster plan` succeeds against the same file — your applied Cluster differs from
+   Bad: `cluster plan` succeeds against the same file, your applied Cluster differs from
    the file. Compare them: `kubectl get cluster dev-1 -n default -o yaml`.
 
 3. Check the six fields you are allowed to set.
@@ -86,9 +86,9 @@ in the message. A version the class accepts but the provider has no image for is
    Good: `class` matches a ClusterClass that exists in this namespace, `version` is a
    `vX.Y.Z` string, each `workers.machineDeployments[].class` matches a worker class the
    ClusterClass declares, and every entry in `variables` is one the class exposes.
-   Bad: `class: std` with no `std` ClusterClass in the namespace — the assembly is not
+   Bad: `class: std` with no `std` ClusterClass in the namespace, the assembly is not
    applied here. Run `make render && kubectl apply -f bin/render/docker.yaml`.
-   Also bad: a variable name the class does not declare — the message says so; remove it.
+   Also bad: a variable name the class does not declare, the message says so; remove it.
 
 4. If the class is the problem, read the class.
 
@@ -98,7 +98,7 @@ in the message. A version the class accepts but the provider has no image for is
    ```
 
    Good: `VariablesReady True` and `RefVersionsUpToDate True`.
-   Bad: `VariablesReady False VariableDiscoveryFailed` — a variable schema or a patch in
+   Bad: `VariablesReady False VariableDiscoveryFailed`, a variable schema or a patch in
    the class is invalid. That is an assembly bug, not a user bug: `make render` and
    `make class-plan` show the blast radius before re-applying.
 
@@ -110,7 +110,7 @@ in the message. A version the class accepts but the provider has no image for is
    ```
 
    Good: the plan lists a control-plane object and one machine deployment per pool.
-   Bad: the plan errors with the same text as the condition — the class and your file
+   Bad: the plan errors with the same text as the condition, the class and your file
    disagree, and the plan output names the patch that failed.
 
 ## Common causes
@@ -135,6 +135,6 @@ kubectl get clusterclass -n default -o yaml > /tmp/classes.yaml
 kubectl logs -n capi-system deployment/capi-controller-manager --since=15m | grep dev-1 > /tmp/topology.log
 ```
 
-The core controller's log is the one that matters here — the topology controller lives in
+The core controller's log is the one that matters here, the topology controller lives in
 `capi-system`, not in a provider. Include `/tmp/cluster.yaml` and `/tmp/classes.yaml`
 together: the failure is always a disagreement between those two files.

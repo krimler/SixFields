@@ -16,8 +16,8 @@ func newDoctorCmd(g *globals) *cobra.Command {
 		Long: "doctor checks the things that stop a `cluster up` before it starts: the\n" +
 			"management cluster is reachable, you may create a Cluster in this namespace,\n" +
 			"and the class you are about to name exists.\n\n" +
-			"For the development environment itself — tools, architecture, container\n" +
-			"runtime, memory profile — run `make doctor`.",
+			"For the development environment itself, tools, architecture, container\n" +
+			"runtime, memory profile, run `make doctor`.",
 		Example: "  cluster doctor\n  cluster doctor -n team-a",
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			failed := false
@@ -37,7 +37,7 @@ func newDoctorCmd(g *globals) *cobra.Command {
 			outln(cmd, "permissions in "+g.namespace)
 			check("create clusters", kubectl(g, "auth", "can-i", "create", "clusters.cluster.x-k8s.io", "-n", g.namespace))
 			// `auth can-i` answers about RBAC, and RBAC is not what refuses a
-			// managed kind — the admission policy is. A cluster-admin passes the
+			// managed kind, the admission policy is. A cluster-admin passes the
 			// RBAC check and is still denied, so this asks the layer that decides,
 			// with a dry-run the API server evaluates and then discards.
 			switch refused, why := managedKindRefused(g); {
@@ -46,7 +46,7 @@ func newDoctorCmd(g *globals) *cobra.Command {
 			default:
 				failed = true
 				outf(cmd, "  fail  a KubeadmControlPlane was admitted: %s\n", why)
-				outln(cmd, "        the policy is not installed or you are exempt from it — see docs/eject.md")
+				outln(cmd, "        the policy is not installed or you are exempt from it, see docs/eject.md")
 			}
 
 			outln(cmd, "classes")
@@ -92,7 +92,7 @@ spec:
 	if strings.Contains(text, "break-glass") {
 		return true, ""
 	}
-	// Denied by something else — RBAC, a webhook, a missing CRD. Still refused,
+	// Denied by something else, RBAC, a webhook, a missing CRD. Still refused,
 	// but not by this policy, and a user should know which.
 	return true, text
 }

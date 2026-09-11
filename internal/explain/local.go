@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-// Local talks to an OpenAI-compatible endpoint on this machine — mlx_lm.server,
+// Local talks to an OpenAI-compatible endpoint on this machine, mlx_lm.server,
 // LM Studio or Ollama. It is the default backend, and with it nothing leaves the
 // machine, which is why --anonymize defaults off for it.
 type Local struct {

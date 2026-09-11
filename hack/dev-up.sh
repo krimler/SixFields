@@ -48,7 +48,7 @@ hack/render.sh
 # The assembly is made of kinds the policy manages, so applying it is a
 # break-glass write: the objects carry the label (see the base kustomization) and
 # this supplies the group. Both halves are required, and the binding records the
-# use in the audit log — which is the point. RBAC still comes from the caller, so
+# use in the audit log, which is the point. RBAC still comes from the caller, so
 # system:masters is impersonated alongside.
 for overlay in ${OVERLAYS:-docker hosted inmemory}; do
   [[ -f "bin/render/${overlay}.yaml" ]] || continue

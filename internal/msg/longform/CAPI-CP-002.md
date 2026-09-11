@@ -1,4 +1,4 @@
-# CAPI-CP-002 — a control-plane machine is stuck provisioning
+# CAPI-CP-002, a control-plane machine is stuck provisioning
 
 What happened: a Machine belonging to the control plane has not become Ready. The
 infrastructure for it exists or is being created, but the node never registered.

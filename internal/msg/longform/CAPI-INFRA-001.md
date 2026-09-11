@@ -1,4 +1,4 @@
-# CAPI-INFRA-001 — infrastructure is not ready
+# CAPI-INFRA-001, infrastructure is not ready
 
 What happened: the Cluster's `InfrastructureReady` condition is still False, so the
 infrastructure provider has not finished creating the network, load balancer and

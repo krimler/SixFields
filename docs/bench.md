@@ -53,7 +53,7 @@ fixture was recorded from a live cluster or hand-built.
 The backend is handed exactly what `cluster why --explain` sends a model: the
 ranked stall, the four-phase table, the runbook for the class, and the object
 names in the envelope. It answers in the schema `docs/schema/explain.v1.json`
-describes — a stall class code, three lines, one next command.
+describes, a stall class code, three lines, one next command.
 
 ## How scoring works
 
@@ -73,8 +73,8 @@ Nothing grades a transcript and nothing asks a model to judge another model.
 Grounding is recorded next to correctness. `explain.Explanation.Grounded` checks
 that every object reference and every number in the answer appeared in what the
 backend was given; the `UNGROUNDED` column counts the answers that failed it. An
-answer can be correct and ungrounded — right about the blocking object, wrong
-about a number beside it — and the column is there to show it.
+answer can be correct and ungrounded, right about the blocking object, wrong
+about a number beside it, and the column is there to show it.
 
 ## Framework errors and reasoning errors
 

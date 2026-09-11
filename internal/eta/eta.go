@@ -82,7 +82,7 @@ func From(durations []time.Duration) Estimate {
 }
 
 // Remaining is how much longer a running phase is expected to take. It never goes
-// below zero and never claims a number for a phase that is over its p95 — at that
+// below zero and never claims a number for a phase that is over its p95, at that
 // point the honest answer is that history does not cover this run.
 func (e Estimate) Remaining(elapsed time.Duration) (time.Duration, bool) {
 	if !e.Known {

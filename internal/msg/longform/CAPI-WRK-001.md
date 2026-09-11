@@ -1,4 +1,4 @@
-# CAPI-WRK-001 — worker machines are not becoming ready
+# CAPI-WRK-001, worker machines are not becoming ready
 
 What happened: the pool has fewer ready replicas than it wants and none has changed
 state for a while.

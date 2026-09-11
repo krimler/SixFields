@@ -12,19 +12,19 @@ all seven phases running on a live management cluster.
 ## Where it stands
 
 All seven phases of PLAN.md are implemented, and Phases 0 to 5 have been verified
-against a real kind + Cluster API + CAPD + k0smotron management cluster, not only
+against a real kind + Cluster API + CAPD + k0smotron management cluster, and
 against fixtures. `make test` runs in 5s of a 30s budget, `make test-envtest` in
 16s of 180s, and `make lint` is clean.
 
 | Phase | State |
 |---|---|
-| 0 — environment and truth | done; `make dev-up`/`dev-down` from clean, `make api-snapshot` generates the API truth from the pinned modules |
-| 1 — the class | done; the six-field Cluster reaches Ready, only topology-owned objects exist |
-| 2 — the policy | done; verified live and by 100 cel-go cases with generated coverage |
-| 3 — the stream | done; every D2 gate is a test, replay is the UI loop |
-| 4 — hosted control plane | done; a k0smotron control plane reaches Ready in 3m07s and reports readiness, not node counts |
-| 5 — k0s on machines | done; both placements are one provider family and differ in one class reference |
-| 6 — eject, e2e, docs | done; the e2e suite passes in three minutes on the in-memory substrate |
+| 0, environment and truth | done; `make dev-up`/`dev-down` from clean, `make api-snapshot` generates the API truth from the pinned modules |
+| 1, the class | done; the six-field Cluster reaches Ready, only topology-owned objects exist |
+| 2, the policy | done; verified live and by 100 cel-go cases with generated coverage |
+| 3, the stream | done; every D2 gate is a test, replay is the UI loop |
+| 4, hosted control plane | done; a k0smotron control plane reaches Ready in 3m07s and reports readiness, not node counts |
+| 5, k0s on machines | done; both placements are one provider family and differ in one class reference |
+| 6, eject, e2e, docs | done; the e2e suite passes in three minutes on the in-memory substrate |
 
 ## What is proven, and how
 
@@ -62,7 +62,7 @@ down where the next person will hit it:
   records every install.
 - CAPI defaults every ClusterClass variable onto the Cluster, so a variable the
   policy does not allow breaks an ordinary user's write. The node image is written
-  into the machine templates instead of being a variable.
+  into the machine templates, and it is no longer a variable.
 - k0smotron wants the same k0s release spelled two ways, and its `K0sControlPlane`
   reports a k0s version where CAPI's preflight expects a Kubernetes one. Both are
   handled in the class with the citation next to them.

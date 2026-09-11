@@ -1,4 +1,4 @@
-# CAPI-ADM-003 — the variable is not one the class exposes
+# CAPI-ADM-003, the variable is not one the class exposes
 
 What happened: `spec.topology.variables` names a variable that is not in the
 allow-list.

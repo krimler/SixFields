@@ -1,5 +1,5 @@
 // Command cluster is the stream: it applies a Cluster, then shows four phases,
-// an estimate, and — when nothing is moving — the one object to look at.
+// an estimate, and, when nothing is moving, the one object to look at.
 package main
 
 import (

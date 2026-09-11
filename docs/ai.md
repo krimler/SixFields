@@ -34,8 +34,8 @@ background call, no warm-up, and no telemetry.
 | `anthropic` | Anthropic's API, `https://api.anthropic.com/v1/messages`, authenticated with `ANTHROPIC_API_KEY` | The redacted, anonymized payload described below | Opt-in only, when the key is set and `AI_CREDIT_CAP_USD` allows it |
 
 One caveat on `local`: `CLUSTER_AI_URL` can point at a model on another machine on your
-network. That is supported — it is how you get a heavier model without giving up the dev
-loop — and it means the payload leaves this machine for that host. Nothing else changes:
+network. That is supported, it is how you get a heavier model without giving up the dev
+loop, and it means the payload leaves this machine for that host. Nothing else changes:
 the same redaction runs, and `--anonymize` still defaults off. Check `CLUSTER_AI_URL`
 before assuming `local` means loopback.
 
@@ -60,7 +60,7 @@ stream under it, with a 60-second hard timeout.
 
 ## Redaction runs on every backend
 
-Redaction happens inside the process, before the payload reaches any backend — including
+Redaction happens inside the process, before the payload reaches any backend, including
 `noop`, `cassette` and `local`. A recorded cassette therefore cannot contain a secret.
 
 Always removed:
@@ -82,8 +82,8 @@ grounded on a redacted value is still traceable.
 ## --anonymize
 
 `--anonymize` replaces object names and namespaces with stable keys before the payload
-leaves the process — `dev-1-control-plane-7fk2x` becomes `Machine/m1`, `default` becomes
-`ns/n1` — and substitutes the real names back into the answer you see. The mapping never
+leaves the process, `dev-1-control-plane-7fk2x` becomes `Machine/m1`, `default` becomes
+`ns/n1`, and substitutes the real names back into the answer you see. The mapping never
 leaves the process. Round-trip identity is asserted against every fixture in the test
 suite.
 
@@ -120,8 +120,8 @@ nothing.
 The split is enforced by two targets:
 
 ```
-make test        # go test ./... — no LLM, no network, under 30s
-make test-llm    # go test -tags llm ./internal/explain/... — cassettes and live evals
+make test        # go test ./..., no LLM, no network, under 30s
+make test-llm    # go test -tags llm ./internal/explain/..., cassettes and live evals
 ```
 
 `make test` is the gate. It builds no model client and opens no socket; the `llm` build

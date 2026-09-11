@@ -1,13 +1,13 @@
-# CAPI-WRK-001 — worker machines are not becoming ready
+# CAPI-WRK-001, worker machines are not becoming ready
 
 After this page you can say whether the pool failed to *create* machines or created them
-and they failed to *become ready*, and read the right object for each — they are different
+and they failed to *become ready*, and read the right object for each, they are different
 faults with different fixes.
 
 ## What you are seeing
 
 ```
-MachineDeployment/dev-1-default — worker machines are not becoming ready (4m55s)
+MachineDeployment/dev-1-default, worker machines are not becoming ready (4m55s)
 raw: kubectl get machinedeployment.cluster.x-k8s.io dev-1-default -n default -o yaml
 next: cluster docs CAPI-WRK-001
 ```
@@ -23,18 +23,18 @@ group. The stall line names whichever one exists.
 
 The `Cluster` (`cluster.x-k8s.io/v1beta2`) holds two rollups:
 
-- `WorkersAvailable` — False with reason `NotAvailable`; reason `NoWorkers` means the
+- `WorkersAvailable`, False with reason `NotAvailable`; reason `NoWorkers` means the
   topology declares no pool at all, which is not a stall.
-- `WorkerMachinesReady` — False with reason `NotReady`; reason `NoReplicas` means the
+- `WorkerMachinesReady`, False with reason `NotReady`; reason `NoReplicas` means the
   pool exists but wants zero machines.
 
 The `MachineDeployment` (`cluster.x-k8s.io/v1beta2`) says which half of the problem it is:
 
-- `ScalingUp` True with reason `ScalingUp` — it is creating machines. Reason
+- `ScalingUp` True with reason `ScalingUp`, it is creating machines. Reason
   `WaitingForReplicasSet` means `spec.replicas` was never set, so it will create none.
 - `Available` False with reason `WaitingForReplicasSet` or `WaitingForAvailableReplicasSet`
-  — machines exist but not enough are available yet.
-- `MachinesReady` False with reason `NotReady` — the machines exist and are not ready.
+ , machines exist but not enough are available yet.
+- `MachinesReady` False with reason `NotReady`, the machines exist and are not ready.
   This is the case where you stop reading the pool and read a Machine.
 
 Counting is the fastest split: `status.replicas` versus `spec.replicas` on the pool. If
@@ -42,7 +42,7 @@ Counting is the fastest split: `status.replicas` versus `spec.replicas` on the p
 `ScalingUp` condition say why). If it matches and `status.readyReplicas` is short, machine
 *readiness* is blocked, and one Machine's own conditions are the answer.
 
-A `MachinePool` publishes no conditions in CAPI v1.14.2 — the constants are declared but
+A `MachinePool` publishes no conditions in CAPI v1.14.2, the constants are declared but
 not implemented. For that kind, the replica counters (`status.replicas`,
 `status.readyReplicas`, `status.availableReplicas`) are the only signal, and the
 `DevMachinePool` behind it carries `Ready` and `ReplicasReady`.
@@ -57,9 +57,9 @@ not implemented. For that kind, the replica counters (`status.replicas`,
      -o custom-columns=NAME:.metadata.name,WANT:.spec.replicas,HAVE:.status.replicas,READY:.status.readyReplicas,AVAIL:.status.availableReplicas
    ```
 
-   Good: `WANT 3  HAVE 3  READY 2` — machines exist, one is not ready. Go to step 3.
-   Bad: `WANT 3  HAVE 1` — creation is blocked. Go to step 2.
-   Also bad: `WANT` empty — the topology never set replicas; read
+   Good: `WANT 3  HAVE 3  READY 2`, machines exist, one is not ready. Go to step 3.
+   Bad: `WANT 3  HAVE 1`, creation is blocked. Go to step 2.
+   Also bad: `WANT` empty, the topology never set replicas; read
    `cluster docs CAPI-TOPO-001`.
 
 2. Creation blocked: read the MachineSet under the pool.
@@ -70,11 +70,11 @@ not implemented. For that kind, the replica counters (`status.replicas`,
      -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{range .status.conditions[*]}  {.type}{"  "}{.status}{"  "}{.reason}{"  "}{.message}{"\n"}{end}{end}'
    ```
 
-   Good: `ScalingUp True ScalingUp` with a fresh `lastTransitionTime` — it is working.
+   Good: `ScalingUp True ScalingUp` with a fresh `lastTransitionTime`, it is working.
    Bad: `ScalingUp True ScalingUp: Scaling up from 0 to 2 replicas`, unchanged for
    minutes, with `HAVE 0`. **The message does not say why.** On CAPI v1.14.2 a failure
-   to create the Machine — a template that will not clone, a bootstrap config a webhook
-   rejects — appears in no condition and emits no event. Go to step 2b.
+   to create the Machine, a template that will not clone, a bootstrap config a webhook
+   rejects, appears in no condition and emits no event. Go to step 2b.
 
 2b. Creation blocked with no reason on any object: read the controller log.
 
@@ -94,7 +94,7 @@ not implemented. For that kind, the replica counters (`status.replicas`,
    ```
 
    Read the object it names. Everything after `denied the request:` is the fix, and it
-   is almost always a field in the class rather than anything on the cluster: correct it
+   is almost always a field in the class, and not anything on the cluster. Correct it
    in `assembly/`, re-run `make dev-up`, and the MachineSet retries by itself.
 
 3. Readiness blocked: find the machine that is not ready.
@@ -105,9 +105,9 @@ not implemented. For that kind, the replica counters (`status.replicas`,
    ```
 
    Good: every worker is `Running` with a node name.
-   Bad: one is `Provisioning` — read `cluster docs CAPI-CP-002`; the machine pipeline is
+   Bad: one is `Provisioning`, read `cluster docs CAPI-CP-002`; the machine pipeline is
    identical for workers.
-   Also bad: one is `Provisioned` with no node name — the machine booted and never joined:
+   Also bad: one is `Provisioned` with no node name, the machine booted and never joined:
    read `cluster docs CAPI-WRK-002`.
 
 4. Read that machine's conditions.
@@ -118,8 +118,8 @@ not implemented. For that kind, the replica counters (`status.replicas`,
    ```
 
    Good: `BootstrapConfigReady True`, `InfrastructureReady True`, `NodeHealthy False
-   NodeNotReady` on a node that appeared seconds ago — the kubelet is still starting.
-   Bad: `NodeHealthy False NodeDoesNotExist` for minutes — `cluster docs CAPI-WRK-002`.
+   NodeNotReady` on a node that appeared seconds ago, the kubelet is still starting.
+   Bad: `NodeHealthy False NodeDoesNotExist` for minutes, `cluster docs CAPI-WRK-002`.
 
 5. Rule out a health check deleting machines faster than they come up.
 
@@ -130,7 +130,7 @@ not implemented. For that kind, the replica counters (`status.replicas`,
    ```
 
    Good: no MachineHealthCheck, or the machine ages are increasing steadily.
-   Bad: every worker is under two minutes old on a cluster that is ten minutes old — the
+   Bad: every worker is under two minutes old on a cluster that is ten minutes old, the
    pool is in a create/remediate loop. The MachineHealthCheck's `RemediationAllowed`
    condition with reason `TooManyUnhealthy` confirms it.
 
@@ -155,5 +155,5 @@ kubectl get machinedeployment,machineset,machine,devmachine,machinehealthcheck -
   -l cluster.x-k8s.io/cluster-name=dev-1 -o yaml > /tmp/objects.yaml
 ```
 
-State which half you landed in — creation or readiness — and the `WANT/HAVE/READY` numbers
+State which half you landed in, creation or readiness, and the `WANT/HAVE/READY` numbers
 from step 1. `make record-fixture NAME=stall-workers CLUSTER_NAME=dev-1` records the state.

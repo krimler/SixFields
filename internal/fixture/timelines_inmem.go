@@ -7,7 +7,7 @@ package fixture
 // changes. These are the primary fixtures for `why` ranking and ETA math.
 
 func hostedDockerHappy() Timeline {
-	const note = "stands in for placement: hosted — a k0smotron control plane runs as pods in the " +
+	const note = "stands in for placement: hosted, a k0smotron control plane runs as pods in the " +
 		"management cluster, so the control-plane phase reports readiness, not node counts"
 	s, objs := build(opts{name: "hosted-docker-happy", note: note, cluster: "hosted-1",
 		placement: "hosted", backend: "docker", cpReplicas: 1, workerCount: 2})

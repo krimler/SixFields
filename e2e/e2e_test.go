@@ -226,7 +226,7 @@ func TestE2E_RenderReAppliesWithNoDiff(t *testing.T) {
 }
 
 // The twelve-minute test: during provisioning the user always sees a phase, a
-// detail, and either an estimate or a stall reason — never a bare Provisioning.
+// detail, and either an estimate or a stall reason, never a bare Provisioning.
 func TestE2E_NoBareProvisioning(t *testing.T) {
 	const name = "e2e-dev-2"
 	_, timeout := substrate()

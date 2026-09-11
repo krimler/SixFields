@@ -171,7 +171,7 @@ func TestAssembly_InMemoryComponentsHaveStartupDurations(t *testing.T) {
 }
 
 // PLAN.md Phase 5's acceptance: the two placements differ in exactly one class
-// reference. They do, now that both bootstrap with k0s — same provider family,
+// reference. They do, now that both bootstrap with k0s, same provider family,
 // same join mechanism, one set of condition types to fold.
 func TestAssembly_PlacementsDifferInOneReference(t *testing.T) {
 	self := find(t, render(t, "docker"), "ClusterClass")["spec"].(map[string]any)
@@ -181,7 +181,7 @@ func TestAssembly_PlacementsDifferInOneReference(t *testing.T) {
 	require.Equal(t, self["variables"], hosted["variables"])
 	// Both placements join workers with the same bootstrap and the same machine.
 	// The one difference is an annotation that only the machine-based control
-	// plane needs — K0sControlPlane reports its version as a k0s release, which
+	// plane needs, K0sControlPlane reports its version as a k0s release, which
 	// CAPI's ControlPlaneIsStable preflight misreads; a hosted control plane does
 	// not, so adding it there would be cargo cult.
 	require.Equal(t, bootstrapKind(t, self), bootstrapKind(t, hosted))
@@ -197,7 +197,7 @@ func TestAssembly_PlacementsDifferInOneReference(t *testing.T) {
 	require.Equal(t, "K0smotronControlPlaneTemplate", templateKind(t, hosted, "controlPlane"))
 
 	// A hosted control plane has no machines, so it must not name a machine
-	// template — that is what makes the control-plane phase report readiness
+	// template, that is what makes the control-plane phase report readiness
 	// rather than a node count.
 	_, hasMachines := hosted["controlPlane"].(map[string]any)["machineInfrastructure"]
 	require.False(t, hasMachines, "a hosted control plane has no machines")
@@ -307,7 +307,7 @@ func pinned(t *testing.T, key string) string {
 // Installing the assembly writes kinds the policy manages, so every rendered
 // object carries one half of the break-glass; hack/dev-up.sh supplies the other
 // by impersonating the group. Without this the second `make dev-up` on a machine
-// that already has the policy is denied — which is how it was found.
+// that already has the policy is denied, which is how it was found.
 func TestAssembly_RenderedObjectsCarryTheBreakGlassLabel(t *testing.T) {
 	for _, overlay := range overlays {
 		t.Run(overlay, func(t *testing.T) {
@@ -327,7 +327,7 @@ func TestAssembly_RenderedObjectsCarryTheBreakGlassLabel(t *testing.T) {
 // k0smotron wants the same k0s release spelled two ways: the control plane puts
 // it in an image tag, where + is not valid, and the worker config's webhook
 // rejects the dash form. Getting this wrong fails minutes later, in a MachineSet
-// controller log, on an object the user never wrote — so it is held here.
+// controller log, on an object the user never wrote, so it is held here.
 func TestAssembly_K0sVersionsAreTheSameRelease(t *testing.T) {
 	plus := pinned(t, "K0S_VERSION")
 	dash := pinned(t, "K0SMOTRON_K0S_VERSION")

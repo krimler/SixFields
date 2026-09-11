@@ -16,7 +16,7 @@
 # writable. KubeadmControlPlaneTemplate has no replicas field and the topology patch engine
 # preserves spec.replicas on the control-plane object (PreserveFields, CAPI v1.14.2
 # core/reconcilers/topology/cluster/patches/engine.go), so a ClusterClass patch cannot set
-# control-plane replicas at this release — a patch that tried would be dropped in silence.
+# control-plane replicas at this release, a patch that tried would be dropped in silence.
 # Cluster.spec.topology.controlPlane.replicas is the only input, and the generator expands
 # the size variable into it. The policy therefore allows the field only at the value size
 # implies: size ha means 3, size dev or absent means 1. Every other key under
@@ -40,13 +40,13 @@
 # v1beta2 renamed spec.topology.class (string) to spec.topology.classRef (name + namespace);
 # spec.topology.class does not exist at v1beta2. clusters.cluster.x-k8s.io serves both
 # v1beta1 and v1beta2 in CAPI v1.14.2, so the policy matches apiVersions ["*"] and tolerates
-# both key spellings — matching only v1beta2 would let anyone bypass the policy by writing
+# both key spellings, matching only v1beta2 would let anyone bypass the policy by writing
 # the v1beta1 endpoint, and denying `class` outright would deny every v1beta1 write with a
 # message about a field the client cannot avoid sending.
 #
 # The decision is default-deny: unknown keys are denied by iterating the object, so a CAPI
 # bump that adds a Cluster spec field does not silently open a hole. The known field names
-# above are only used to make the *message* deterministic — CEL map iteration order is not,
+# above are only used to make the *message* deterministic, CEL map iteration order is not,
 # so a message built from an arbitrary offending key could differ between two identical
 # requests, and internal/msg is tested for byte equality.
 #
@@ -58,14 +58,14 @@
 #
 # Exemption. PLAN.md Phase 2 says to determine empirically which of the two mechanisms holds
 # on a real run. There is no cluster here, so both are implemented:
-#   (a) identity — the load-bearing check. request.userInfo.username against the controller
+#   (a) identity, the load-bearing check. request.userInfo.username against the controller
 #       service accounts listed in the not-a-provider-controller match condition. The names
 #       were read out of the pinned provider manifests, not from memory:
 #         clusterctl generate provider --core cluster-api:v1.14.2 |
 #           grep -A3 'kind: ServiceAccount'
 #       and the same for --infrastructure docker:v1.14.2, --bootstrap kubeadm:v1.14.2,
 #       --control-plane kubeadm:v1.14.2 and k0sproject-k0smotron:v1.10.9 (three providers).
-#   (b) ownership label — the second check. topology.cluster.x-k8s.io/owned, the name in
+#   (b) ownership label, the second check. topology.cluster.x-k8s.io/owned, the name in
 #       api@v1.14.2 core/v1beta2/common_types.go:33 (ClusterTopologyOwnedLabel).
 # Which one actually holds must be confirmed against an audit of a real run, as PLAN.md
 # Phase 2 requires ("record who creates what from the audit of a std-docker-happy run").
@@ -74,7 +74,7 @@
 # labels the objects it creates, never the Cluster that owns them.
 #
 # (b) is scoped to service-account requesters. A bare "has the label, is exempt" rule would
-# let any user self-exempt by adding the label — and metadata.labels is inside the allowed
+# let any user self-exempt by adding the label, and metadata.labels is inside the allowed
 # surface. Scoped this way, (b) still catches a provider controller whose service-account
 # name in (a) is wrong, which is the only thing it is for.
 #
@@ -144,7 +144,7 @@ spec:
     - name: oldClassRef
       expression: "'classRef' in variables.oldTopology ? variables.oldTopology.classRef : {}"
     # The name the denial messages quote. classRef.name at v1beta2, class at v1beta1, and
-    # 'std' when the request has no topology at all — a Cluster written without one is
+    # 'std' when the request has no topology at all, a Cluster written without one is
     # denied for its spec.infrastructureRef, and the class it should have used is std.
     - name: className
       expression: |-

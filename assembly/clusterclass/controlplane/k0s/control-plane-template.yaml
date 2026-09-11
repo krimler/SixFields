@@ -15,7 +15,7 @@ spec:
       k0sConfigSpec:
         args:
         # A k0s controller is not a Kubernetes node unless it also runs a worker,
-        # and a Machine with no node never becomes Ready — which holds the
+        # and a Machine with no node never becomes Ready, which holds the
         # MachineSet's preflight and stops any worker being created at all. The
         # control-plane taint still keeps ordinary workloads off it.
         - --enable-worker=true

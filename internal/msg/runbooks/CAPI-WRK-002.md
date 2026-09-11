@@ -1,13 +1,13 @@
-# CAPI-WRK-002 — a node is not joining the cluster
+# CAPI-WRK-002, a node is not joining the cluster
 
 After this page you can decide whether the node never tried to join, tried and was
-rejected, or joined and is not ready — and read the workload cluster directly, which is
+rejected, or joined and is not ready, and read the workload cluster directly, which is
 the only place the answer exists.
 
 ## What you are seeing
 
 ```
-Machine/dev-1-default-6b9c8-mn4tp — a node is not joining the cluster (7m10s)
+Machine/dev-1-default-6b9c8-mn4tp, a node is not joining the cluster (7m10s)
 raw: kubectl get machine.cluster.x-k8s.io dev-1-default-6b9c8-mn4tp -n default -o yaml
 next: cluster docs CAPI-WRK-002
 ```
@@ -21,20 +21,20 @@ the management cluster controls has already succeeded.
 The `Machine` (`cluster.x-k8s.io/v1beta2`) has passed its first two steps and is stuck on
 the third:
 
-- `BootstrapConfigReady` True and `InfrastructureReady` True — the data secret exists and
+- `BootstrapConfigReady` True and `InfrastructureReady` True, the data secret exists and
   the machine was created.
-- `NodeHealthy` False with reason `NodeDoesNotExist` — no Node object in the workload
+- `NodeHealthy` False with reason `NodeDoesNotExist`, no Node object in the workload
   cluster matches this machine's provider ID. Nothing joined.
 - `NodeHealthy` False with reason `NodeNotReady`, or `NodeReady` False with reason
-  `NodeNotReady` — a Node exists and its kubelet reports not ready. Something joined and
+  `NodeNotReady`, a Node exists and its kubelet reports not ready. Something joined and
   is unhealthy; that is usually a missing CNI.
-- Reason `ConnectionDown` or `InspectionFailed` — CAPI cannot reach the workload API
+- Reason `ConnectionDown` or `InspectionFailed`, CAPI cannot reach the workload API
   server, so it does not know either way. Fix that first.
 - `status.nodeRef` is empty until a node is matched. It is the fastest thing to look at.
 
 The `Cluster`'s `RemoteConnectionProbe` condition (reasons `ProbeSucceeded` /
 `ProbeFailed`) tells you whether the management cluster can talk to the workload API at
-all — the difference between "no node" and "cannot see the node".
+all, the difference between "no node" and "cannot see the node".
 
 The `KubeadmConfig` (`bootstrap.cluster.x-k8s.io/v1beta2`) holds the join instructions:
 `DataSecretAvailable` True with reason `Available` means the secret was produced. The
@@ -51,11 +51,11 @@ secret is rejected at join time and the reason is only visible on the node.
      -o jsonpath='{.status.phase}{"  "}{.status.nodeRef.name}{"\n"}{range .status.conditions[*]}{.type}{"  "}{.status}{"  "}{.reason}{"  "}{.message}{"\n"}{end}'
    ```
 
-   Good: a node name is printed and `NodeHealthy False NodeNotReady` — the node joined;
+   Good: a node name is printed and `NodeHealthy False NodeNotReady`, the node joined;
    go to step 4.
-   Bad: no node name and `NodeHealthy False NodeDoesNotExist` — nothing joined; go to
+   Bad: no node name and `NodeHealthy False NodeDoesNotExist`, nothing joined; go to
    step 2.
-   Also bad: reason `ConnectionDown` — go to step 3 first; the rest is unreadable until
+   Also bad: reason `ConnectionDown`, go to step 3 first; the rest is unreadable until
    the probe succeeds.
 
 2. Ask the workload cluster what it has.
@@ -65,9 +65,9 @@ secret is rejected at join time and the reason is only visible on the node.
    kubectl --kubeconfig /tmp/dev-1.kubeconfig get nodes -o wide
    ```
 
-   Good: the node is listed, and the Machine simply has not matched it yet — wait one
+   Good: the node is listed, and the Machine simply has not matched it yet, wait one
    reconcile.
-   Bad: the node is absent — the join never completed. Read the machine's own log
+   Bad: the node is absent, the join never completed. Read the machine's own log
    (step 5).
 
 3. Check the management cluster can reach the workload API server.
@@ -89,9 +89,9 @@ secret is rejected at join time and the reason is only visible on the node.
    kubectl --kubeconfig /tmp/dev-1.kubeconfig get pods -A -o wide | grep -v Running
    ```
 
-   Good: only `Ready` is False and the message mentions the CNI not being initialised —
+   Good: only `Ready` is False and the message mentions the CNI not being initialised,
    the add-ons are the fault: `cluster docs CAPI-ADDON-001`.
-   Bad: `DiskPressure` or `MemoryPressure` True — the host is out of resources.
+   Bad: `DiskPressure` or `MemoryPressure` True, the host is out of resources.
 
 5. Nothing joined: read the machine's log.
 
@@ -101,12 +101,12 @@ secret is rejected at join time and the reason is only visible on the node.
    ```
 
    Good: `kubeadm join` lines that end in a successful join.
-   Bad: `token is invalid or expired` — the bootstrap secret went stale; delete the
+   Bad: `token is invalid or expired`, the bootstrap secret went stale; delete the
    Machine and let the pool make a new one.
    Also bad: `connection refused` or `no route to host` against the control-plane
-   endpoint — the node cannot reach the API server; step 3's endpoint is wrong or the
+   endpoint, the node cannot reach the API server; step 3's endpoint is wrong or the
    load balancer is down.
-   Also bad: `x509` errors — the machine was created against a different cluster CA.
+   Also bad: `x509` errors, the machine was created against a different cluster CA.
 
 ## Common causes
 

@@ -239,7 +239,7 @@ func TestExplain_RedactIPsIsOneWay(t *testing.T) {
 	require.NotContains(t, revealed, "10.96.0.1", "addresses do not")
 }
 
-// With redaction off — the default for the local backend — an address survives,
+// With redaction off, the default for the local backend, an address survives,
 // because it is often the whole answer.
 func TestExplain_AddressesSurviveWhenRedactionIsOff(t *testing.T) {
 	anon := explain.NewAnonymizer()
@@ -247,7 +247,7 @@ func TestExplain_AddressesSurviveWhenRedactionIsOff(t *testing.T) {
 }
 
 // The cassettes are recorded from the pinned local model (versions.env), and this
-// replays them in `make test` — no network, no model, no key. Every one must pass
+// replays them in `make test`, no network, no model, no key. Every one must pass
 // the same two gates a live answer does, so a model that starts inventing object
 // names fails the build the next time cassettes are re-recorded.
 func TestExplain_RecordedAnswersAreValidAndGrounded(t *testing.T) {

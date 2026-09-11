@@ -27,7 +27,7 @@ func newWhyCmd(g *globals) *cobra.Command {
 	cmd.Flags().StringVar(&ai.anonymize, "anonymize", "", "on or off; defaults to on for a remote model and off for a local one")
 	cmd.Flags().BoolVar(&ai.redactIPs, "redact-ips", false, "replace IP addresses before anything is sent; not reversible")
 	cmd.Flags().BoolVar(&g.jsonOut, "json", false, "emit the stall as JSON")
-	cmd.Flags().StringVar(&g.replay, "replay", "", "replay a recorded fixture directory instead of a cluster")
+	cmd.Flags().StringVar(&g.replay, "replay", "", "replay a recorded fixture directory in place of a cluster")
 	cmd.Flags().StringVar(&g.stallAfter, "stall-after", "3m", "how long without a change before a phase is called stalled")
 
 	cmd.RunE = func(cmd *cobra.Command, args []string) error {

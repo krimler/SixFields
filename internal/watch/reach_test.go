@@ -54,7 +54,7 @@ func names(objs []snapshot.Object) []string {
 }
 
 // The envelope holds exactly the objects behind one cluster: what it references,
-// what is labelled with its name, and what those own — and nothing else.
+// what is labelled with its name, and what those own, and nothing else.
 func TestWatch_ReachableSetIsExactlyOneCluster(t *testing.T) {
 	objects := []snapshot.Object{
 		obj("Cluster", "dev-1", ref("infrastructureRef", "DevCluster", "dev-1")),

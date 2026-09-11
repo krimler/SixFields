@@ -1,4 +1,4 @@
-# CAPI-ENV-002 — no such cluster
+# CAPI-ENV-002, no such cluster
 
 What happened: no Cluster of that name exists in the namespace.
 

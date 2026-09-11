@@ -1,4 +1,4 @@
-# CAPI-CP-001 — control plane is not initializing
+# CAPI-CP-001, control plane is not initializing
 
 What happened: infrastructure is ready but the control plane has not reported
 `Initialized`, so no API server has come up yet.

@@ -11,7 +11,7 @@ import (
 	"testing"
 )
 
-var update = flag.Bool("update", false, "rewrite golden files instead of comparing")
+var update = flag.Bool("update", false, "rewrite golden files in place of comparing")
 
 // Updating reports whether this run should rewrite goldens. The -update flag only
 // exists in packages that import this one, so `make golden` sets UPDATE_GOLDEN=1

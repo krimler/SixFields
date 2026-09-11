@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Install the assembly's add-ons as a ClusterResourceSet, so every cluster the
 # class creates gets a CNI without the user knowing there is one. Without it the
-# nodes join and stay NotReady, and the cluster never reaches Ready — which is
+# nodes join and stay NotReady, and the cluster never reaches Ready, which is
 # how the missing add-on was found.
 #
 # The manifest is pinned by digest. A tag can be moved; a digest cannot.

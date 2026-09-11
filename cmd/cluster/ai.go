@@ -23,7 +23,7 @@ const DefaultLocalURL = "http://127.0.0.1:11434/v1"
 // aiOptions are the cost and privacy knobs from docs/ai.md.
 type aiOptions struct {
 	enabled   bool
-	anonymize string // "", "on", "off" — empty means the backend's default
+	anonymize string // "", "on", "off", empty means the backend's default
 	redactIPs bool
 }
 
@@ -70,7 +70,7 @@ func cassetteDir() string {
 func anonymizeByDefault(name string) bool { return name == "anthropic" }
 
 // explainStall prints the runbook first and the model's three lines under it. If
-// the model is slow, wrong or absent, the runbook stands alone — the ladder never
+// the model is slow, wrong or absent, the runbook stands alone, the ladder never
 // depends on the top rung.
 func explainStall(ctx context.Context, cmd *cobra.Command, stall why.Stall, view render.View, env snapshot.Envelope, opt aiOptions) {
 	if !opt.enabled {

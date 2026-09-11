@@ -3,7 +3,7 @@
 // returns is checked against that input before a user sees it: the model explains
 // the analyzer's answer, it never produces one.
 //
-// Four backends behind one interface — noop, cassette, local and anthropic — so
+// Four backends behind one interface, noop, cassette, local and anthropic, so
 // every AI code path is testable without a model, and `make test` never calls one.
 package explain
 

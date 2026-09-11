@@ -14,7 +14,7 @@ import (
 )
 
 // kubeconfigFor writes a kubeconfig for the envtest API server, because the
-// watcher takes a path — the same one a user passes with --kubeconfig.
+// watcher takes a path, the same one a user passes with --kubeconfig.
 func kubeconfigFor(t *testing.T, config *rest.Config) string {
 	t.Helper()
 	api := clientcmdapi.NewConfig()

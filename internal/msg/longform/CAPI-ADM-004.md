@@ -1,4 +1,4 @@
-# CAPI-ADM-004 — break-glass needs both the label and the group
+# CAPI-ADM-004, break-glass needs both the label and the group
 
 What happened: the object carries the break-glass label but the requester is not in
 the break-glass group, or the other way round.

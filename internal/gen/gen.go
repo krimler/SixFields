@@ -125,7 +125,7 @@ func (s Spec) Defaults() Spec {
 	return s
 }
 
-// Validate returns every problem, not just the first: a user fixing a cluster file
+// Validate returns every problem it finds: a user fixing a cluster file
 // should see all of it in one pass.
 func (s Spec) Validate() []*msg.Error {
 	s = s.Defaults()

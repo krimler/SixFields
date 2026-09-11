@@ -27,7 +27,7 @@ func newUpCmd(g *globals) *cobra.Command {
 	cmd.Flags().BoolVar(&g.jsonOut, "json", false, "emit the versioned status document")
 	cmd.Flags().StringVar(&g.timeout, "timeout", "", "give up waiting after this long")
 	cmd.Flags().StringVar(&g.stallAfter, "stall-after", "3m", "how long without a change before a phase is called stalled")
-	cmd.Flags().StringVar(&g.replay, "replay", "", "replay a recorded fixture directory instead of a cluster")
+	cmd.Flags().StringVar(&g.replay, "replay", "", "replay a recorded fixture directory in place of a cluster")
 	cmd.Flags().Float64Var(&g.speed, "speed", 1, "replay speed multiplier")
 
 	cmd.RunE = func(cmd *cobra.Command, args []string) error {

@@ -40,7 +40,7 @@ linters:
         - ifElseChain
         # The pure core takes values and returns values on purpose: a caller can
         # never be surprised by a mutation. These two checks trade that for a
-        # copying win this workload — tens of objects per snapshot — does not need.
+        # copying win this workload, tens of objects per snapshot, does not need.
         - hugeParam
         - rangeValCopy
 

@@ -1,13 +1,13 @@
-# CAPI-CP-002 — a control-plane machine is stuck provisioning
+# CAPI-CP-002, a control-plane machine is stuck provisioning
 
-After this page you can say which of the four steps of a Machine's life it is stuck on —
-bootstrap data, infrastructure, node registration, or control-plane pods — and read the
+After this page you can say which of the four steps of a Machine's life it is stuck on,
+bootstrap data, infrastructure, node registration, or control-plane pods, and read the
 one object that owns that step.
 
 ## What you are seeing
 
 ```
-Machine/dev-1-control-plane-7fk2x — a control-plane machine is stuck provisioning (5m03s)
+Machine/dev-1-control-plane-7fk2x, a control-plane machine is stuck provisioning (5m03s)
 raw: kubectl get machine.cluster.x-k8s.io dev-1-control-plane-7fk2x -n default -o yaml
 next: cluster docs CAPI-CP-002
 ```
@@ -21,14 +21,14 @@ If the count is `0/1` or `0/3` and no API server has ever come up, the code is
 A `Machine` (`cluster.x-k8s.io/v1beta2`) is a four-step pipeline, and each step has its
 own condition. Read them in this order, because each waits on the one before:
 
-1. `BootstrapConfigReady` — False with reason `NotReady` until the bootstrap provider
+1. `BootstrapConfigReady`, False with reason `NotReady` until the bootstrap provider
    writes the data secret. Reason `ObjectDoesNotExist` means the KubeadmConfig is gone.
-2. `InfrastructureReady` — False with reason `NotReady` until the infrastructure provider
+2. `InfrastructureReady`, False with reason `NotReady` until the infrastructure provider
    creates the machine. Reason `ObjectDoesNotExist` means the DevMachine is gone.
-3. `NodeHealthy` / `NodeReady` — reason `NodeDoesNotExist` until the kubelet registers,
+3. `NodeHealthy` / `NodeReady`, reason `NodeDoesNotExist` until the kubelet registers,
    then `NodeNotReady` until the node is ready. If you are here, this is `CAPI-WRK-002`
    territory even for a control-plane machine.
-4. `Ready` — the rollup, False with reason `NotReady`.
+4. `Ready`, the rollup, False with reason `NotReady`.
 
 `status.phase` on the Machine is the same story in one word: `Pending`, `Provisioning`,
 `Provisioned`, `Running`.
@@ -38,17 +38,17 @@ The `DevMachine` (`infrastructure.cluster.x-k8s.io/v1beta2`) named by the Machin
 
 With `spec.backend.docker`:
 
-- `ContainerProvisioned` — reasons `WaitingForClusterInfrastructureReady`,
+- `ContainerProvisioned`, reasons `WaitingForClusterInfrastructureReady`,
   `WaitingForControlPlaneInitialized`, `WaitingForBootstrapData` while it waits on
   something else, `NotProvisioned` when creating the container failed. The container
   runtime's own error is in the message.
-- `BootstrapCompleted` — reasons `WaitingForContainer`, `WaitingForCGroups`,
+- `BootstrapCompleted`, reasons `WaitingForContainer`, `WaitingForCGroups`,
   `WaitingForPreloadedImages` while it waits, `Failed` when `kubeadm` exited non-zero.
-- `CGroupsReady` and `PreLoadedImagesReady` — the two steps `BootstrapCompleted` waits on.
+- `CGroupsReady` and `PreLoadedImagesReady`, the two steps `BootstrapCompleted` waits on.
 
 With `spec.backend.inMemory` there is no container. Four conditions flip on timers:
 `VMProvisioned`, `NodeProvisioned`, `EtcdProvisioned`, `APIServerProvisioned`. Reason
-`WaitingForStartupTimeout` means the configured `startupDuration` has not elapsed — the
+`WaitingForStartupTimeout` means the configured `startupDuration` has not elapsed, the
 machine is not broken, it is scheduled. `WaitingForVMProvisioned` and
 `WaitingForNodeProvisioned` mean an earlier one has not finished.
 
@@ -68,9 +68,9 @@ cannot reach the workload API server, so those conditions say nothing about the 
    ```
 
    Good: `BootstrapConfigReady True` and `InfrastructureReady False NotReady` with a
-   `lastTransitionTime` inside the last minute — the infrastructure provider is working.
-   Bad: `BootstrapConfigReady False NotReady` — nothing downstream will move; go to step 4.
-   Also bad: `NodeHealthy False NodeDoesNotExist` with infrastructure ready — the machine
+   `lastTransitionTime` inside the last minute, the infrastructure provider is working.
+   Bad: `BootstrapConfigReady False NotReady`, nothing downstream will move; go to step 4.
+   Also bad: `NodeHealthy False NodeDoesNotExist` with infrastructure ready, the machine
    booted and never joined; read `cluster docs CAPI-WRK-002`.
 
 2. Read the DevMachine.
@@ -82,12 +82,12 @@ cannot reach the workload API server, so those conditions say nothing about the 
    ```
 
    Good, docker backend: `ContainerProvisioned True Provisioned` and `BootstrapCompleted
-   False WaitingForCGroups` — it is mid-boot.
-   Good, inMemory backend: `VMProvisioned False WaitingForStartupTimeout` — a deliberate
+   False WaitingForCGroups`, it is mid-boot.
+   Good, inMemory backend: `VMProvisioned False WaitingForStartupTimeout`, a deliberate
    delay, not a fault. Compare it against the template's `startupDuration` (step 5).
-   Bad: `ContainerProvisioned False NotProvisioned` — the message is the runtime's error
+   Bad: `ContainerProvisioned False NotProvisioned`, the message is the runtime's error
    (image not found, no space, port in use).
-   Also bad: `BootstrapCompleted False Failed` — `kubeadm` failed inside the machine; its
+   Also bad: `BootstrapCompleted False Failed`, `kubeadm` failed inside the machine; its
    output is in the message and in the container's log (step 3).
 
 3. Docker backend only: read the machine's container.
@@ -110,7 +110,7 @@ cannot reach the workload API server, so those conditions say nothing about the 
    ```
 
    Good: `DataSecretAvailable=True/Available`.
-   Bad: `DataSecretAvailable=False/NotAvailable` — the bootstrap provider log has the
+   Bad: `DataSecretAvailable=False/NotAvailable`, the bootstrap provider log has the
    reason; a control-plane join also needs `CertificatesAvailable=True/Available` on the
    KubeadmControlPlane.
 

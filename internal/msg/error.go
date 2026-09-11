@@ -16,7 +16,7 @@ const (
 //
 // There is no way to build one without a next action: New is the only constructor
 // and it takes the code, whose registry entry supplies the action. That is what
-// "the compiler is the lint" means in D2.4 — a message with nothing to do next
+// "the compiler is the lint" means in D2.4, a message with nothing to do next
 // cannot be constructed, so no test has to look for one.
 type Error struct {
 	Code    Code
