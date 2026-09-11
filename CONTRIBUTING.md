@@ -78,6 +78,11 @@ first.
 checklists. `STATUS.md` says where the work is now. The README has a map of the
 directories.
 
+## Who maintains this
+
+`OWNERS` lists the maintainers. Open issues and pull requests on
+[krimler/sixfields](https://github.com/krimler/sixfields).
+
 ## Licence
 
 By contributing you agree that your work is licensed under Apache-2.0, the same as

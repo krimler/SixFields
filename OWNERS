@@ -1,0 +1,5 @@
+# https://www.kubernetes.dev/docs/guide/owners/
+approvers:
+  - krimler
+reviewers:
+  - krimler
