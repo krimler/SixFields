@@ -304,3 +304,20 @@ func TestAssembly_K0sVersionsAreTheSameRelease(t *testing.T) {
 		worker["spec"].(map[string]any)["template"].(map[string]any)["spec"].(map[string]any)["version"],
 		"k0smotron's webhook rejects the dash form here")
 }
+
+// A hosted control plane on one Kubernetes minor and a topology version on
+// another leaves workers unable to fetch the worker-config ConfigMap their k0s
+// version expects: they reach the API server, authenticate, and then exit. The
+// two versions are the same release, and this keeps them that way.
+func TestAssembly_K0sMatchesTheWorkloadKubernetesVersion(t *testing.T) {
+	k0s := pinned(t, "K0S_VERSION")
+	workload := pinned(t, "WORKLOAD_K8S_VERSION")
+	require.NotEmpty(t, k0s)
+	require.NotEmpty(t, workload)
+
+	kubernetesPart, _, found := strings.Cut(k0s, "+")
+	require.True(t, found, "K0S_VERSION must carry a +k0s suffix, got %q", k0s)
+	require.Equal(t, workload, kubernetesPart,
+		"the k0s release installs Kubernetes %s while the assembly installs %s",
+		kubernetesPart, workload)
+}
