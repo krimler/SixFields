@@ -199,6 +199,12 @@ var deniedPaths = map[string]func(map[string]any){
 	"spec.paused": func(o map[string]any) {
 		o["spec"].(map[string]any)["paused"] = true
 	},
+	// Not a managed key but a malformed value. The commonest cause is a file meant
+	// to be run through envsubst that was applied directly, and the API server
+	// accepts it: nothing in Cluster API checks the shape of this string.
+	"spec.topology.version": func(o map[string]any) {
+		topology(o)["version"] = "1.34.11"
+	},
 	"spec.availabilityGates": func(o map[string]any) {
 		o["spec"].(map[string]any)["availabilityGates"] = []any{map[string]any{"conditionType": "Ready"}}
 	},
@@ -255,6 +261,12 @@ func TestPolicy_EveryDeniedPathIsDenied(t *testing.T) {
 // the same three things internal/msg promises (D2.3).
 func TestUX_AdmissionMessageContract(t *testing.T) {
 	for path, mutate := range deniedPaths {
+		if path == "spec.topology.version" {
+			// A managed field names the class that owns it. A malformed value is a
+			// different denial: the field is the user's, the value is wrong, and
+			// no class owns it. TestPolicy_MalformedVersionIsDenied covers its text.
+			continue
+		}
 		t.Run(path, func(t *testing.T) {
 			got := decide(t, fieldsPolicy, tests.Request{Object: cluster(mutate)})
 			require.False(t, got.Allowed)
@@ -282,6 +294,8 @@ func TestUX_PlanMatchesAdmission(t *testing.T) {
 			msg.Render(msg.VariableUnknown, msg.Vars{Variable: "gpuPool", Class: "std"})},
 		{"controlPlane.replicas", deniedPaths["spec.topology.controlPlane.replicas"],
 			msg.Render(msg.FieldManaged, msg.Vars{Field: "spec.topology.controlPlane.replicas", Class: "std"})},
+		{"malformed version", deniedPaths["spec.topology.version"],
+			msg.Render(msg.VersionMalformed, msg.Vars{Field: "spec.topology.version", Version: "1.34.11"})},
 	} {
 		t.Run(tc.path, func(t *testing.T) {
 			got := decide(t, fieldsPolicy, tests.Request{Object: cluster(tc.mutate)})
@@ -386,11 +400,7 @@ func managed(kind string, mutate ...func(map[string]any)) map[string]any {
 }
 
 func TestPolicy_ManagedKindsAreDeniedToPeople(t *testing.T) {
-	for _, kind := range []string{
-		"KubeadmControlPlane", "K0sControlPlane", "K0smotronControlPlane",
-		"MachineDeployment", "MachineSet", "Machine", "MachinePool",
-		"DockerCluster", "KubeadmConfig", "KubeadmConfigTemplate", "DevMachineTemplate",
-	} {
+	for _, kind := range gen.ManagedKinds {
 		t.Run(kind, func(t *testing.T) {
 			got := decide(t, kindsPolicy, tests.Request{Object: managed(kind)})
 			require.False(t, got.Allowed, "%s was allowed", kind)
@@ -416,9 +426,17 @@ func TestPolicy_ManagedKindsAreAllowedToTheirControllers(t *testing.T) {
 	}
 }
 
-// The kinds a user still owns. Denying these would break the class itself.
+// The kinds a user still owns. A ClusterClass is what an operator installs, and
+// a Cluster is the one kind the whole design asks a user to write; denying
+// either would deny the assembly itself.
+//
+// DevMachine used to be on this list, on the reasoning that denying it would
+// break the class. It does not: a DevMachine is created by the MachineSet
+// controller and reconciled by the CAPD one, and both service accounts are
+// exempt. Leaving it writable meant `kubectl patch devmachine` succeeded for an
+// ordinary user, which is the one thing the policy exists to stop.
 func TestPolicy_UnmanagedKindsAreUntouched(t *testing.T) {
-	for _, kind := range []string{"DevMachine", "ClusterClass"} {
+	for _, kind := range []string{"ClusterClass", "Cluster"} {
 		t.Run(kind, func(t *testing.T) {
 			got := decide(t, kindsPolicy, tests.Request{Object: managed(kind)})
 			require.True(t, got.Allowed, "%s is not a managed kind", kind)
@@ -458,4 +476,62 @@ func TestUX_KindDenialNamesNoParticularClass(t *testing.T) {
 	require.NotContains(t, got.Message, "'std'")
 	require.Equal(t, msg.Render(msg.KindManaged, msg.Vars{Kind: "MachineDeployment"}), got.Message,
 		"the policy and internal/msg have drifted")
+}
+
+// The generator refuses managed kinds before submit and the policy refuses them
+// at admission. Two lists that must agree, so this is the test that says so.
+func TestPolicy_ManagedKindListMatchesTheGenerator(t *testing.T) {
+	inPolicy := kindsInPolicy(t)
+	for _, kind := range gen.ManagedKinds {
+		require.Contains(t, inPolicy, kind, "gen.ManagedKinds has %s and the policy does not", kind)
+	}
+	for _, kind := range inPolicy {
+		require.Contains(t, gen.ManagedKinds, kind, "the policy has %s and gen.ManagedKinds does not", kind)
+	}
+}
+
+// A version the provider cannot publish is refused at admission. The control
+// study found this one accepted by the API server and caught by `cluster plan`,
+// which a user reaching for kubectl never runs.
+func TestPolicy_MalformedVersionIsDenied(t *testing.T) {
+	// The empty string is not here: spec.topology.version is +required with
+	// MinLength=1 (api@v1.14.2 core/v1beta2/cluster_types.go:563), so the API
+	// server's own schema refuses it and the CEL harness does not model schemas.
+	for _, version := range []string{"1.34.11", "v1.34", "${KUBERNETES_VERSION}", "latest"} {
+		t.Run(version, func(t *testing.T) {
+			got := decide(t, fieldsPolicy, tests.Request{Object: cluster(func(o map[string]any) {
+				topology(o)["version"] = version
+			})})
+			require.False(t, got.Allowed, "version %q was allowed", version)
+			require.Contains(t, got.Message, "not a Kubernetes version")
+		})
+	}
+}
+
+// The versions the assembly actually uses must keep working. A rule this close to
+// the six fields is one typo away from refusing every cluster.
+func TestPolicy_WellFormedVersionIsAllowed(t *testing.T) {
+	for _, version := range []string{"v1.34.11", "v1.30.0", "v1.34.11+k0s.0", "v1.34.11-rc.1"} {
+		t.Run(version, func(t *testing.T) {
+			got := decide(t, fieldsPolicy, tests.Request{Object: cluster(func(o map[string]any) {
+				topology(o)["version"] = version
+			})})
+			require.True(t, got.Allowed, "version %q was refused: %s", version, got.Message)
+		})
+	}
+}
+
+// An existing Cluster whose stored version is malformed must stay editable. The
+// rule fires on a change to the field, not on its presence, or a cluster created
+// before the rule existed could never be updated again, including to fix it.
+func TestPolicy_AMalformedVersionAlreadyStoredDoesNotLockTheCluster(t *testing.T) {
+	stored := cluster(func(o map[string]any) { topology(o)["version"] = "1.34.11" })
+	edited := cluster(func(o map[string]any) {
+		topology(o)["version"] = "1.34.11"
+		topology(o)["workers"] = map[string]any{"machineDeployments": []any{
+			map[string]any{"class": "default", "name": "default", "replicas": int64(3)},
+		}}
+	})
+	got := decide(t, fieldsPolicy, tests.Request{Object: edited, OldObject: stored})
+	require.True(t, got.Allowed, "an unrelated edit was refused: %s", got.Message)
 }

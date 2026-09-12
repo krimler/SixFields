@@ -26,6 +26,38 @@ const APIVersion = "cluster.x-k8s.io/v1beta2"
 // DefaultClass is the only class an ordinary user names.
 const DefaultClass = "std"
 
+// ManagedKinds are the kinds the ClusterClass owns. A user writes exactly one
+// kind, Cluster; everything here is derived from it and is refused before submit
+// as well as at admission. The list is the same one the policy carries, and
+// TestPolicy_ManagedKindListMatchesTheGenerator fails if the two drift.
+//
+// Every kind whose name ends in Template is managed too; that rule is in
+// IsManagedKind rather than here, because it covers templates from providers
+// this list has never heard of.
+var ManagedKinds = []string{
+	"KubeadmControlPlane", "K0sControlPlane", "K0smotronControlPlane",
+	"MachineDeployment", "MachineSet", "Machine", "MachinePool",
+	"DockerCluster", "DevCluster",
+	"DockerMachine", "DevMachine",
+	"DockerMachinePool", "DevMachinePool",
+	"KubeadmConfig", "K0sWorkerConfig", "K0sControllerConfig",
+	"KubeadmConfigTemplate",
+}
+
+// IsManagedKind reports whether a kind belongs to the class rather than to the
+// user.
+func IsManagedKind(kind string) bool {
+	if strings.HasSuffix(kind, "Template") {
+		return true
+	}
+	for _, m := range ManagedKinds {
+		if m == kind {
+			return true
+		}
+	}
+	return false
+}
+
 // HostedClassSuffix is how placement resolves to a class. A ClusterClass has
 // exactly one controlPlane (api@v1.14.2 core/v1beta2/clusterclass_types.go), so a
 // hosted control plane cannot be a patch on the same class; it is a second class,
@@ -93,7 +125,22 @@ var AllowedVariables = []string{"size", "placement"}
 // kubernetesVersion is deliberately loose: it rejects an empty value, an
 // unsubstituted ${PLACEHOLDER} and a version without its v, and leaves judging
 // whether the version exists to the provider, which is the only thing that knows.
+// kubernetesVersion is applied to the version the API server will store, not to
+// the one the user typed. Cluster API's mutating webhook prepends a missing `v`
+// before any validation runs, with the comment "Tolerate version strings without
+// a v prefix" (cluster-api@v1.14.2 core/webhooks/admission/cluster.go:92), so
+// refusing `1.34.11` here would refuse a manifest the cluster accepts and
+// corrects. Prefixing before matching is how the client stays the same answer as
+// admission, which is the only claim `cluster plan` makes.
 var kubernetesVersion = regexp.MustCompile(`^v\d+\.\d+\.\d+`)
+
+// asStored is the version after the webhook has had it.
+func asStored(version string) string {
+	if version != "" && !strings.HasPrefix(version, "v") {
+		return "v" + version
+	}
+	return version
+}
 
 var (
 	allowedSizes      = []string{"dev", "ha"}
@@ -138,7 +185,7 @@ func (s Spec) Validate() []*msg.Error {
 	if s.Name == "" {
 		add(msg.FieldManaged, msg.Vars{Field: "metadata.name"})
 	}
-	if !kubernetesVersion.MatchString(s.Version) {
+	if !kubernetesVersion.MatchString(asStored(s.Version)) {
 		add(msg.VersionMalformed, msg.Vars{Field: "spec.topology.version", Version: s.Version})
 	}
 	if !contains(allowedSizes, s.Size) {
@@ -241,27 +288,43 @@ func FromObject(obj map[string]any) (Spec, []*msg.Error) {
 	spec.Labels = fromAny(metadata["labels"])
 	spec.Annotations = fromAny(metadata["annotations"])
 
-	root, _ := obj["spec"].(map[string]any)
-	class := DefaultClass
-	for field := range root {
-		if field != "topology" {
-			errs = append(errs, msg.New(msg.FieldManaged, msg.Vars{Field: "spec." + field, Class: class}))
+	// A managed kind is not a Cluster with strange fields in it. Reading one
+	// field by field produced denials naming fields that are legitimate on that
+	// kind, and a class the object does not carry; the server-side policy denies
+	// the whole kind and names none. Same answer, same words.
+	if kind, _ := obj["kind"].(string); kind != "" && kind != "Cluster" {
+		if IsManagedKind(kind) {
+			return Spec{}, []*msg.Error{msg.New(msg.KindManaged, msg.Vars{Kind: kind})}
 		}
 	}
+
+	root, _ := obj["spec"].(map[string]any)
 	topology, _ := root["topology"].(map[string]any)
+	// The class is read before any denial is written, because every denial names
+	// it. Reading it afterwards made each field beside topology say 'std'
+	// whatever the file said, while the policy interpolated the real name.
 	if classRef, ok := topology["classRef"].(map[string]any); ok {
 		spec.Class, _ = classRef["name"].(string)
 		// placement is expanded into the class name on the way out, so it is
 		// folded back on the way in and the spec round-trips.
 		spec.Class = strings.TrimSuffix(spec.Class, HostedClassSuffix)
+	}
+	class := DefaultClass
+	if spec.Class != "" {
+		class = spec.Class
+	}
+
+	for field := range root {
+		if field != "topology" {
+			errs = append(errs, msg.New(msg.FieldManaged, msg.Vars{Field: "spec." + field, Class: class}))
+		}
+	}
+	if classRef, ok := topology["classRef"].(map[string]any); ok {
 		for field := range classRef {
 			if field != "name" && field != "namespace" {
 				errs = append(errs, msg.New(msg.FieldManaged, msg.Vars{Field: "spec.topology.classRef." + field, Class: class}))
 			}
 		}
-	}
-	if spec.Class != "" {
-		class = spec.Class
 	}
 	spec.Version, _ = topology["version"].(string)
 

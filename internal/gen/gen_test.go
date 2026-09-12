@@ -217,3 +217,89 @@ func TestGen_PlacementResolvesToAClass(t *testing.T) {
 	require.Equal(t, "std", back.Class)
 	require.Equal(t, "hosted", back.Placement)
 }
+
+// A denial names the class the Cluster actually references. The first version
+// read spec.topology.classRef after it had already emitted the errors for the
+// fields beside topology, so every one of those said 'std' whatever the file
+// said, while the server-side policy interpolated the real name. The two texts
+// are meant to be identical character for character.
+func TestUX_DenialNamesTheClusterOwnClass(t *testing.T) {
+	doc := `apiVersion: cluster.x-k8s.io/v1beta2
+kind: Cluster
+metadata:
+  name: dev-1
+spec:
+  paused: true
+  clusterNetwork:
+    pods:
+      cidrBlocks: [10.0.0.0/16]
+  topology:
+    classRef:
+      name: std-inmemory
+    version: v1.34.11
+`
+	_, errs := gen.FromYAML([]byte(doc))
+	require.NotEmpty(t, errs)
+	for _, e := range errs {
+		require.Contains(t, e.Summary, "std-inmemory", "denial named the wrong class: %s", e.Summary)
+		require.NotContains(t, e.Summary, "'std'", "denial hardcoded std: %s", e.Summary)
+	}
+}
+
+// A managed kind is not a Cluster with strange fields. Walking a MachineDeployment
+// as though it were one produced "spec.clusterName is managed by ClusterClass
+// 'std'", which names a field the user may legitimately set on that kind and a
+// class the object does not carry. The server-side policy says the kind is
+// managed and names no class; this says the same.
+func TestUX_ManagedKindIsRejectedByKindNotByField(t *testing.T) {
+	for _, kind := range []string{
+		"MachineDeployment", "MachineSet", "Machine", "MachinePool",
+		"KubeadmControlPlane", "K0sControlPlane", "K0smotronControlPlane",
+		"DevCluster", "DockerCluster", "DevMachine", "DockerMachine",
+		"KubeadmConfig", "KubeadmConfigTemplate", "DevMachineTemplate",
+	} {
+		t.Run(kind, func(t *testing.T) {
+			doc := "apiVersion: cluster.x-k8s.io/v1beta2\nkind: " + kind +
+				"\nmetadata:\n  name: hand-made\nspec:\n  clusterName: dev-1\n"
+			_, errs := gen.FromYAML([]byte(doc))
+			require.Len(t, errs, 1)
+			require.Equal(t, msg.KindManaged, errs[0].Code)
+			require.Contains(t, errs[0].Summary, kind)
+			require.NotContains(t, errs[0].Summary, "'std'")
+		})
+	}
+}
+
+// Cluster API's mutating webhook prepends a missing `v` before anything else
+// sees the object: "Tolerate version strings without a v prefix: prepend it if
+// it's not there" (cluster-api@v1.14.2 core/webhooks/admission/cluster.go:92).
+// The client refused what the server accepts and corrects, which breaks the one
+// promise `cluster plan` makes, that its messages are the ones admission would
+// produce. What must still be refused is a version no prefix can rescue.
+func TestUX_PlanToleratesWhatTheServerRepairs(t *testing.T) {
+	for _, tc := range []struct {
+		version string
+		allowed bool
+	}{
+		{"v1.34.11", true},
+		{"1.34.11", true}, // the webhook makes this v1.34.11
+		{"1.30.0", true},
+		{"v1.34.11+k0s.0", true},
+		{"latest", false}, // becomes vlatest, which no provider publishes
+		{"${KUBERNETES_VERSION}", false},
+		{"v1.34", false},
+		{"", false},
+	} {
+		t.Run(tc.version, func(t *testing.T) {
+			spec := minimal()
+			spec.Version = tc.version
+			errs := spec.Validate()
+			named := mentions(errs, "spec.topology.version")
+			if tc.allowed {
+				require.False(t, named, "%q was refused: %v", tc.version, errs)
+				return
+			}
+			require.True(t, named, "%q was allowed", tc.version)
+		})
+	}
+}

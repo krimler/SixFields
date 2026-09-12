@@ -35,6 +35,8 @@ func TestPolicy_NoCaseTestsAVanishedRule(t *testing.T) {
 	// variable name, and a control-plane replica count that disagrees with size.
 	declared["spec.topology.variables[unknown]"] = true
 	declared["spec.topology.controlPlane.replicas"] = true
+	// A malformed version is denied by a value rule, not by a key list.
+	declared["spec.topology.version"] = true
 
 	for path := range deniedPaths {
 		require.True(t, declared[path],
@@ -88,5 +90,29 @@ func keyList(t *testing.T, text, variable string) []string {
 		out = append(out, match[1])
 	}
 	require.NotEmpty(t, out, "no keys found in variable %q", variable)
+	return out
+}
+
+// kindsInPolicy reads the managed-kind list out of the policy's is-a-managed-kind
+// match condition, so the Go list and the CEL list cannot drift apart silently.
+// The Template suffix rule lives beside it and is not a kind, so it is skipped.
+func kindsInPolicy(t *testing.T) []string {
+	t.Helper()
+	b, err := os.ReadFile(vapDir + "/managed-kinds.yaml")
+	require.NoError(t, err)
+	text := string(b)
+
+	marker := "request.kind.kind in [\n"
+	start := strings.Index(text, marker)
+	require.NotEqual(t, -1, start, "the policy has no is-a-managed-kind list")
+	rest := text[start+len(marker):]
+	end := strings.Index(rest, "]")
+	require.Greater(t, end, 0)
+
+	var out []string
+	for _, match := range keyListPattern.FindAllStringSubmatch(rest[:end], -1) {
+		out = append(out, match[1])
+	}
+	require.NotEmpty(t, out)
 	return out
 }

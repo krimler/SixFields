@@ -47,6 +47,7 @@ const (
 const (
 	NoRuntime       Code = "CAPI-ENV-001"
 	ClusterNotFound Code = "CAPI-ENV-002"
+	ClassNotFound   Code = "CAPI-ENV-003"
 )
 
 // Class groups codes for the exit-code contract and for the runbook lint.
@@ -179,6 +180,18 @@ var registry = map[Code]Entry{
 		Summary:    "no container runtime is answering.",
 		NextAction: "start Docker Desktop, OrbStack or Colima, then run: make doctor",
 	},
+	ClassNotFound: {
+		Code: ClassNotFound, Class: Environment,
+		Title: "there is no such ClusterClass",
+		// The one mistake nothing else catches. The API server accepts a Cluster
+		// naming a class that does not exist, with a warning rather than an error,
+		// and the cluster then sits there creating nothing. A typo in the class
+		// name is the cheapest way to make that happen, so the message carries the
+		// nearest installed name.
+		Summary:    "spec.topology.classRef.name is '{{.Class}}', and no such ClusterClass is installed in {{.Namespace}}.",
+		NextAction: "kubectl get clusterclass -n {{.Namespace}}",
+	},
+
 	ClusterNotFound: {
 		Code: ClusterNotFound, Class: Environment,
 		Title:      "no such cluster",

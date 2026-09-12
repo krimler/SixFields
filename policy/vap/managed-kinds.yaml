@@ -18,10 +18,22 @@
 #                                                              v1beta2, no longer exp)
 #   DockerCluster              infrastructure.cluster.x-k8s.io CAPD v1.14.2
 #   DevCluster                 infrastructure.cluster.x-k8s.io CAPD v1.14.2
+#   DockerMachine              infrastructure.cluster.x-k8s.io CAPD v1.14.2
+#   DevMachine                 infrastructure.cluster.x-k8s.io CAPD v1.14.2
+#   DockerMachinePool          infrastructure.cluster.x-k8s.io CAPD v1.14.2
+#   DevMachinePool             infrastructure.cluster.x-k8s.io CAPD v1.14.2
 #   KubeadmConfig              bootstrap.cluster.x-k8s.io      kubeadm bootstrap v1.14.2
+#   K0sWorkerConfig            bootstrap.cluster.x-k8s.io      k0smotron v1.10.9
+#   K0sControllerConfig        bootstrap.cluster.x-k8s.io      k0smotron v1.10.9
 #   KubeadmConfigTemplate      bootstrap.cluster.x-k8s.io      kubeadm bootstrap v1.14.2
 # plus any kind whose name ends in Template, which covers the ClusterClass's own templates
 # and the copies the topology controller clones from them.
+#
+# The infrastructure machine kinds were missing until a control study found that
+# `kubectl patch devmachine` succeeded for an ordinary user. They are created by the
+# MachineSet controller and reconciled by the provider's, and both service accounts are on
+# the exemption list below, so denying them to people costs nothing. gen.ManagedKinds carries
+# the same list and a test fails if the two diverge.
 #
 # Consequence worth knowing before you run `make dev-up`: the templates the ClusterClass
 # references are *Template kinds, so installing or updating the assembly is itself a denied
@@ -89,7 +101,11 @@ spec:
         request.kind.kind in [
           'KubeadmControlPlane', 'K0sControlPlane', 'K0smotronControlPlane',
           'MachineDeployment', 'MachineSet', 'Machine', 'MachinePool',
-          'DockerCluster', 'DevCluster', 'KubeadmConfig', 'KubeadmConfigTemplate'
+          'DockerCluster', 'DevCluster',
+          'DockerMachine', 'DevMachine',
+          'DockerMachinePool', 'DevMachinePool',
+          'KubeadmConfig', 'K0sWorkerConfig', 'K0sControllerConfig',
+          'KubeadmConfigTemplate'
         ] || request.kind.kind.endsWith('Template')
   variables:
     - name: username

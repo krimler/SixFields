@@ -291,6 +291,28 @@ spec:
         'replicas' in variables.controlPlane
           && variables.controlPlane.replicas != variables.expectedControlPlaneReplicas
           ? ['spec.topology.controlPlane.replicas'] : []
+    # spec.topology.version is one of the six fields, so it is not denied as a key.
+    # What is denied is a value the provider cannot publish. The commonest cause is
+    # an unsubstituted placeholder, a file meant to be run through envsubst and
+    # applied directly, and nothing in Cluster API checks the shape of this string:
+    # the control study submitted `1.34.11` to a live API server and it was stored.
+    #
+    # The pattern is the one internal/gen uses, so the two agree by inspection:
+    # gen.go's kubernetesVersion, `^v\d+\.\d+\.\d+`. CEL's matches() is RE2 and
+    # is unanchored, hence the explicit ^.
+    #
+    # Keyed on a change, like every other rule here. A Cluster whose stored version
+    # is already malformed must stay editable, or one created before this rule
+    # existed could never be updated again, including to correct it.
+    - name: version
+      expression: "'version' in variables.topology ? string(variables.topology.version) : ''"
+    - name: oldVersion
+      expression: |-
+        'version' in variables.oldTopology ? string(variables.oldTopology.version) : ''
+    - name: versionMalformed
+      expression: |-
+        variables.version != variables.oldVersion
+        && !variables.version.matches('^v[0-9]+[.][0-9]+[.][0-9]+')
     - name: denied
       expression: |-
         variables.deniedSpec + variables.deniedSpecUnknown
@@ -327,6 +349,15 @@ spec:
       messageExpression: |-
         string(variables.denied[0]) + " is managed by ClusterClass '" + variables.className
         + "'. Set it via the class or use break-glass (docs/eject.md)."
+    # Last, because a request that is wrong in both ways should be told about the
+    # managed field first: that one is about what the user may write at all, and
+    # this one is about the value of a field they are allowed to write.
+    - expression: "!variables.versionMalformed || variables.breakGlass"
+      reason: Forbidden
+      messageExpression: |-
+        "spec.topology.version is '" + variables.version
+        + "', which is not a Kubernetes version. Set it to something like v1.34.11,"
+        + " or use break-glass (docs/eject.md)."
   # auditAnnotations live on the policy in admissionregistration.k8s.io/v1; the binding's
   # validationActions is what makes them recorded. The key reaches the audit event as
   # sixfields-cluster-fields/break-glass.
