@@ -293,7 +293,29 @@ You need not submit a file to find out whether it is acceptable. The `plan` comm
 cluster plan -f cluster.yaml
 ```
 
-It prints the same message that `cluster up` would.
+It prints the same message that `cluster up` would, for every rule that can be
+checked by reading the file.
+
+One mistake cannot be. If you misspell the class name, `plan` has nothing to
+compare it against, because it never contacts the cluster:
+
+```
+c-1 in default: class std-inmemroy, v1.34.11, self control plane (1 nodes)
+  pool default: 2 nodes
+no field is rejected; `cluster up` would apply this unchanged.
+class std-inmemroy is not checked here; `cluster up` looks it up before applying.
+```
+
+`cluster up` does contact the cluster, so it catches it before writing anything:
+
+```
+spec.topology.classRef.name is 'std-inmemroy', and no such ClusterClass is installed in default.
+next: did you mean std-inmemory? Otherwise: kubectl get clusterclass -n default
+```
+
+This one is worth knowing because Cluster API on its own accepts it. A Cluster
+naming a class that does not exist is stored with a warning, and then nothing
+happens: no machines, no phases, no error to read.
 
 ## 10. Using your cluster
 
@@ -333,7 +355,9 @@ cluster render dev-1 > dev-1-objects.yaml
 kubectl diff -f dev-1-objects.yaml && echo "no diff"
 ```
 
-The first command writes out every object behind the cluster. The second compares that file with what is running; `kubectl diff` exits with 0 when they match, so `no diff` is printed. That file is your whole cluster.
+The first command writes out every object behind the cluster, together with the ClusterClass and the templates it is built from, so the file stands on its own. The second compares that file with what is running; `kubectl diff` exits with 0 when they match, so `no diff` is printed.
+
+`render` also prints to standard error what it did not write: your cluster's Secrets, which hold its certificate authority and one bootstrap token per machine, and any ConfigMap an add-on applies. It does not read those, and the line tells you the `kubectl` command that fetches them. Standard error, so `cluster render dev-1 > file` still writes a file of objects.
 
 Note, however, that most of these objects are owned by the ClusterClass, so applying the file yourself needs the six-field rule switched off first. `docs/eject.md` shows how to do this without stopping any cluster.
 
@@ -346,7 +370,7 @@ An exit code is the number a command leaves behind when it finishes, so that a s
 | 0 | ready |
 | 2 | stalled, or still building when the wait ran out |
 | 3 | your file was rejected |
-| 4 | something on your machine is wrong; run `make doctor` |
+| 4 | your machine or your cluster is missing something: run `make doctor`, or check the ClusterClass name |
 
 ## 14. Summary
 

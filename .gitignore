@@ -16,3 +16,6 @@
 # there rather than from a tag.
 /paper/
 /docs/paper/
+
+# Task briefs written for one session and kept beside the work they produced.
+/prompt*
