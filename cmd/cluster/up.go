@@ -38,12 +38,19 @@ func newUpCmd(g *globals) *cobra.Command {
 			if err != nil {
 				return msg.Wrap(msg.ClusterNotFound, msg.Vars{Object: file, Namespace: g.namespace}, err)
 			}
-			if _, errs := gen.FromYAML(b); len(errs) > 0 {
+			spec, errs := gen.FromYAML(b)
+			if len(errs) > 0 {
 				for _, e := range errs {
 					cmd.PrintErrln(e.Summary)
 					cmd.PrintErrln("  next: " + e.Action)
 				}
 				return exitWith(errs[0])
+			}
+			// The class name is the one field admission cannot check, because a
+			// policy sees only the object being written. Unchecked, a typo is
+			// accepted with a warning and the cluster then creates nothing.
+			if err := checkClass(cmd, g, gen.ClassFor(spec.Class, spec.Placement)); err != nil {
+				return err
 			}
 			if err := apply(cmd, g, b); err != nil {
 				return err

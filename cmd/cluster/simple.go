@@ -81,7 +81,7 @@ func newDocsCmd() *cobra.Command {
 // unknownCode is where `did you mean` earns its place: a mistyped code is the most
 // likely way to get here.
 func unknownCode(code msg.Code) error {
-	suggestion := nearest(string(code), codeStrings())
+	suggestion := nearest(string(code), codeStrings(), 4)
 	action := "cluster explain"
 	if suggestion != "" {
 		action = fmt.Sprintf("did you mean %s? Otherwise: cluster explain", suggestion)
@@ -132,7 +132,12 @@ func newPlanCmd(g *globals) *cobra.Command {
 		for _, p := range spec.Pools {
 			outf(cmd, "  pool %s: %d nodes\n", p.Name, p.Replicas)
 		}
+		// plan reads the file and nothing else, so it cannot know whether the class
+		// exists. Saying so is the difference between "this is fine" and "the part
+		// I can check is fine": a Cluster naming a class that is not installed
+		// passes every field rule and then creates nothing.
 		outln(cmd, "no field is rejected; `cluster up` would apply this unchanged.")
+		outf(cmd, "class %s is not checked here; `cluster up` looks it up before applying.\n", spec.Class)
 		return nil
 	}
 	return cmd
@@ -190,10 +195,12 @@ func newNewCmd(g *globals) *cobra.Command {
 	return cmd
 }
 
-// nearest is a one-edit suggestion: cheap, and it catches the typo that actually
-// happens (a transposed character or a missing one).
-func nearest(input string, candidates []string) string {
-	best, bestDistance := "", 4
+// nearest is a small-edit suggestion: cheap, and it catches the typo that
+// actually happens (a transposed character or a missing one). The budget is the
+// caller's, because an error code and a class name tolerate different amounts of
+// wrongness: 'gpu' is three edits from 'std' and is not a misspelling of it.
+func nearest(input string, candidates []string, budget int) string {
+	best, bestDistance := "", budget
 	for _, c := range candidates {
 		if d := distance(strings.ToLower(input), strings.ToLower(c)); d < bestDistance {
 			best, bestDistance = c, d

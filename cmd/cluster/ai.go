@@ -30,7 +30,19 @@ type aiOptions struct {
 // backend picks an explainer from the environment. `local` is the default and
 // with it nothing leaves the machine; `anthropic` is opt-in and turns
 // anonymisation on. `noop` and `cassette` exist so tests never call a model.
+// The command a reader pastes is the analyzer's, never the model's, so every
+// backend this returns is wrapped. Wrapping here rather than at each return keeps
+// a new backend from arriving without it; TestUX_EveryBackendTakesItsCommandFromTheAnalyser
+// fails if that stops being true.
 func backend() (explain.Explainer, string, error) {
+	inner, name, err := chooseBackend()
+	if inner == nil || err != nil {
+		return inner, name, err
+	}
+	return explain.AnalyserCommand(inner), name, nil
+}
+
+func chooseBackend() (explain.Explainer, string, error) {
 	mode, err := explain.ParseMode(os.Getenv("CLUSTER_AI"))
 	if err != nil {
 		return nil, "", &msg.Error{Code: msg.NoRuntime, Summary: err.Error(),

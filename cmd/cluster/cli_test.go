@@ -12,6 +12,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/require"
 
+	"sixfields/internal/explain"
 	"sixfields/internal/golden"
 	"sixfields/internal/msg"
 )
@@ -225,4 +226,66 @@ func TestUX_DataGoesToStdout(t *testing.T) {
 // looked for a runtime on a port nothing was serving.
 func TestUX_DefaultLocalURLMatchesVersionsEnv(t *testing.T) {
 	require.Equal(t, pinned(t, "CLUSTER_AI_URL"), DefaultLocalURL)
+}
+
+// The one mistake no layer caught. A Cluster naming a class that does not exist
+// is accepted by the API server with a warning, passes the policy, and passes
+// `cluster plan`; the cluster is then created and nothing happens. `cluster up`
+// looks the class up before applying, and says which names would have worked.
+func TestUX_MissingClassIsNamedBeforeApply(t *testing.T) {
+	err := classNotInstalled("std-inmemroy", "default",
+		[]string{"std", "std-hosted", "std-inmemory"})
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "std-inmemroy")
+	require.Contains(t, err.Error(), "did you mean std-inmemory")
+	require.Equal(t, msg.ExitEnv, err.ExitCode())
+}
+
+// With nothing close to the name, the message still has to leave the reader
+// somewhere: the command that lists what is installed.
+func TestUX_MissingClassWithNoNearMatchStillSaysWhereToLook(t *testing.T) {
+	err := classNotInstalled("gpu", "default", []string{"std", "std-hosted"})
+	require.Error(t, err)
+	require.NotContains(t, err.Error(), "did you mean")
+	require.Contains(t, err.Action, "kubectl get clusterclass")
+}
+
+// render now carries the class and its templates, so the file stands alone. It
+// still does not carry the cluster's Secrets, and the one thing worse than an
+// incomplete escape hatch is one that is quietly incomplete. The note goes to
+// stderr so that `cluster render > file` is still a file of objects.
+func TestUX_RenderSaysWhatItLeftOut(t *testing.T) {
+	out, errOut, _ := runCLI(t, "render", "--replay", "../../testdata/fixtures/std-docker-ready")
+	require.NotContains(t, out, "kind: Secret", "secrets must not be written to stdout")
+	require.Contains(t, errOut, "Secret")
+	require.Contains(t, errOut, "kubectl get secret")
+}
+
+// Three documents told the reader to verify the escape hatch with
+// `kubectl apply --dry-run=server`, which the policy denies for most of the
+// objects. The documents were fixed; this help text was not, and it is the copy
+// that is one keystroke from being run. Naming the flag to warn against it is
+// fine; offering it as the check is not.
+func TestUX_RenderDoesNotPromiseADryRunApply(t *testing.T) {
+	out, _, _ := runCLI(t, "render", "--help")
+	require.NotContains(t, out, "| kubectl apply --dry-run=server")
+	require.NotContains(t, out, "re-applies with no diff")
+	require.Contains(t, out, "kubectl diff")
+}
+
+// Every backend the CLI can pick takes its command from the analyser. Wrapping
+// happens in one place so a new backend cannot arrive without it, and this is
+// what says so.
+func TestUX_EveryBackendTakesItsCommandFromTheAnalyser(t *testing.T) {
+	for _, name := range []string{"noop", "cassette", "anthropic", "local"} {
+		t.Run(name, func(t *testing.T) {
+			t.Setenv("CLUSTER_AI", "explain")
+			t.Setenv("CLUSTER_AI_BACKEND", name)
+			explainer, _, err := backend()
+			require.NoError(t, err)
+			require.NotNil(t, explainer)
+			require.IsType(t, explain.Func(nil), explainer,
+				"%s is not wrapped in AnalyserCommand", name)
+		})
+	}
 }
