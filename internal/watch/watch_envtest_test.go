@@ -168,3 +168,16 @@ func TestWatch_HeartbeatsWhenNothingChanges(t *testing.T) {
 		t.Fatalf("no envelope within %s of silence", watch.Heartbeat*3)
 	}
 }
+
+// client-go rate-limits itself by default, at 5 queries a second with a burst of
+// 10. This client lists every CAPI resource type once and exits, so the limiter
+// only ever delays it: `cluster why` took 5.4s against 84ms for `clusterctl
+// describe`, all of it spent waiting on the limiter rather than on the API
+// server. kubectl opts out for the same reason.
+func TestWatch_DoesNotRateLimitItself(t *testing.T) {
+	config := envtest.Start(t)
+	client, err := watch.New(kubeconfigFor(t, config), "default")
+	require.NoError(t, err)
+	require.False(t, client.Throttled(),
+		"client-side throttling is on; a snapshot of ~40 resource types will wait seconds on its own limiter")
+}

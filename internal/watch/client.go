@@ -26,8 +26,10 @@ type Client struct {
 	discovery discovery.DiscoveryInterface
 	namespace string
 
-	mu    sync.Mutex
-	cache map[string]snapshot.Object
+	mu        sync.Mutex
+	cache     map[string]snapshot.Object
+	resources []schema.GroupVersionResource
+	throttled bool
 }
 
 // capiGroups are the API groups a cluster's objects live in. Everything CAPI and
@@ -49,6 +51,15 @@ func New(kubeconfig, namespace string) (*Client, error) {
 	// are about this tool's listing, not about anything the user wrote, so they
 	// are dropped rather than printed over the four rows.
 	config.WarningHandler = rest.NoWarnings{}
+	// Opt out of client-go's client-side rate limiter, as kubectl does. Its
+	// default is 5 queries a second with a burst of 10, sized for a controller
+	// that runs for ever, and this client lists every CAPI resource type once and
+	// exits. With the default, `cluster why` spent 5.4s of an idle wall clock
+	// waiting on its own limiter and said so on stderr ("Waited before sending
+	// request ... client-side throttling"), against 84ms for `clusterctl
+	// describe`. A negative QPS disables it and leaves the API server's own
+	// priority and fairness to do the limiting, which is where it belongs.
+	config.QPS = -1
 	dyn, err := dynamic.NewForConfig(config)
 	if err != nil {
 		return nil, err
@@ -57,7 +68,10 @@ func New(kubeconfig, namespace string) (*Client, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Client{dynamic: dyn, discovery: disco, namespace: namespace, cache: map[string]snapshot.Object{}}, nil
+	return &Client{
+		dynamic: dyn, discovery: disco, namespace: namespace,
+		cache: map[string]snapshot.Object{}, throttled: config.QPS >= 0,
+	}, nil
 }
 
 func loadConfig(kubeconfig string) (*rest.Config, error) {
@@ -72,6 +86,11 @@ func loadConfig(kubeconfig string) (*rest.Config, error) {
 // management cluster. Discovery, not a hardcoded list: a provider installed later
 // shows up without a code change.
 func (c *Client) Resources() ([]schema.GroupVersionResource, error) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	if c.resources != nil {
+		return c.resources, nil
+	}
 	// Preferred versions only. CAPI serves v1beta1 and v1beta2 of every kind at
 	// this release, and listing both returns each object twice and prints a
 	// deprecation warning per resource, which is what a first real run looked
@@ -94,6 +113,9 @@ func (c *Client) Resources() ([]schema.GroupVersionResource, error) {
 		}
 	}
 	sort.Slice(out, func(i, j int) bool { return out[i].String() < out[j].String() })
+	// Discovery is a round trip per API group and the set does not change while
+	// one command runs; Watch asks for it straight after Snapshot did.
+	c.resources = out
 	return out, nil
 }
 
@@ -123,6 +145,12 @@ func verbs(have []string, want ...string) bool {
 }
 
 // Snapshot lists everything once and returns the envelope for one cluster.
+//
+// The lists run concurrently, which on its own changed nothing measurable: the
+// 5.4s this command used to take was the client-side rate limiter, not the
+// sequencing, and turning that off is what fixed it. Concurrency is kept because
+// it keeps the semantics identical and pays the slowest list rather than the sum,
+// which is the shape that would bite again if a provider added resource types.
 func (c *Client) Snapshot(ctx context.Context, name string) (snapshot.Envelope, error) {
 	resources, err := c.Resources()
 	if err != nil {
@@ -132,18 +160,24 @@ func (c *Client) Snapshot(ctx context.Context, name string) (snapshot.Envelope, 
 	c.cache = map[string]snapshot.Object{}
 	c.mu.Unlock()
 
+	var wg sync.WaitGroup
 	for _, gvr := range resources {
-		list, err := c.dynamic.Resource(gvr).Namespace(c.namespace).List(ctx, metav1.ListOptions{})
-		if err != nil {
-			// A resource the caller cannot list is not a reason to fail: the escape
-			// hatch is that the user runs kubectl themselves, and a partial view
-			// with a named gap beats no view.
-			continue
-		}
-		for i := range list.Items {
-			c.put(snapshot.Object(list.Items[i].Object))
-		}
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			list, err := c.dynamic.Resource(gvr).Namespace(c.namespace).List(ctx, metav1.ListOptions{})
+			if err != nil {
+				// A resource the caller cannot list is not a reason to fail: the
+				// escape hatch is that the user runs kubectl themselves, and a
+				// partial view with a named gap beats no view.
+				return
+			}
+			for i := range list.Items {
+				c.put(snapshot.Object(list.Items[i].Object))
+			}
+		}()
 	}
+	wg.Wait()
 	return c.envelope(name), nil
 }
 
@@ -241,3 +275,10 @@ func (c *Client) envelope(name string) snapshot.Envelope {
 		Objects: Reachable(objects, name),
 	}
 }
+
+// Throttled reports whether this client would rate-limit itself. It exists so
+// the cost of the default limiter is a test rather than a thing somebody has to
+// remember: with client-go's default of 5 queries a second, listing the forty
+// CAPI resource types took 5.4s, and the only sign of it was a klog line on
+// stderr.
+func (c *Client) Throttled() bool { return c.throttled }
