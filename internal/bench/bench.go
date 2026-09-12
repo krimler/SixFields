@@ -138,10 +138,19 @@ func run(backend explain.Explainer, tasks []task) []result {
 	return out
 }
 
-// backendFor builds one of the four explain backends by name. There is no fifth
-// and no wrapper: the interface a user's `cluster why --explain` goes through is
-// the interface the benchmark scores.
+// backendFor builds one of the four explain backends by name, wrapped exactly as
+// `cluster why --explain` wraps it: the interface a user goes through is the
+// interface the benchmark scores. The one wrapper is AnalyserCommand, which
+// replaces the model's suggested command with the analyzer's own.
 func backendFor(name string) (explain.Explainer, error) {
+	inner, err := chooseBackend(name)
+	if err != nil {
+		return nil, err
+	}
+	return explain.AnalyserCommand(inner), nil
+}
+
+func chooseBackend(name string) (explain.Explainer, error) {
 	switch name {
 	case "noop":
 		return explain.Noop{}, nil

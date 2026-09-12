@@ -2,6 +2,7 @@ package explain_test
 
 import (
 	"context"
+	"errors"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -267,4 +268,121 @@ func TestExplain_RecordedAnswersAreValidAndGrounded(t *testing.T) {
 			require.Equal(t, string(req.Code), answer.Code)
 		})
 	}
+}
+
+// The grounding check read the three lines and not the command underneath them,
+// and the command is the part the reader runs. Judging six local-model answers by
+// hand found two that named a real object under the wrong kind: `kubectl get
+// kubeadmcontrolplane hosted-1-cp` for an object that is a K0smotronControlPlane,
+// and `kubectl get kubeadmcontrolplane dev-1` for the name of a Cluster. Both are
+// NotFound, and both scored as correct answers.
+func TestExplain_NextCommandMustNameAnObjectThatExists(t *testing.T) {
+	req := explain.Request{
+		Code:  msg.ControlPlaneNotInit,
+		Stall: why.Stall{Object: snapshot.Ref{Kind: "K0smotronControlPlane", Name: "hosted-1-cp"}},
+		Names: []string{
+			"K0smotronControlPlane/hosted-1-cp", "hosted-1-cp",
+			"Cluster/hosted-1", "hosted-1",
+			"Machine/shared-1", "DevMachine/shared-1", "shared-1",
+		},
+	}
+	for _, tc := range []struct {
+		name, command string
+		grounded      bool
+	}{
+		{"the object's own kind", "kubectl get k0smotroncontrolplane.controlplane.cluster.x-k8s.io hosted-1-cp -n default -o yaml", true},
+		{"a kind the object does not have", "kubectl get kubeadmcontrolplane.controlplane.cluster.x-k8s.io hosted-1-cp -n default", false},
+		{"a name nothing in the envelope has", "kubectl get k0smotroncontrolplane.controlplane.cluster.x-k8s.io hosted-9-cp -n default", false},
+		{"a listing, naming no object", "kubectl get k0smotroncontrolplane -n default", true},
+		{"not a kubectl command at all", "cluster docs CAPI-CP-001", true},
+		// CAPI names a Machine's infrastructure object after the Machine, so one
+		// name legitimately belongs to two kinds and either is right.
+		{"a name two kinds share", "kubectl get machine.cluster.x-k8s.io shared-1 -n default", true},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			e := explain.Explanation{
+				Code:        string(msg.ControlPlaneNotInit),
+				Lines:       []string{"a", "b", "c"},
+				NextCommand: tc.command,
+			}
+			err := e.Grounded(req)
+			if tc.grounded {
+				require.NoError(t, err)
+				return
+			}
+			require.Error(t, err)
+		})
+	}
+}
+
+// The command under the model's three lines is the line a reader pastes, and the
+// model was writing it. Judged by hand over six tasks, it read the wrong object
+// in three: `kubectl get kubeadmcontrolplane` against a K0smotron control plane,
+// and a lookup by a Cluster's name that no control plane carries. Teaching the
+// grounding check to reject those made them visible; it did not stop them being
+// produced. The analyser already knows which object it ranked and has already
+// written the command that reads it, so the model is no longer asked.
+func TestExplain_TheCommandComesFromTheAnalyserNotTheModel(t *testing.T) {
+	req := explain.Request{
+		Code: msg.ControlPlaneNotInit,
+		Stall: why.Stall{
+			Object: snapshot.Ref{Kind: "K0smotronControlPlane", Name: "hosted-1-cp"},
+			Raw:    "kubectl get k0smotroncontrolplane.controlplane.cluster.x-k8s.io hosted-1-cp -n default -o yaml",
+		},
+		Names: []string{"K0smotronControlPlane/hosted-1-cp", "hosted-1-cp"},
+	}
+	// A backend that writes the exact command the local model wrote on this task.
+	wrong := explain.Func(func(context.Context, explain.Request) (explain.Explanation, error) {
+		return explain.Explanation{
+			Code:        string(msg.ControlPlaneNotInit),
+			Lines:       []string{"a", "b", "c"},
+			NextCommand: "kubectl get kubeadmcontrolplane.controlplane.cluster.x-k8s.io hosted-1-cp -n default",
+		}, nil
+	})
+
+	got, err := explain.AnalyserCommand(wrong).Explain(context.Background(), req)
+	require.NoError(t, err)
+	require.Equal(t, req.Stall.Raw, got.NextCommand)
+	require.NoError(t, got.Grounded(req), "the analyser's own command must ground")
+}
+
+// A backend that returns an error, or an answer the schema rejects, must not be
+// rescued into looking valid by having a command bolted on.
+func TestExplain_AnalyserCommandDoesNotRescueABrokenAnswer(t *testing.T) {
+	req := explain.Request{Code: msg.ControlPlaneNotInit,
+		Stall: why.Stall{Raw: "kubectl get cluster dev-1"}}
+
+	failing := explain.Func(func(context.Context, explain.Request) (explain.Explanation, error) {
+		return explain.Explanation{}, errors.New("the model timed out")
+	})
+	_, err := explain.AnalyserCommand(failing).Explain(context.Background(), req)
+	require.Error(t, err)
+
+	short := explain.Func(func(context.Context, explain.Request) (explain.Explanation, error) {
+		return explain.Explanation{Code: string(msg.ControlPlaneNotInit), Lines: []string{"only one"}}, nil
+	})
+	got, err := explain.AnalyserCommand(short).Explain(context.Background(), req)
+	require.NoError(t, err)
+	require.Error(t, got.Validate(msg.ControlPlaneNotInit), "two lines must still fail the schema")
+}
+
+// The wrapper runs before validation, so the schema's required next_command is
+// satisfied by the analyser and not by the model. This is what lets the prompt
+// stop asking for one without every answer becoming a framework error.
+func TestExplain_ABackendThatWritesNoCommandStillValidates(t *testing.T) {
+	req := explain.Request{
+		Code:  msg.ControlPlaneNotInit,
+		Stall: why.Stall{Raw: "kubectl get cluster.cluster.x-k8s.io dev-1 -n default -o yaml"},
+	}
+	silent := explain.Func(func(context.Context, explain.Request) (explain.Explanation, error) {
+		return explain.Explanation{
+			Code:  string(msg.ControlPlaneNotInit),
+			Lines: []string{"what is blocked", "why", "what changes"},
+		}, nil
+	})
+
+	got, err := explain.AnalyserCommand(silent).Explain(context.Background(), req)
+	require.NoError(t, err)
+	require.NoError(t, got.Validate(msg.ControlPlaneNotInit))
+	require.Equal(t, req.Stall.Raw, got.NextCommand)
 }

@@ -96,11 +96,15 @@ func Prompt(req Request) string {
 		b.WriteString(req.Runbook)
 	}
 	b.WriteString("\nReturn JSON only, matching this shape exactly:\n")
-	b.WriteString(`{"code":"<the stall class above>","lines":["<what is blocked>","<why>","<what changes when it is fixed>"],"next_command":"<one command to run>"}`)
+	b.WriteString(`{"code":"<the stall class above>","lines":["<what is blocked>","<why>","<what changes when it is fixed>"]}`)
 	b.WriteString("\n\nRules: exactly three lines, each one sentence and under 160 characters. Use no\n")
 	b.WriteString("Kubernetes condition type names. Every object name and every number you write must\n")
-	b.WriteString("appear above, if you are not sure of a name, leave it out. next_command must start\n")
-	b.WriteString("with kubectl, cluster, clusterctl, docker or make.\n")
+	b.WriteString("appear above, if you are not sure of a name, leave it out.\n")
+	b.WriteString("Line 1 names the blocking object, as Kind/name, and says what it is blocking.\n")
+	b.WriteString("Line 2 says why, in the words of the message above.\n")
+	b.WriteString("Line 3 says what becomes true once it is unblocked. It is not an instruction:\n")
+	b.WriteString("do not tell the reader what to do and do not write a command. The command the\n")
+	b.WriteString("reader runs is the analyzer's, and it is added after you answer.\n")
 	return b.String()
 }
 
@@ -127,4 +131,37 @@ func parse(text string) (Explanation, error) {
 		return Explanation{}, fmt.Errorf("model response is not the expected JSON: %w", err)
 	}
 	return out, nil
+}
+
+// Func adapts a function to an Explainer, so a test can stand in for a backend
+// without a type of its own.
+type Func func(context.Context, Request) (Explanation, error)
+
+func (f Func) Explain(ctx context.Context, req Request) (Explanation, error) {
+	return f(ctx, req)
+}
+
+// AnalyserCommand replaces whatever command a backend returned with the one the
+// analyzer already wrote.
+//
+// The model used to be asked for the command, and judged over six diagnosis
+// tasks it read the wrong object in three of them: a real name under a kind it
+// does not have, which returns NotFound, and a lookup by the Cluster's name when
+// no control plane carries it. Rejecting those in the grounding check made them
+// visible and left them being produced. The analyzer has already ranked one
+// object and already written the command that reads it, so there is nothing for
+// a model to decide here. Wrapping the backend rather than trusting the prompt is
+// what makes it impossible rather than unlikely.
+//
+// An error from the backend passes through, and an answer that fails the schema
+// still fails it: this adds a command, it does not rescue an answer.
+func AnalyserCommand(inner Explainer) Explainer {
+	return Func(func(ctx context.Context, req Request) (Explanation, error) {
+		out, err := inner.Explain(ctx, req)
+		if err != nil {
+			return out, err
+		}
+		out.NextCommand = req.Stall.Raw
+		return out, nil
+	})
 }

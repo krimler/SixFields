@@ -118,7 +118,71 @@ func (e Explanation) Grounded(req Request) error {
 			}
 		}
 	}
-	return nil
+	return e.commandNamesARealObject(req)
+}
+
+// commandNamesARealObject checks the line the reader actually runs.
+//
+// The three lines were checked and the command under them was not, and the
+// command is the part that gets pasted. Judging six local-model answers by hand
+// found two that named a real object under a kind it does not have, `kubectl get
+// kubeadmcontrolplane hosted-1-cp` for a K0smotronControlPlane and the same for
+// the name of a Cluster. Both return NotFound, and both scored as correct
+// because the prose above them was right.
+//
+// Only `kubectl get|describe <resource> <name>` is inspected. A command that
+// names no object, or is not kubectl, is left alone: the schema already bounds
+// the verb, and inventing more rules here would reject commands that are fine.
+func (e Explanation) commandNamesARealObject(req Request) error {
+	resource, name, ok := kubectlTarget(e.NextCommand)
+	if !ok {
+		return nil
+	}
+	// One name can belong to several kinds: CAPI gives a Machine's infrastructure
+	// object the Machine's own name, so dev-1-cp-abcde is both a Machine and a
+	// DevMachine. Any of them matching is enough.
+	var kinds []string
+	for _, known := range req.Names {
+		kind, objectName, isPair := strings.Cut(known, "/")
+		if !isPair || objectName != name {
+			continue
+		}
+		// A resource may be written as the plural, or fully qualified with its
+		// group; both start with the lowercased kind.
+		if strings.HasPrefix(resource, strings.ToLower(kind)) {
+			return nil
+		}
+		kinds = append(kinds, kind)
+	}
+	if len(kinds) == 0 {
+		return fmt.Errorf("next_command names %q, which is not an object the model was given", name)
+	}
+	return fmt.Errorf("next_command reads %s %s, but %s is %s",
+		resource, name, name, strings.Join(kinds, " or "))
+}
+
+// kubectlTarget returns the resource and object name a kubectl read command
+// targets, if it targets one. A command with no name after the resource is a
+// listing and has no target.
+func kubectlTarget(command string) (resource, name string, ok bool) {
+	fields := strings.Fields(command)
+	if len(fields) < 4 || fields[0] != "kubectl" {
+		return "", "", false
+	}
+	if fields[1] != "get" && fields[1] != "describe" {
+		return "", "", false
+	}
+	var positional []string
+	for _, field := range fields[2:] {
+		if strings.HasPrefix(field, "-") {
+			break
+		}
+		positional = append(positional, field)
+	}
+	if len(positional) < 2 {
+		return "", "", false
+	}
+	return positional[0], positional[1], true
 }
 
 func phaseText(phases []fold.Phase) string {
