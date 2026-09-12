@@ -6,86 +6,85 @@ Resume with:
 make doctor && make test && make test-envtest
 ```
 
-Last updated 2026-09-11, after a session that took the assembly from nothing to
-all seven phases running on a live management cluster.
+Last updated 2026-09-12, after a control study and the nine fixes it produced.
 
 ## Where it stands
 
-All seven phases of PLAN.md are implemented, and Phases 0 to 5 have been verified
-against a real kind + Cluster API + CAPD + k0smotron management cluster, and
-against fixtures. `make test` runs in 5s of a 30s budget, `make test-envtest` in
-16s of 180s, and `make lint` is clean.
+All seven phases of PLAN.md are implemented and verified against a live kind +
+Cluster API + CAPD + k0smotron management cluster. `make test` runs in 3s of a
+30s budget, `make test-envtest` in 26s of 180s, `make lint` is clean.
 
 | Phase | State |
 |---|---|
-| 0, environment and truth | done; `make dev-up`/`dev-down` from clean, `make api-snapshot` generates the API truth from the pinned modules |
-| 1, the class | done; the six-field Cluster reaches Ready, only topology-owned objects exist |
-| 2, the policy | done; verified live and by 100 cel-go cases with generated coverage |
-| 3, the stream | done; every D2 gate is a test, replay is the UI loop |
-| 4, hosted control plane | done; a k0smotron control plane reaches Ready in 3m07s and reports readiness, not node counts |
-| 5, k0s on machines | done; both placements are one provider family and differ in one class reference |
-| 6, eject, e2e, docs | done; the e2e suite passes in three minutes on the in-memory substrate |
+| 0, environment and truth | done |
+| 1, the class | done |
+| 2, the policy | done; the managed-kind list now covers the infrastructure machine kinds |
+| 3, the stream | done; `cluster why` answers in 65ms, was 5,450ms |
+| 4, hosted control plane | done |
+| 5, k0s on machines | done |
+| 6, eject, e2e, docs | done; `cluster render` emits the class and its templates, and names what it skips |
 
-## What is proven, and how
+## The control study
 
-Four fixtures are recorded from real runs and the rest are declared stand-ins
-(`_meta.synthetic`, with a note saying what each stands in for). The recorded ones
-are `std-docker-happy` (a full provisioning timeline), `std-docker-ready`,
-`hosted-docker-happy`, and `stall-cp-killed`, which was induced by removing a live
-control-plane container.
+`paper/study/` holds the whole thing: `findings.md` is the writeup,
+`measure.sh` re-runs every measurement, `data/*.csv` are the numbers,
+`build.sh` redraws the figures. It ran the three pre-registered first-use tasks
+against this tool and against `clusterctl` alone, five blinded trials per task per
+arm, with commands counted by logging shims rather than self-reported.
 
-The AI rung is real too: `make doctor-ai` picked `qwen2.5:14b` on this machine
-(24 − 5 VM − 5 macOS = 14 GB, measured 26 tok/s warm), and the seven cassettes in
-`testdata/cassettes/` were recorded from it. Every one passes the schema and the
-grounding check, and they replay inside `make test`, which never calls a model.
+Headline: 1 command against a median of 7 to create a cluster, 2 against 3 to
+diagnose a stall, and 3 lines of output to read against 113. The control arm won
+the eject task outright until that was fixed, and still gives a more specific
+diagnosis than `cluster why` does.
+
+It found thirteen defects, counted as distinct repairs, each carrying a regression
+test that fails if the repair is reverted. Twelve were properties of the system as
+measured; the thirteenth was introduced by two of the repairs and caught by
+re-measuring. DECISIONS.md 2026-09-12 has an entry per defect with before and after.
+The three that matter to the claims:
+
+1. An ordinary user could `kubectl patch devmachine`, so the managed surface was
+   smaller than described.
+2. `cluster why` spent 5.4s of every invocation inside client-go's own rate
+   limiter. Nothing to do with the model, which is never called without
+   `--explain`.
+3. `cluster render` omitted the ClusterClass its own output refers to, so the
+   escape hatch depended on the thing it exists to escape.
 
 ## What is still prototype
 
 - **`cluster history` and `cluster rollback`** (PLAN.md D5.6) are not implemented.
-- **The `anthropic` backend** has never run. `AI_CREDIT_CAP_USD` is 0 and CLAUDE.md
-  puts spending past that cap on the must-ask list.
-- **The UX probe runs by hand.** `docs/ux-probe/` has a report from a real run;
-  nothing schedules it nightly.
-- **`inmem-happy` is still synthetic.** The in-memory substrate now runs, and its
-  stall fixture is recorded, but the happy path on it has not been re-recorded.
+- **The `anthropic` backend** has never run. `AI_CREDIT_CAP_USD` is 0.
+- **The UX probe and the control study run by hand.** Nothing schedules either.
+- **`inmem-happy` is still synthetic.**
+- **The model writes raw condition names into prose, and nothing stops it.**
+  `docs/schema/explain.v1.json` says the three lines carry no condition type names;
+  the local model writes `WaitingForStartupTimeout` into them, and no check
+  enforces the schema's sentence. The jargon lint that keeps those identifiers out
+  of `internal/msg` does not run over model output. Recorded in
+  `paper/study/data/model-judge.csv`, `after-fixes` row `inmem-stall-vm`, and in
+  DECISIONS.md 2026-09-12 under the tension it creates with the four-phase display.
+- **The model no longer writes the command under its lines.** The analyser supplies
+  it, so it cannot name an object the analyser did not rank. What the model still
+  decides is the prose.
 
 ## Known constraints, found by running it
 
-Each of these cost real time to find and is now either handled in code or written
-down where the next person will hit it:
-
-- A Cluster's placement cannot be changed after creation, and a ClusterClass's
-  control-plane kind cannot be changed in place. `hack/dev-up.sh` recreates a class
-  whose control plane changed, and refuses while any Cluster uses it.
-- Installing the assembly is itself a break-glass write, because `*Template` is a
-  managed kind. `dev-up` does it the documented way and the audit annotation
-  records every install.
-- CAPI defaults every ClusterClass variable onto the Cluster, so a variable the
-  policy does not allow breaks an ordinary user's write. The node image is written
-  into the machine templates, and it is no longer a variable.
-- k0smotron wants the same k0s release spelled two ways, and its `K0sControlPlane`
-  reports a k0s version where CAPI's preflight expects a Kubernetes one. Both are
-  handled in the class with the citation next to them.
-- When a MachineSet cannot create a Machine, CAPI v1.14.2 reports it in no
-  condition and emits no event. The `CAPI-WRK-001` runbook says where the reason
-  actually is.
+- A Cluster's placement cannot change after creation, and a ClusterClass's
+  control-plane kind cannot change in place.
+- Installing the assembly is itself a break-glass write.
+- CAPI defaults every ClusterClass variable onto the Cluster.
+- k0smotron wants the same k0s release spelled two ways.
+- A MachineSet that cannot create a Machine reports it in no condition and emits
+  no event.
+- CAPI never removes an owner reference from a template a ClusterClass has
+  stopped naming, and one ClusterResourceSet owns every cluster's binding. Both
+  make ownership the wrong edge to follow out of a shared object.
+- The API server accepts a Cluster naming a ClusterClass that does not exist, with
+  a warning rather than an error. No admission policy can catch it; the client
+  looks the name up instead.
 
 ## Blocked on a human
 
-1. **The project name and the licence** (QUESTIONS.md Q1). `sixfields` is in the
-   module path and the break-glass label domain; no LICENSE is committed, because
-   committing one is the decision.
-2. **`docs/schema/cluster-spec.v1.json` covers `machineDeployments` only.** A cloud
-   overlay backing a pool with `machinePools` needs that file changed, and
-   CLAUDE.md makes `docs/schema/` a must-ask.
-
-## Two things PLAN.md gets wrong about the pinned release
-
-Both are recorded in DECISIONS.md with the source that proves it, and both are
-handled in code. PLAN.md is left unedited so the original is visible.
-
-1. `spec.topology.class` does not exist at v1beta2; it is
-   `spec.topology.classRef.{name,namespace}`.
-2. Control-plane replicas cannot be set by a ClusterClass patch, so `size` is
-   expanded by `internal/gen` and the policy allows the field only when the two
-   agree.
+1. **The project name and the licence** (QUESTIONS.md Q1).
+2. **`docs/schema/cluster-spec.v1.json` covers `machineDeployments` only.**

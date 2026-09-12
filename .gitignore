@@ -8,3 +8,11 @@
 
 # macOS writes these into any directory Finder has opened.
 .DS_Store
+
+# The paper and everything behind it. Drafts, figures, the control study's data and
+# its generated LaTeX are a research artifact with its own life: they change on a
+# different clock from the code, and a rebuild rewrites every figure. `paper/study/`
+# keeps the measurements it needs beside it, and the review bundle is built from
+# there rather than from a tag.
+/paper/
+/docs/paper/

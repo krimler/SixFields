@@ -302,3 +302,217 @@ with `spec.backend.inMemory`. `hack/clusterctl-init.sh` uses exactly these names
 The original build spec was handed over as a file named `prompt`; it is now
 `docs/build-spec.md`, unedited. CLAUDE.md is Part A of it and PLAN.md is Parts B and D,
 so the guardrails and the plan are where CLAUDE.md says they are.
+
+## 2026-09-12, thirteen defects found by a control study, and what was done about each
+
+A two-arm control study (`paper/study/`) ran the three pre-registered first-use
+tasks against this tool and against `clusterctl` alone. Thirteen defects came out
+of it, counted as distinct repairs, each carrying its own regression test that
+fails if the repair is reverted. Twelve were properties of the system as measured;
+the thirteenth was introduced by two of the repairs and caught by re-measuring.
+Nine are below and four in the entry that follows. The numbers are before and
+after, measured on the same live cluster.
+
+**1. A misspelt ClusterClass name was refused by nothing.** The API server
+accepts `classRef.name: std-inmemroy` with a warning, stores the Cluster, and
+creates nothing; the policy passed it, and `cluster plan` printed "no field is
+rejected". An admission policy cannot fix this: it sees only the object being
+written and cannot read a second object to learn whether the class exists. So
+`cluster up` looks the class up before applying (`cmd/cluster/class.go`), fails
+with `CAPI-ENV-003` and suggests the nearest installed name. `cluster plan` stays
+offline and now says which check it did not do. Alternative considered: a
+`paramKind` on the policy naming the installed classes, rejected because it would
+have to be regenerated whenever a class is installed.
+
+**2. `cluster why` took 5.4s against 84ms for `clusterctl describe`.** Not the
+model: `CLUSTER_AI=off` made no difference and the process sat at 2% CPU. It was
+client-go's own rate limiter, 5 queries a second by default, against a snapshot
+that lists about forty CAPI resource types. `internal/watch` now opts out
+(`config.QPS = -1`), as kubectl does, and leaves the limiting to the API server's
+priority and fairness. 5,450ms to 81ms. The lists were also made concurrent,
+which on its own changed nothing and is kept because it costs nothing and the
+sum-of-latencies shape would return the moment a provider adds resource types.
+`Client.Throttled` exists so an envtest asserts the setting. 5,450 ms to 65 ms;
+readings of 81 ms and 66 ms appear in earlier runs of the same build, and
+`paper/study/data/stream-output.csv` carries the current one.
+
+**3. `DevMachine` was not a managed kind.** `kubectl patch devmachine` succeeded
+for an ordinary user, so "users write exactly one kind" was not true of the
+infrastructure machine object. The test that asserted this was correct behaviour
+gave the reason "denying these would break the class itself", and that reason is
+wrong: a DevMachine is created by the MachineSet controller and reconciled by
+CAPD's, and both service accounts are exempt. Added `DevMachine`,
+`DockerMachine`, `DevMachinePool`, `DockerMachinePool`, `K0sWorkerConfig` and
+`K0sControllerConfig`. Verified live: the write is refused and a cluster still
+reaches Ready in 48s. The list now lives in `gen.ManagedKinds` as well as in the
+CEL, and `TestPolicy_ManagedKindListMatchesTheGenerator` fails if they drift.
+
+**4. `cluster render` omitted what the rendered file depends on.** It emitted 18
+objects for a cluster whose control arm counterparts captured 32 to 34. The
+rendered Cluster keeps `spec.topology`, so it points at a ClusterClass the file
+did not contain: the escape hatch depended on the thing it exists to escape.
+`Reachable` now follows `spec.topology.classRef` to the class and the class's
+`templateRef`s to its templates. 18 to 24 objects, and `kubectl diff` still exits
+0 clean.
+
+Secrets are still not printed, and that is deliberate: CLAUDE.md's non-goals rule
+out secrets handling beyond what clusterctl does, and writing a cluster's
+certificate authority into a file as a side effect of `render` is not something
+this command should do quietly. The defect was the silence, not the omission, so
+render now names on stderr exactly which Secrets it skipped and gives the command
+that fetches them. `REVISIT`: if `cluster render` is ever meant to produce a file
+that recreates a cluster elsewhere rather than one that describes the cluster you
+have, this decision has to be reopened, and `clusterctl move` is the prior art.
+
+Following owner references out of a ClusterClass had to be stopped at the same
+time. CAPI adds an owner reference to every template a class has ever named and
+never removes it: on the live cluster `std-control-plane-machine` was owned by
+both `std` and `std-inmemory`, and expanding those references pulled the docker
+class's templates into an in-memory cluster's render. A class's children are the
+templates in its spec.
+
+**5. `cluster plan` named the wrong ClusterClass and read managed kinds as
+Clusters.** It printed `is managed by ClusterClass 'std'` for a `std-inmemory`
+cluster, because `gen.FromObject` emitted the denials for the fields beside
+`topology` before it had read `classRef.name`. The server-side policy interpolated
+the real name all along, so this was the client disagreeing with the thing it
+claims to reproduce character for character. Reading a `MachineDeployment` field
+by field was the same bug in another form: it produced "spec.clusterName is
+managed by ClusterClass 'std'", naming a field that is legitimate on that kind and
+a class the object does not carry. A non-Cluster managed kind now returns
+`KindManaged`, which is the wording the policy uses and names no class.
+
+**6. `cluster render --help` still promised the check the documents had
+dropped.** README, the user guide and `docs/eject.md` were corrected to
+`kubectl diff` after the first-use study; the command's own help still offered
+`cluster render NAME | kubectl apply --dry-run=server -f -`, which the policy
+denies for 13 of 18 objects. It is the copy nearest to being run. The help now
+gives the diff and says why the dry-run apply is the wrong check.
+
+**7. Grounding did not read the line the reader runs.** Judging six local-model
+answers by hand found two that named a real object under a kind it does not have,
+`kubectl get kubeadmcontrolplane hosted-1-cp` for a K0smotronControlPlane and the
+same for a Cluster's name. Both return NotFound, and both scored as correct,
+because `Explanation.Grounded` checked the three lines and not `next_command`.
+It now checks that a `kubectl get|describe` target names an object the model was
+given, under a kind that object has. The local backend's `UNGROUNDED` count went
+from 0 to 2 on the same six tasks, which is the check working rather than the
+model getting worse. One name can belong to two kinds, because CAPI names an
+infrastructure machine after its Machine, and the check accepts either.
+
+**8. `cluster render` left a dangling ClusterResourceSetBinding.** Re-running the
+eject task after fix 4 was what found it: all three subjects independently
+reported that the file carries the binding recording that Calico was applied and
+not the `ClusterResourceSet` that defines it, so the CNI would not be reinstalled
+from the file. `Reachable` now follows `spec.bindings[].clusterResourceSetName`,
+which is the only link, since the set carries no cluster label and does not own
+the binding. The ConfigMap the set applies is in the core group, which this tool
+does not read, and is named on stderr beside the Secrets.
+
+**9. Owner references must not be followed out of a shared definition.** Both
+render fixes leaked on their first attempt and both were caught by rendering a
+live cluster rather than by a test. A ClusterClass owns every template it has ever
+named, so an in-memory cluster's file gained the docker class's templates; a
+ClusterResourceSet owns every binding it has applied, so following it took a
+24-object render to 37, the extra thirteen being other clusters' bindings.
+`sharedDefinitions` names the two kinds a cluster refers to rather than owns, and
+the owner-reference pass stops at them. `REVISIT`: this is a list of two, and a
+third shared kind would have to be added by hand. A rule derived from the
+contract, rather than a list, would be worth more.
+
+### What this cost, and what it says about the method
+
+Nine defects at this point, of which the first-use study had already found four and
+fixed them. Four of the five new ones were invisible to the fixture-backed suite for the same
+reason as the eleven in the paper: the fixtures encode the same understanding as
+the code. Two were found only by a control arm, which is the argument for running
+one; two more were found only by re-measuring after a fix, which is the argument
+for re-measuring. The latency defect was found by timing a command that the test
+suite only ever asserts the output of.
+
+## 2026-09-12, three gaps the control study left open
+
+**Item 1, the two refusals that were client-side only.**
+
+`04-version-no-v` was not a defect. Cluster API's mutating webhook prepends a missing `v`
+before anything else sees the object, with the comment "Tolerate version strings without a
+v prefix: prepend it if it's not there" (cluster-api@v1.14.2
+core/webhooks/admission/cluster.go:92), and validating admission runs after mutating
+admission, so the policy is handed `v1.34.11` whatever the user typed. The study recorded a
+tolerated input as an uncaught mistake. The case is reclassified `tolerated`, and
+`internal/gen` now prefixes before matching, because refusing `1.34.11` made `cluster plan`
+stricter than the server and broke the one promise it makes.
+
+What is a real mistake is a version no prefix can rescue: `latest` becomes `vlatest`,
+`${KUBERNETES_VERSION}` survives unsubstituted, `v1.34` has no patch. The policy now denies
+those, with the same text `internal/msg` produces, and `15-version-placeholder` is the case.
+The message quotes the version after mutation, so a user who typed `latest` is told about
+`vlatest`; that is inherent to validating-after-mutating and is left as it is, because the
+alternative is a message that does not match the stored object.
+
+`02-class-typo` stays client-side, and this is a decision rather than an omission.
+
+A `ValidatingAdmissionPolicy` cannot ask whether a named object exists. `paramRef` takes a
+fixed name or a label selector, and with a selector "multiple params are found, they are all
+evaluated with the policy expressions and the results are ANDed together"
+(k8s.io/api@v0.37.0 admissionregistration/v1/types.go:582), so selecting every ClusterClass
+expresses "every class has this name", not "some class does". The only expressible form is a
+single ConfigMap listing installed class names.
+
+That was rejected. Cluster API polls for two seconds waiting for the class to appear and be
+reconciled before it downgrades to a warning
+(core/webhooks/admission/cluster.go:989), which is deliberate tolerance of a Cluster and its
+ClusterClass being applied in either order, as one kustomize output or one GitOps sync does.
+A static list refuses exactly that case, and refuses it with a message that is wrong: the
+class is there, the list has not caught up. Trading a benign warning for a false refusal
+makes the failure worse, not earlier. `cluster up` looks the name up instead, which is
+allowed to be wrong in the harmless direction because it runs before the write.
+
+The result is 12 of 13 refused at admission and one advised by the client. `REVISIT` if
+Cluster API ever makes a missing class an error, or if VAP gains a lookup.
+
+**Item 2, the command under the model's lines.**
+
+`AnalyserCommand` wraps every backend and replaces whatever command it returned with
+`req.Stall.Raw`, the command the analyser had already written for the object it ranked. The
+prompt no longer asks for one. Both construction sites wrap, and a test asserts each backend
+the CLI can pick comes back wrapped, so this is a property of the type rather than of the
+prompt.
+
+Judged by hand over the same six tasks: the command read the right object in 3 of 6 before
+and 6 of 6 after. The third line helped in 4 of 6 before and 6 of 6 after, because the line
+that told a reader to raise the `startupDuration` that caused the stall is gone; the prompt
+now states the schema's own contract for that line, that it says what becomes true once the
+object is unblocked rather than what to do.
+
+Two things this cost. Naming the object in line 1 had to be asked for explicitly: taking the
+command away lost it on one task, reproducibly, and the benchmark fell to 5 of 6 until the
+prompt said so. And the model still writes raw condition names into prose, which the schema
+forbids and nothing enforces; that predates this change and is recorded below.
+
+The rung is kept rather than removed. It stays behind `--explain`, costs nothing unused, and
+two of six answers say something the analyser cannot: which variable is undefined, and which
+image failed to pull. What it must not do is decide, and after this change it cannot.
+
+**Item 3, where a reader learns why.** No code change; `data/rungs.csv` is the measurement.
+The study measured rung 1. `cluster why --verbose` carries
+`VMProvisioned=False reason=WaitingForStartupTimeout`, and the runbook explains that the
+duration has not elapsed and the machine is scheduled rather than broken. Both are one
+command from the stall line. Rung 1 omits the reason because it is a raw condition
+identifier and the jargon lint keeps those out of user-facing prose, which is the rule that
+stops the one-liner growing back into the condition tree.
+
+`REVISIT`: rung 1's `next:` names the runbook and never mentions `--verbose`, so a reader
+following the tool's own signposting goes from three lines to a 154-line runbook without
+being shown the 23-line answer in between. Naming both would cost one line. Left alone
+because the brief for this work asked for the question to be stated rather than closed.
+
+**A tension between the two, worth naming rather than fixing.** Rung 1 omits the condition
+reason because the jargon lint keeps raw identifiers out of user-facing prose, and that lint
+is the argument for the four-phase display existing at all. Rung 5, the model, writes those
+identifiers freely: `WaitingForStartupTimeout` appears in its prose, the schema for that
+output forbids condition type names, and nothing checks it. So the rule that shapes the
+bottom of the ladder is unenforced at the top. Either the lint should run over model output
+as it runs over `internal/msg`, or rung 5 should be described as a different kind of text
+with a different rule. It is recorded as an open item in STATUS.md rather than decided here,
+because deciding it means choosing what the model rung is for.
